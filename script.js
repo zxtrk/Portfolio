@@ -1,28 +1,27 @@
 // Project data - Add your GitHub projects here
 const projects = [
     {
-        title: "Project I",
-        description:
-            "A brief description of what this project does and the problem it solves. Keep it concise and impactful.",
+        title: "Custom Wordle",
+        description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        githubUrl: "https://github.com/yourusername/project-one",
-        imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop",
+        githubUrl: "",
+        imageUrl: "/Assets/wordle.png",
     },
     {
-        title: "Project II",
-        description:
-            "Another interesting project that showcases your skills. Explain the key features and technologies used.",
+        title: "Temp/Noth",
+        description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        githubUrl: "https://github.com/yourusername/project-two",
-        imageUrl: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&h=400&fit=crop",
+        githubUrl: "",
+        imageUrl:
+            "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&h=400&fit=crop",
     },
     {
-        title: "Project III",
-        description:
-            "A third project demonstrating your range and capabilities. Highlight what makes it unique.",
+        title: "Temp/Noth",
+        description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        githubUrl: "https://github.com/yourusername/project-three",
-        imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
+        githubUrl: "",
+        imageUrl:
+            "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
     },
 ];
 
@@ -65,7 +64,7 @@ function createProjectCard(project, index) {
             ${project.tags.map((tag) => `<span class="project-tag">${tag}</span>`).join("")}
         </div>
         <a href="${project.githubUrl}" target="_blank" rel="noopener noreferrer" class="project-link">
-            View on GitHub
+            View Project
         </a>
     `;
 
@@ -181,7 +180,7 @@ function initEmailForm() {
     const emailForm = document.getElementById("emailForm");
     const formConfirmation = document.getElementById("formConfirmation");
     const formError = document.getElementById("formError");
-    const submitButton = emailForm.querySelector('.submit-button');
+    const submitButton = emailForm.querySelector(".submit-button");
 
     let formIsOpen = false;
 
@@ -212,7 +211,7 @@ function initEmailForm() {
 
         // Disable submit button
         submitButton.disabled = true;
-        submitButton.textContent = 'Sending...';
+        submitButton.textContent = "Sending...";
 
         // Hide any previous messages
         formConfirmation.classList.remove("show");
@@ -225,7 +224,7 @@ function initEmailForm() {
             // Submit to Web3Forms
             const response = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
-                body: formData
+                body: formData,
             });
 
             const data = await response.json();
@@ -239,7 +238,7 @@ function initEmailForm() {
 
                 // Re-enable submit button
                 submitButton.disabled = false;
-                submitButton.textContent = 'Send Message';
+                submitButton.textContent = "Send Message";
 
                 // Hide form and scroll back after 3 seconds
                 setTimeout(() => {
@@ -257,12 +256,12 @@ function initEmailForm() {
                 }, 3000);
             } else {
                 // Show error message
-                formError.textContent = `✗ ${data.message || 'Something went wrong. Please try again.'}`;
+                formError.textContent = `✗ ${data.message || "Something went wrong. Please try again."}`;
                 formError.classList.add("show");
 
                 // Re-enable submit button
                 submitButton.disabled = false;
-                submitButton.textContent = 'Send Message';
+                submitButton.textContent = "Send Message";
 
                 // Hide error after 5 seconds
                 setTimeout(() => {
@@ -270,15 +269,16 @@ function initEmailForm() {
                 }, 5000);
             }
         } catch (error) {
-            console.error('Form submission error:', error);
+            console.error("Form submission error:", error);
 
             // Show error message
-            formError.textContent = '✗ Network error. Please check your connection and try again.';
+            formError.textContent =
+                "✗ Network error. Please check your connection and try again.";
             formError.classList.add("show");
 
             // Re-enable submit button
             submitButton.disabled = false;
-            submitButton.textContent = 'Send Message';
+            submitButton.textContent = "Send Message";
 
             // Hide error after 5 seconds
             setTimeout(() => {
