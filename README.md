@@ -1,19 +1,19 @@
-<div align="center"> <h1 style="color:#7B6CFF; text-shadow: 0 0 8px rgba(123,108,255,0.35);"> Personal Portfolio </h1> <p style="color:#A5A1FF;"> A personal website built to showcase who I am and what I create </p> <br/> <img src="https://img.shields.io/badge/HTML-Structure-E34F26?style=for-the-badge&logo=html5&logoColor=white"/> <img src="https://img.shields.io/badge/CSS-Styling-1572B6?style=for-the-badge&logo=css3&logoColor=white"/> <img src="https://img.shields.io/badge/JavaScript-Interactivity-F7DF1E?style=for-the-badge&logo=javascript&logoColor=000"/> </div> <br/> <hr style="border: none; height: 2px; background: linear-gradient(90deg, transparent, #7B6CFF, #4FC3F7, #7B6CFF, transparent);" /> <h2 style="color:#7B6CFF;">About</h2>
+<div align="center"> <h1 style="color:#4F46E5; font-weight:600;"> Personal Portfolio </h1> <p style="color:#6B7280; max-width:520px;"> A personal portfolio website built to present my work, skills, and approach to development </p> <br/> <img src="https://img.shields.io/badge/HTML-Markup-E34F26?style=flat&logo=html5&logoColor=white"/> <img src="https://img.shields.io/badge/CSS-Styling-1572B6?style=flat&logo=css3&logoColor=white"/> <img src="https://img.shields.io/badge/JavaScript-Logic-F7DF1E?style=flat&logo=javascript&logoColor=000"/> </div> <br/> <hr style="border: none; height: 1px; background: linear-gradient(to right, transparent, #D1D5DB, transparent);" /> <h2 style="color:#374151; font-weight:600;">Overview</h2>
 
-This project is my personal portfolio website. It’s a digital space that represents me as a developer, my mindset, and the kind of work I care about. The focus is on clarity, simplicity, and intention rather than overwhelming visuals or heavy tooling.
+This project is my personal portfolio website. It serves as a concise and focused representation of who I am as a developer and how I approach building for the web. The emphasis is on clarity, structure, and thoughtful design rather than unnecessary complexity.
 
-The entire site is built using plain HTML, CSS, and JavaScript. I chose to avoid frameworks so I could work closer to the fundamentals of the web and have full control over structure, layout, and behavior.
+The site is built entirely with standard web technologies. Using HTML, CSS, and JavaScript allows for complete control over structure, styling, and behavior while keeping the codebase lightweight and easy to understand.
 
-<br/> <h2 style="color:#7B6CFF;">Design & Experience</h2>
+<br/> <h2 style="color:#374151; font-weight:600;">Design Philosophy</h2>
 
-The design leans modern and minimal, with color used as an accent rather than a distraction. Spacing and typography are deliberate, keeping the layout calm and readable. The site adapts smoothly across screen sizes while maintaining a consistent feel.
+The design is intentionally minimal and professional. Typography, spacing, and color are used with restraint to create a clean reading experience and a balanced layout. The interface adapts smoothly across screen sizes while maintaining consistency and visual hierarchy.
 
-JavaScript adds small but meaningful interactions. Animations and dynamic elements are subtle, designed to enhance the experience without pulling focus away from the content.
+JavaScript is used selectively to enhance usability and interaction. All dynamic behavior is purposeful and designed to support the content rather than distract from it.
 
-<br/> <h2 style="color:#7B6CFF;">Why this exists</h2>
+<br/> <h2 style="color:#374151; font-weight:600;">Intent</h2>
 
-This portfolio is both a showcase and a checkpoint. It reflects my current skill set while giving me space to refine and improve as I grow. It’s treated as a living project, not a finished product.
+This portfolio exists as both a showcase and a foundation. It reflects my current skill set while remaining flexible enough to evolve as I continue learning and refining my craft. The project is treated as a living document rather than a finished artifact.
 
-If you’re reviewing the code, you’ll find an emphasis on clarity and structure. Every choice is made to be understandable, maintainable, and intentional.
+The code prioritizes readability and maintainability. Naming, structure, and organization are deliberate so that the intent behind each decision is clear.
 
-<br/> <hr style="border: none; height: 2px; background: linear-gradient(90deg, transparent, #7B6CFF, #4FC3F7, #7B6CFF, transparent);" /> <div align="center"> <p style="color:#A5A1FF;"> Designed and built with intention using HTML, CSS, and JavaScript </p> </div>
+<br/> <hr style="border: none; height: 1px; background: linear-gradient(to right, transparent, #D1D5DB, transparent);" /> <div align="center"> <p style="color:#6B7280; font-size:0.95em;"> Designed and built using HTML, CSS, and JavaScript </p> </div>
