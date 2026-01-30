@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+        />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <title>Artjom Japins - Portfolio</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div class="grain-overlay"></div>
+
+        <!-- Floating abstract shapes -->
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+
+        <!-- Decorative dots -->
+        <div class="decorative-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="nav-content">
+                <a href="#" class="logo">AJ</a>
+                <button
+                    class="burger-menu"
+                    id="burgerMenu"
+                    type="button"
+                    aria-label="Toggle menu"
+                >
+                    <span class="burger-line"></span>
+                    <span class="burger-line"></span>
+                    <span class="burger-line"></span>
+                </button>
+                <div class="nav-links" id="navLinks">
+                    <a href="#about" data-nav>About</a>
+                    <a href="#projects" data-nav>Projects</a>
+                    <a href="#contact" data-nav>Contact</a>
+                </div>
+            </div>
+        </nav>
+        <div class="nav-overlay" id="navOverlay"></div>
+
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-tag">Portfolio / 2026</div>
+                <h1 class="hero-title">
+                    <span class="title-line" data-reveal>Artjom Japins</span>
+                </h1>
+                <div class="hero-subtitle" data-reveal>
+                    <p>Creative Technology Enthusiast</p>
+                    <div class="subtitle-accent"></div>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="mouse-icon">
+                    <div class="mouse-wheel"></div>
+                </div>
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="about-content">
+                <h2 class="section-title" data-reveal>About Me</h2>
+
+                <div class="about-main">
+                    <div class="about-text-block" data-reveal>
+                        <p class="intro-paragraph">
+                            I enjoy working with technology and finding
+                            solutions to technical problems that help systems
+                            run more effectively. I'm naturally curious and like
+                            learning how different systems fit together, which
+                            allows me to approach issues carefully and
+                            logically. I pay close attention to detail and take
+                            pride in doing my work properly and reliably.
+                        </p>
+                        <p class="intro-paragraph">
+                            I also enjoy working through more challenging
+                            technical problems and taking the time to understand
+                            new technologies as they come up. I see learning as
+                            an ongoing process and aim to continually improve my
+                            skills by thinking problems through and building
+                            practical experience.
+                        </p>
+                    </div>
+
+                    <div class="about-features" data-reveal>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9-9v4m0 14v-3m-9-6h4m14 0h-3m-6 0v.01"/>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Goal-Oriented</h3>
+                                <p>
+                                    Focused on delivering results that meet the expectations
+                                    and quality.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+                                    <g fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <path d="M12 4a1 1 0 1 0 2 0a1 1 0 1 0-2 0M7 21l3-4m6 4l-2-4l-3-3l1-6"/>
+                                        <path d="m6 12l2-3l4-1l3 3l3 1"/>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Fast Learner</h3>
+                                <p>
+                                    Quickly adapting to new technologies
+                                    that are developed.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15V8a3 3 0 0 1 6 0v7m-6-4h6M5 19h14"/>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Quality First</h3>
+                                <p>
+                                    Committed to crafting polished work with attention to detail.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="projects-section">
+            <div class="projects-header">
+                <h2 class="section-title" data-reveal>Selected Projects</h2>
+                <p class="projects-intro" data-reveal>
+                    A collection of work that showcases my approach to
+                    problem-solving and design.
+                </p>
+            </div>
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Projects will be dynamically loaded here -->
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="contact-content">
+                <h2 class="section-title" data-reveal>Get In Touch</h2>
+                <div class="contact-info" data-reveal>
+                    <button class="contact-link" id="emailButton" type="button">
+                        <span class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <g fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                    <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <path d="m3 7l9 6l9-6"/>
+                                </g>
+                            </svg>
+                        </span>
+                        <span class="contact-details">
+                            <span class="contact-label">Email</span>
+                            <span class="contact-value"
+                                >/Email.Hidden/</span
+                            >
+                        </span>
+                    </button>
+
+                    <!-- Email Form with Web3Forms integration -->
+                    <div class="email-form-container" id="emailFormContainer">
+                        <form class="email-form" id="emailForm" action="https://api.web3forms.com/submit" method="POST">
+                            <h3 class="form-title">Send me a message</h3>
+                            
+                            <!-- Access Key - GET YOUR KEY FROM https://web3forms.com -->
+                            <input type="hidden" name="access_key" value="9e486bea-95fa-4d15-81f0-f98640a0e1b3">
+                            
+                            <!-- Optional: Redirect after submission (remove if you want to stay on page) -->
+                            <input type="hidden" name="redirect" value="false">
+                            
+                            <div class="form-group">
+                                <label for="senderName">Your Name</label>
+                                <input
+                                    type="text"
+                                    id="senderName"
+                                    name="name"
+                                    required
+                                    placeholder="John Doe"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="senderEmail">Your Email</label>
+                                <input
+                                    type="email"
+                                    id="senderEmail"
+                                    name="email"
+                                    required
+                                    placeholder="your.email@example.com"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    rows="6"
+                                    required
+                                    placeholder="Your message here..."
+                                ></textarea>
+                            </div>
+                            
+                            <!-- Honeypot spam protection -->
+                            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                            
+                            <button type="submit" class="submit-button">
+                                Send Message
+                            </button>
+                            <div
+                                class="form-confirmation"
+                                id="formConfirmation"
+                            >
+                                ✓ Message sent successfully! I'll get back to
+                                you soon.
+                            </div>
+                            <div
+                                class="form-error"
+                                id="formError"
+                            >
+                                ✗ Something went wrong. Please try again.
+                            </div>
+                        </form>
+                    </div>
+
+                    <a
+                        href="https://github.com/zxtrk"
+                        target="_blank"
+                        rel="noopener"
+                        class="contact-link"
+                    >
+                        <span class="contact-icon">
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                                ></path>
+                            </svg>
+                        </span>
+                        <span class="contact-details">
+                            <span class="contact-label">GitHub</span>
+                            <span class="contact-value">@zxtrk</span>
+                        </span>
+                    </a>
+                    <a
+                        href="https://www.linkedin.com/in/artjom-japins-4b589b35b/"
+                        target="_blank"
+                        rel="noopener"
+                        class="contact-link"
+                    >
+                        <span class="contact-icon">
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                                ></path>
+                                <rect x="2" y="9" width="4" height="12"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </span>
+                        <span class="contact-details">
+                            <span class="contact-label">LinkedIn</span>
+                            <span class="contact-value">ArtjomJapins</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p>&copy; 2026 Artjom Japins. All rights reserved.</p>
+                <p class="footer-note">Designed & developed with care.</p>
+            </div>
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
+</html>
