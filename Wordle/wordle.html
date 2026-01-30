@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Custom Wordle</title>
+        <link rel="stylesheet" href="wordle.css" />
+    </head>
+    <body>
+        <div class="game-container">
+            <!-- Header -->
+            <header class="game-header">
+                <h1 class="game-title">Custom-Wordle</h1>
+            </header>
+
+            <!-- Word Selection Screen -->
+            <div id="wordSelectionScreen" class="screen active">
+                <div class="word-selection-card">
+                    <h2 class="section-title">Pick a random Word</h2>
+                    <p class="instruction">
+                        Pick from the word list or enter your own 5-letter word
+                    </p>
+
+                    <div class="word-options">
+                        <h3>Suggested Words</h3>
+                        <div class="word-grid" id="wordGrid"></div>
+                    </div>
+
+                    <div class="custom-word-section">
+                        <h3>Or Enter Your Own</h3>
+                        <input
+                            type="text"
+                            id="customWordInput"
+                            placeholder="5-letter word"
+                            maxlength="5"
+                        />
+                        <p class="hint">Must be 5 letters, A-Z only</p>
+                    </div>
+
+                    <p class="error-message" id="wordError"></p>
+
+                    <button class="btn btn-primary" id="confirmWordBtn">
+                        Start Game
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="gameScreen" class="screen">
+                <p class="error-message" id="guessError"></p>
+
+                <div class="game-board" id="gameBoard"></div>
+
+                <div class="keyboard" id="keyboard"></div>
+
+                <button class="btn btn-secondary new-game-btn" id="newGameBtn">
+                    New Game
+                </button>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div id="gameOverScreen" class="screen">
+                <div class="game-over-card">
+                    <h2 class="result-title" id="resultTitle">
+                        Congratulations!
+                    </h2>
+                    <div class="result-content">
+                        <p class="result-message" id="resultMessage"></p>
+                        <div class="word-reveal">
+                            The picked word was: <span id="finalWord"></span>
+                        </div>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <span class="stat-label"
+                                    >Amount of Guesses</span
+                                >
+                                <span class="stat-value" id="finalAttempts"
+                                    >0/6</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="playAgainBtn">
+                        Play Again?
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script src="wordle.js"></script>
+    </body>
+</html>

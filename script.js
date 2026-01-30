@@ -1,17 +1,17 @@
-// Project data - Add your GitHub projects here
 const projects = [
     {
         title: "Custom Wordle",
-        description: "Temp/Noth",
-        tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        githubUrl: "",
+        description:
+            "This is a custom Wordle game mode designed for two users, where one user chooses the target word and the other user tries to guess it.",
+        tags: ["HTML", "CSS", "JAVASCRIPT"],
+        pageUrl: "/Wordle/wordle.html",
         imageUrl: "/Assets/wordle.png",
     },
     {
         title: "Temp/Noth",
         description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        githubUrl: "",
+        pageUrl: "project2.html",
         imageUrl:
             "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&h=400&fit=crop",
     },
@@ -19,7 +19,7 @@ const projects = [
         title: "Temp/Noth",
         description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        githubUrl: "",
+        pageUrl: "project3.html",
         imageUrl:
             "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
     },
@@ -63,16 +63,16 @@ function createProjectCard(project, index) {
         <div class="project-tags">
             ${project.tags.map((tag) => `<span class="project-tag">${tag}</span>`).join("")}
         </div>
-        <a href="${project.githubUrl}" target="_blank" rel="noopener noreferrer" class="project-link">
+        <a href="${project.pageUrl}" class="project-link">
             View Project
         </a>
     `;
 
-    // Add click handler to open GitHub project
+    // Add click handler to open project page
     card.addEventListener("click", (e) => {
         // Don't trigger if clicking directly on the link
         if (e.target.classList.contains("project-link")) return;
-        window.open(project.githubUrl, "_blank", "noopener,noreferrer");
+        window.location.href = project.pageUrl; // Changed to navigate to HTML page
     });
 
     return card;
