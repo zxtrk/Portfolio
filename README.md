@@ -1,30 +1,19 @@
-<div align="center">
-🌐 Personal Portfolio Website
-<img src="https://capsule-render.vercel.app/api?type=rounded&color=gradient&height=140&section=header"/> </div>
-👋 About the project
+<div align="center"> <h1 style="color:#6C63FF;">Personal Portfolio</h1> <p style="color:#9aa0ff;"> A personal website built to showcase who I am and what I create </p> <br/> <img src="https://img.shields.io/badge/HTML-Structure-E34F26?style=for-the-badge&logo=html5&logoColor=white"/> <img src="https://img.shields.io/badge/CSS-Styling-1572B6?style=for-the-badge&logo=css3&logoColor=white"/> <img src="https://img.shields.io/badge/JavaScript-Interactivity-F7DF1E?style=for-the-badge&logo=javascript&logoColor=000"/> </div> <br/> <hr style="border: none; height: 1px; background: linear-gradient(to right, transparent, #6C63FF, transparent);" /> <h2 style="color:#6C63FF;">About</h2>
 
-This project is my personal portfolio website. It’s a space that represents who I am, what I build, and how I approach development. The site is intentionally simple and fast, focusing on clean design, clear structure, and smooth interactions rather than heavy frameworks or unnecessary complexity.
+This project is my personal portfolio website. It’s a digital space that represents me as a developer, my mindset, and the kind of work I care about. The focus is on clarity, simplicity, and intention rather than overwhelming visuals or heavy tooling.
 
-Everything here is built with plain HTML, CSS, and JavaScript. I wanted full control over the layout, styling, and behavior, and building it from the ground up helped me better understand how the pieces fit together without abstractions doing the work for me.
+The entire site is built using plain HTML, CSS, and JavaScript. I chose to avoid frameworks so I could work closer to the fundamentals of the web and have full control over structure, layout, and behavior.
 
-🎨 Design & structure
+<br/> <h2 style="color:#6C63FF;">Design & Experience</h2>
 
-The design focuses on clarity and personality. Layout, spacing, and color choices are intentional, aiming to feel modern without being distracting. The site is responsive and designed to work across different screen sizes while keeping the experience consistent.
+The design leans toward minimal and modern. Spacing, typography, and color choices are deliberate, aiming to keep the content readable and the layout calm. The site is responsive and adapts smoothly across different screen sizes.
 
-JavaScript is used to enhance interactivity and polish, not to overcomplicate things. Animations, transitions, and dynamic elements exist to support the experience rather than take attention away from the content.
+JavaScript is used to enhance the experience where it makes sense. Interactions and animations are subtle and purposeful, supporting the content instead of competing with it.
 
-⚙️ Built with
+<br/> <h2 style="color:#6C63FF;">Why this exists</h2>
 
-This project uses standard web technologies that run directly in the browser. HTML provides the structure, CSS handles layout and styling, and JavaScript adds interactivity and logic. No external frameworks are required to run the site.
+This portfolio is both a showcase and a personal checkpoint. It reflects my current skill level while giving me room to iterate and improve as I learn more. I treat it as a living project rather than a finished one.
 
-🚀 Purpose
+If you’re looking through the code, you’ll notice an emphasis on readability and structure. I want it to be easy to understand not just what I built, but why I built it that way.
 
-This portfolio exists as both a showcase and a learning project. It highlights my current skills while also serving as a foundation I can continue improving over time. As I grow as a developer, this site will evolve alongside me.
-
-If you’re a recruiter, collaborator, or just browsing, feel free to explore the code and see how things are structured. I keep things readable and organized on purpose.
-
-<div align="center">
-
-✨ Designed and built by me using HTML, CSS, and JavaScript ✨
-
-</div>
+<br/> <hr style="border: none; height: 1px; background: linear-gradient(to right, transparent, #6C63FF, transparent);" /> <div align="center"> <p style="color:#9aa0ff;"> Designed and built with intention using HTML, CSS, and JavaScript </p> </div>
