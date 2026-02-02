@@ -5,15 +5,14 @@ const projects = [
             "This is a custom Wordle game mode designed for two users, where one user chooses the target word and the other user tries to guess it.",
         tags: ["HTML", "CSS", "JAVASCRIPT"],
         pageUrl: "/Wordle/wordle.html",
-        imageUrl: "/Assets/vika.JPG",
+        imageUrl: "/Assets/wordle.png",
     },
     {
         title: "Temp/Noth",
         description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        pageUrl: "project2.html",
-        imageUrl:
-            "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&h=400&fit=crop",
+        pageUrl: "vika.html",
+        imageUrl: "/Assets/vika.JPG",
     },
     {
         title: "Temp/Noth",
