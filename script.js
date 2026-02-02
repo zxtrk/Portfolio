@@ -12,7 +12,7 @@ const projects = [
         description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
         pageUrl: "vika.html",
-        imageUrl: "/Assets/vika.JPG",
+        imageUrl: "/Assets/vika.png",
     },
     {
         title: "Temp/Noth",
