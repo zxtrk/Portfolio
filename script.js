@@ -11,16 +11,15 @@ const projects = [
         title: "Temp/Noth",
         description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        pageUrl: "vika.html",
-        imageUrl: "vika.png",
+        pageUrl: "",
+        imageUrl: "",
     },
     {
         title: "Temp/Noth",
         description: "Temp/Noth",
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
         pageUrl: "project3.html",
-        imageUrl:
-            "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
+        imageUrl: "",
     },
 ];
 
