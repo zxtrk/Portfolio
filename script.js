@@ -25,6 +25,7 @@ const projects = [
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
     initProjects();
     initScrollAnimations();
     initSmoothScroll();
@@ -33,6 +34,25 @@ document.addEventListener("DOMContentLoaded", () => {
     initNavScroll();
     initBurgerMenu();
 });
+
+// Theme functionality
+function initTheme() {
+    const themeToggle = document.getElementById("themeToggle");
+    const storedTheme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    
+    // Set initial theme
+    document.documentElement.setAttribute("data-theme", storedTheme);
+    
+    if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+            const currentTheme = document.documentElement.getAttribute("data-theme");
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+            
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+        });
+    }
+}
 
 // Populate projects grid
 function initProjects() {

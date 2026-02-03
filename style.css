@@ -16,6 +16,15 @@
     --spacing-xl: 8rem;
 }
 
+[data-theme="dark"] {
+    --color-bg: #1a1a1a;
+    --color-text: #faf8f5;
+    --color-accent: #e09b7d;
+    --color-secondary: #9cb0a1;
+    --color-light: #2d2d2d;
+    --color-border: rgba(250, 248, 245, 0.1);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -387,6 +396,34 @@ footer {
 
 .nav-links a:hover::after {
     width: 100%;
+}
+
+.theme-toggle {
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.theme-toggle:hover {
+    color: var(--color-accent);
+}
+
+.theme-toggle .moon-icon {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle .sun-icon {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle .moon-icon {
+    display: block;
 }
 
 /* Hero Section */
