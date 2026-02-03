@@ -288,16 +288,13 @@ footer {
 }
 
 .logo {
-    display: flex;
-    align-items: center;
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--color-text);
     text-decoration: none;
+    letter-spacing: -0.02em;
     z-index: 1001;
-}
-
-.logo-img {
-    height: 40px;
-    width: auto;
-    display: block;
 }
 
 /* Burger Menu - Hidden on desktop, shown on mobile */
