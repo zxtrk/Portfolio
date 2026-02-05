@@ -25,7 +25,6 @@ const projects = [
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
-    initTheme();
     initProjects();
     initScrollAnimations();
     initSmoothScroll();
@@ -33,26 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
     initEmailForm();
     initNavScroll();
     initBurgerMenu();
+    initDarkMode();
+    initScrollIndicator();
 });
 
-// Theme functionality
-function initTheme() {
-    const themeToggle = document.getElementById("themeToggle");
-    const storedTheme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    
-    // Set initial theme
-    document.documentElement.setAttribute("data-theme", storedTheme);
-    
-    if (themeToggle) {
-        themeToggle.addEventListener("click", () => {
-            const currentTheme = document.documentElement.getAttribute("data-theme");
-            const newTheme = currentTheme === "dark" ? "light" : "dark";
-            
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-        });
-    }
-}
 
 // Populate projects grid
 function initProjects() {
@@ -90,7 +73,7 @@ function createProjectCard(project, index) {
     card.addEventListener("click", (e) => {
         // Don't trigger if clicking directly on the link
         if (e.target.classList.contains("project-link")) return;
-        window.location.href = project.pageUrl; // Changed to navigate to HTML page
+        window.location.href = project.pageUrl;
     });
 
     return card;
@@ -148,6 +131,30 @@ function initHeroAnimation() {
         if (titleLine) titleLine.classList.add("revealed");
         if (heroSubtitle) heroSubtitle.classList.add("revealed");
     }, 300);
+}
+
+// Initialize scroll indicator visibility based on scroll position
+function initScrollIndicator() {
+    const scrollIndicator = document.getElementById("scrollIndicator");
+
+    if (!scrollIndicator) return;
+
+    function updateScrollIndicator() {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+        // Hide indicator when scrolled down more than 100px
+        if (scrollPosition > 100) {
+            scrollIndicator.classList.add("hidden");
+        } else {
+            scrollIndicator.classList.remove("hidden");
+        }
+    }
+
+    // Check on scroll
+    window.addEventListener("scroll", updateScrollIndicator);
+
+    // Initial check
+    updateScrollIndicator();
 }
 
 // Add parallax effect to section numbers on scroll
@@ -396,4 +403,43 @@ function initBurgerMenu() {
             closeMenu();
         }
     });
+}
+
+// Dark mode functionality - MODIFIED to start in light mode by default
+function initDarkMode() {
+    const darkModeToggleDesktop = document.getElementById("darkModeToggleDesktop");
+    const darkModeToggleMobile = document.getElementById("darkModeToggle");
+    const body = document.body;
+
+    // Check for saved dark mode preference - only apply dark mode if explicitly saved as "true"
+    const savedDarkMode = localStorage.getItem("darkMode");
+    const isDarkMode = savedDarkMode === "true";
+
+    // Apply dark mode ONLY if it was previously enabled and saved
+    if (isDarkMode) {
+        body.classList.add("dark-mode");
+    } else {
+        // Explicitly ensure we're in light mode
+        body.classList.remove("dark-mode");
+        // If there's no saved preference, set it to false (light mode)
+        if (savedDarkMode === null) {
+            localStorage.setItem("darkMode", "false");
+        }
+    }
+
+    // Toggle dark mode function
+    function toggleDarkMode() {
+        body.classList.toggle("dark-mode");
+        const isDark = body.classList.contains("dark-mode");
+        localStorage.setItem("darkMode", isDark);
+    }
+
+    // Add event listeners to both toggle buttons
+    if (darkModeToggleDesktop) {
+        darkModeToggleDesktop.addEventListener("click", toggleDarkMode);
+    }
+
+    if (darkModeToggleMobile) {
+        darkModeToggleMobile.addEventListener("click", toggleDarkMode);
+    }
 }
