@@ -625,15 +625,19 @@ input[type="text"]::placeholder {
         font-size: 1.75rem;
     }
 
+    .keyboard-row {
+        gap: 2px;
+    }
+
     .key {
-        min-width: 28px;
-        height: 50px;
-        font-size: 0.7rem;
+        min-width: 32px;
+        height: 54px;
+        font-size: 0.75rem;
     }
 
     .key.wide {
-        min-width: 50px;
-        font-size: 0.65rem;
+        min-width: 58px;
+        font-size: 0.7rem;
     }
 
     .word-grid {
@@ -684,20 +688,19 @@ input[type="text"]::placeholder {
         font-size: 1.5rem;
     }
 
+    .keyboard-row {
+        gap: 2px;
+    }
+
     .key {
-        min-width: 24px;
-        height: 46px;
-        font-size: 0.65rem;
-        gap: 4px;
+        min-width: 28px;
+        height: 50px;
+        font-size: 0.7rem;
     }
 
     .key.wide {
-        min-width: 45px;
-        font-size: 0.6rem;
-    }
-
-    .keyboard-row {
-        gap: 4px;
+        min-width: 52px;
+        font-size: 0.65rem;
     }
 
     .game-title {
