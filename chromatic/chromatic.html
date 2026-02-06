@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chromatic Memory</title>
+<link rel="stylesheet" href="chromatic.css">
+</head>
+<body>
+<!-- Instruction Screen -->
+<div class="instruction-screen" id="instructionScreen">
+<div class="instruction-content">
+<h1>Chromatic Memory</h1>
+<p class="subtitle">Test your memory with colors</p>
+<div class="instructions-list">
+<div class="instruction-item">
+<div class="instruction-number">1</div>
+<div class="instruction-text">Watch the color sequence displayed in the circle</div>
+</div>
+<div class="instruction-item">
+<div class="instruction-number">2</div>
+<div class="instruction-text">Recreate the sequence by clicking colors or using keyboard shortcuts</div>
+</div>
+<div class="instruction-item">
+<div class="instruction-number">3</div>
+<div class="instruction-text">Each level adds one more color to remember</div>
+</div>
+<div class="instruction-item">
+<div class="instruction-number">4</div>
+<div class="instruction-text">The game gets faster and adds more colors as you progress</div>
+</div>
+<div class="instruction-item">
+<div class="instruction-number">5</div>
+<div class="instruction-text">One wrong move and it's game over. Will you beat it?</div>
+</div>
+</div>
+<button class="start-button" id="instructionStartBtn">Begin</button>
+</div>
+</div>
+<!-- Game Screen -->
+<div class="game-screen" id="gameScreen">
+<div class="level-indicator" id="levelIndicator">Level 1</div>
+<div class="color-display" id="colorDisplay"></div>
+<div class="status-text" id="statusText"></div>
+<div class="options" id="options"></div>
+</div>
+<!-- Game Over Overlay -->
+<div class="gameover-overlay" id="gameoverOverlay">
+<div class="gameover-content">
+<h2>Game Over</h2>
+<div class="gameover-stats">
+<div class="gameover-stat">
+<div class="gameover-stat-label">Score</div>
+<div class="gameover-stat-value" id="finalScore">0</div>
+</div>
+<div class="gameover-stat">
+<div class="gameover-stat-label">Level Reached</div>
+<div class="gameover-stat-value" id="finalLevel">1</div>
+</div>
+<div class="gameover-stat">
+<div class="gameover-stat-label">Best Score</div>
+<div class="gameover-stat-value" id="finalBest">0</div>
+</div>
+</div>
+<button class="try-again-button" id="tryAgainBtn">Try Again</button>
+</div>
+</div>
+<script src="chromatic.js"></script>
+</body>
+</html>
