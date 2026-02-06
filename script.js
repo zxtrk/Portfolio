@@ -12,7 +12,7 @@ const projects = [
         description: "Chromatic Memory is a minimalistic game, where the player has to memorise the color pattern to win. ",
         tags: ["HTML", "CSS", "JAVASCRIPT"],
         pageUrl: "/chromatic/chromatic.html",
-        imageUrl: "/Assets/Chromatic Memory.png",
+        imageUrl: "/Assets/ChromaticMemory.png",
     },
     {
         title: "Temp/Noth",
