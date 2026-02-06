@@ -187,19 +187,42 @@ body {
 
 @keyframes slideInUp {
   to {
-      opacity: 1;
-      transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.color-option:nth-child(1) { animation-delay: 0.05s; }
-.color-option:nth-child(2) { animation-delay: 0.1s; }
-.color-option:nth-child(3) { animation-delay: 0.15s; }
-.color-option:nth-child(4) { animation-delay: 0.2s; }
-.color-option:nth-child(5) { animation-delay: 0.25s; }
-.color-option:nth-child(6) { animation-delay: 0.3s; }
-.color-option:nth-child(7) { animation-delay: 0.35s; }
-.color-option:nth-child(8) { animation-delay: 0.4s; }
+.color-option:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.color-option:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.color-option:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.color-option:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.color-option:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.color-option:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.color-option:nth-child(7) {
+  animation-delay: 0.35s;
+}
+
+.color-option:nth-child(8) {
+  animation-delay: 0.4s;
+}
 
 .color-option::after {
   content: '';
@@ -250,77 +273,98 @@ body {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-10px);
+  }
+
+  75% {
+    transform: translateX(10px);
+  }
 }
 
 /* TV Screen Break Effect */
 @keyframes tvBreak {
   0% {
-      transform: scale(1);
-      filter: brightness(1);
+    transform: scale(1);
+    filter: brightness(1);
   }
+
   10% {
-      transform: scale(1.02);
-      filter: brightness(1.5) contrast(1.5);
+    transform: scale(1.02);
+    filter: brightness(1.5) contrast(1.5);
   }
+
   20% {
-      transform: scale(0.98) scaleY(1.05);
-      filter: brightness(0.8) contrast(2);
+    transform: scale(0.98) scaleY(1.05);
+    filter: brightness(0.8) contrast(2);
   }
+
   30% {
-      transform: scale(1.01) scaleX(0.95);
-      filter: brightness(1.2) hue-rotate(45deg);
+    transform: scale(1.01) scaleX(0.95);
+    filter: brightness(1.2) hue-rotate(45deg);
   }
+
   40% {
-      transform: scale(0.99) scaleY(0.92);
-      filter: brightness(0.5) contrast(3) saturate(0);
+    transform: scale(0.99) scaleY(0.92);
+    filter: brightness(0.5) contrast(3) saturate(0);
   }
+
   50% {
-      transform: scale(1) scaleY(0.05);
-      filter: brightness(2) contrast(5);
+    transform: scale(1) scaleY(0.05);
+    filter: brightness(2) contrast(5);
   }
+
   60% {
-      transform: scale(1) scaleY(0.02);
-      filter: brightness(3);
+    transform: scale(1) scaleY(0.02);
+    filter: brightness(3);
   }
+
   70% {
-      transform: scale(1.02) scaleY(0.01);
-      filter: brightness(5);
-      opacity: 0.5;
+    transform: scale(1.02) scaleY(0.01);
+    filter: brightness(5);
+    opacity: 0.5;
   }
+
   100% {
-      transform: scale(1) scaleY(0);
-      filter: brightness(0);
-      opacity: 0;
+    transform: scale(1) scaleY(0);
+    filter: brightness(0);
+    opacity: 0;
   }
 }
 
 @keyframes staticNoise {
-  0%, 100% {
-      background-position: 0% 0%;
+
+  0%,
+  100% {
+    background-position: 0% 0%;
   }
+
   25% {
-      background-position: 100% 100%;
+    background-position: 100% 100%;
   }
+
   50% {
-      background-position: 0% 100%;
+    background-position: 0% 100%;
   }
+
   75% {
-      background-position: 100% 0%;
+    background-position: 100% 0%;
   }
 }
 
 .color-display.breaking {
   animation: tvBreak 1s ease-out forwards;
-  background: repeating-linear-gradient(
-      0deg,
+  background: repeating-linear-gradient(0deg,
       transparent,
       transparent 2px,
       rgba(255, 255, 255, 0.1) 2px,
-      rgba(255, 255, 255, 0.1) 4px
-  );
+      rgba(255, 255, 255, 0.1) 4px);
   background-size: 100% 100%;
   animation: tvBreak 1s ease-out forwards, staticNoise 0.1s infinite;
 }
@@ -399,21 +443,77 @@ body {
   color: #0a0a0a;
 }
 
+/* Social Icons */
+.social-icons {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  gap: 15px;
+  z-index: 1001;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+  transition: fill 0.3s ease;
+}
+
+.social-icon:hover {
+  background: #fff;
+  border-color: #fff;
+  transform: translateY(-3px);
+}
+
+.social-icon:hover svg {
+  fill: #0a0a0a;
+}
+
 @media (max-width: 768px) {
   .color-display {
-      width: 280px;
-      height: 280px;
+    width: 280px;
+    height: 280px;
   }
 
   .options {
-      max-width: 100%;
+    max-width: 100%;
   }
 
   .instruction-content h1 {
-      font-size: 2.5em;
+    font-size: 2.5em;
   }
 
   .gameover-content h2 {
-      font-size: 2em;
+    font-size: 2em;
+  }
+
+  .social-icons {
+    bottom: 20px;
+    right: 20px;
+    gap: 12px;
+  }
+
+  .social-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .social-icon svg {
+    width: 18px;
+    height: 18px;
   }
 }
