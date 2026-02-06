@@ -55,6 +55,113 @@
             href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap"
             rel="stylesheet"
         />
+        <style>
+            /* Quote of the Day Section */
+            .quote-section {
+                padding: var(--spacing-xl) var(--spacing-lg);
+                background: linear-gradient(
+                    to bottom,
+                    transparent,
+                    rgba(232, 228, 223, 0.1),
+                    transparent
+                );
+                position: relative;
+            }
+
+            body.dark-mode .quote-section {
+                background: linear-gradient(
+                    to bottom,
+                    transparent,
+                    rgba(42, 42, 42, 0.2),
+                    transparent
+                );
+            }
+
+            .quote-content {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: var(--spacing-xl) var(--spacing-md);
+                text-align: center;
+                position: relative;
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            .quote-content.revealed {
+                animation: fadeInUp 0.8s ease forwards;
+            }
+
+            .quote-icon {
+                font-family: var(--font-display);
+                font-size: 120px;
+                color: var(--color-accent);
+                opacity: 0.15;
+                line-height: 1;
+                margin-bottom: -40px;
+                user-select: none;
+            }
+
+            .quote-text {
+                font-family: var(--font-display);
+                font-size: clamp(1.5rem, 4vw, 2.5rem);
+                font-weight: 400;
+                line-height: 1.6;
+                color: var(--color-text);
+                margin-bottom: var(--spacing-md);
+                font-style: italic;
+                position: relative;
+                padding: 0 var(--spacing-md);
+            }
+
+            .quote-author {
+                font-size: 18px;
+                color: var(--color-accent);
+                font-weight: 600;
+                margin-bottom: var(--spacing-sm);
+                letter-spacing: 0.05em;
+            }
+
+            .quote-tag {
+                display: inline-block;
+                font-size: 11px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                padding: 6px 16px;
+                border: 1px solid var(--color-border);
+                border-radius: 20px;
+                margin-top: var(--spacing-md);
+                background: rgba(255, 255, 255, 0.5);
+            }
+
+            body.dark-mode .quote-tag {
+                background: rgba(42, 42, 42, 0.5);
+            }
+
+            @media (max-width: 768px) {
+                .quote-section {
+                    padding: var(--spacing-lg) var(--spacing-md);
+                }
+
+                .quote-content {
+                    padding: var(--spacing-md);
+                }
+
+                .quote-icon {
+                    font-size: 80px;
+                    margin-bottom: -30px;
+                }
+
+                .quote-text {
+                    font-size: clamp(1.25rem, 5vw, 1.75rem);
+                    padding: 0 var(--spacing-sm);
+                }
+
+                .quote-author {
+                    font-size: 16px;
+                }
+            }
+        </style>
     </head>
 
     <body>
@@ -358,6 +465,18 @@
             </div>
             <div class="projects-grid" id="projectsGrid">
                 <!-- Projects will be dynamically loaded here -->
+            </div>
+        </section>
+
+        <!-- Quote of the Day Section -->
+        <section class="quote-section">
+            <div class="quote-content" data-reveal>
+                <div class="quote-icon">"</div>
+                <blockquote class="quote-text" id="quoteText">
+                    Loading quote...
+                </blockquote>
+                <p class="quote-author" id="quoteAuthor">— Author</p>
+                <div class="quote-tag">Quote of the Day</div>
             </div>
         </section>
 

@@ -9,7 +9,8 @@ const projects = [
     },
     {
         title: "Chromatic Memory",
-        description: "Chromatic Memory is a minimalistic game, where the player has to memorise the color pattern to win. ",
+        description:
+            "Chromatic Memory is a minimalistic game, where the player has to memorise the color pattern to win. ",
         tags: ["HTML", "CSS", "JAVASCRIPT"],
         pageUrl: "/chromatic/chromatic.html",
         imageUrl: "/Assets/ChromaticMemory.png",
@@ -20,6 +21,130 @@ const projects = [
         tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
         pageUrl: "project3.html",
         imageUrl: "",
+    },
+];
+
+// Daily quotes collection
+const dailyQuotes = [
+    {
+        text: "The only way to do great work is to love what you do.",
+        author: "Steve Jobs",
+    },
+    {
+        text: "Innovation distinguishes between a leader and a follower.",
+        author: "Steve Jobs",
+    },
+    {
+        text: "Code is like humor. When you have to explain it, it's bad.",
+        author: "Cory House",
+    },
+    {
+        text: "First, solve the problem. Then, write the code.",
+        author: "John Johnson",
+    },
+    {
+        text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+        author: "Martin Fowler",
+    },
+    {
+        text: "The best way to predict the future is to invent it.",
+        author: "Alan Kay",
+    },
+    {
+        text: "Simplicity is the soul of efficiency.",
+        author: "Austin Freeman",
+    },
+    {
+        text: "Make it work, make it right, make it fast.",
+        author: "Kent Beck",
+    },
+    {
+        text: "Technology is best when it brings people together.",
+        author: "Matt Mullenweg",
+    },
+    {
+        text: "The function of good software is to make the complex appear to be simple.",
+        author: "Grady Booch",
+    },
+    {
+        text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.",
+        author: "Antoine de Saint-Exupéry",
+    },
+    {
+        text: "I have no special talents. I am only passionately curious",
+        author: "Albert Einstein",
+    },
+    {
+        text: "Continuous improvement is better than delayed perfection.",
+        author: "Mark Twain",
+    },
+    {
+        text: "Programs must be written for people to read, and only incidentally for machines to execute.",
+        author: "Harold Abelson",
+    },
+    {
+        text: "The most disastrous thing that you can ever learn is your first programming language.",
+        author: "Alan Kay",
+    },
+    {
+        text: "Software is a great combination between artistry and engineering.",
+        author: "Bill Gates",
+    },
+    {
+        text: "Good design is as little design as possible.",
+        author: "Dieter Rams",
+    },
+    {
+        text: "Debugging is twice as hard as writing the code in the first place.",
+        author: "Brian Kernighan",
+    },
+    {
+        text: "Every great developer you know got there by solving problems they were unqualified to solve until they actually did it.",
+        author: "Patrick McKenzie",
+    },
+    {
+        text: "Walking on water and developing software from a specification are easy if both are frozen.",
+        author: "Edward V. Berard",
+    },
+    {
+        text: "The best error message is the one that never shows up.",
+        author: "Thomas Fuchs",
+    },
+    {
+        text: "Don't comment bad code — rewrite it.",
+        author: "Brian Kernighan",
+    },
+    {
+        text: "Experience is the name everyone gives to their mistakes.",
+        author: "Oscar Wilde",
+    },
+    {
+        text: "Quality is not an act, it is a habit.",
+        author: "Aristotle",
+    },
+    {
+        text: "Design is not just what it looks like and feels like. Design is how it works.",
+        author: "Steve Jobs",
+    },
+    {
+        text: "The only impossible journey is the one you never begin.",
+        author: "Tony Robbins",
+    },
+    {
+        text: "It's not a bug – it's an undocumented feature.",
+        author: "Anonymous",
+    },
+    {
+        text: "Talk is cheap. Show me the code.",
+        author: "Linus Torvalds",
+    },
+    {
+        text: "Learning to write programs stretches your mind and helps you think better.",
+        author: "Bill Gates",
+    },
+    {
+        text: "The computer was born to solve problems that did not exist before.",
+        author: "Bill Gates",
     },
 ];
 
@@ -34,8 +159,31 @@ document.addEventListener("DOMContentLoaded", () => {
     initBurgerMenu();
     initDarkMode();
     initScrollIndicator();
+    initQuoteOfTheDay();
 });
 
+// Initialize Quote of the Day
+function initQuoteOfTheDay() {
+    const quoteText = document.getElementById("quoteText");
+    const quoteAuthor = document.getElementById("quoteAuthor");
+
+    if (!quoteText || !quoteAuthor) return;
+
+    // Get the day of the year (1-365/366)
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
+
+    // Use the day of year to select a quote (cycles through the quotes array)
+    const quoteIndex = dayOfYear % dailyQuotes.length;
+    const todaysQuote = dailyQuotes[quoteIndex];
+
+    // Set the quote and author
+    quoteText.textContent = todaysQuote.text;
+    quoteAuthor.textContent = `— ${todaysQuote.author}`;
+}
 
 // Populate projects grid
 function initProjects() {
@@ -140,7 +288,8 @@ function initScrollIndicator() {
     if (!scrollIndicator) return;
 
     function updateScrollIndicator() {
-        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollPosition =
+            window.pageYOffset || document.documentElement.scrollTop;
 
         // Hide indicator when scrolled down more than 100px
         if (scrollPosition > 100) {
@@ -407,7 +556,9 @@ function initBurgerMenu() {
 
 // Dark mode functionality - MODIFIED to start in light mode by default
 function initDarkMode() {
-    const darkModeToggleDesktop = document.getElementById("darkModeToggleDesktop");
+    const darkModeToggleDesktop = document.getElementById(
+        "darkModeToggleDesktop",
+    );
     const darkModeToggleMobile = document.getElementById("darkModeToggle");
     const body = document.body;
 
