@@ -248,7 +248,7 @@ function initScrollAnimations() {
     revealElements.forEach((el) => observer.observe(el));
 }
 
-// Smooth scroll for navigation links
+// Smooth scroll for navigation links - UPDATED WITH CUSTOM EASING
 function initSmoothScroll() {
     const navLinks = document.querySelectorAll("[data-nav]");
 
@@ -260,13 +260,42 @@ function initSmoothScroll() {
 
             if (targetSection) {
                 const offsetTop = targetSection.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: "smooth",
-                });
+
+                // Custom smooth scroll with easing for slower, more elegant animation
+                smoothScrollTo(offsetTop, 1200); // 1200ms duration
             }
         });
     });
+}
+
+// Custom smooth scroll function with easing
+function smoothScrollTo(targetPosition, duration) {
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime = null;
+
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const run = easeInOutCubic(
+            timeElapsed,
+            startPosition,
+            distance,
+            duration,
+        );
+        window.scrollTo(0, run);
+        if (timeElapsed < duration) requestAnimationFrame(animation);
+    }
+
+    // Easing function for smooth deceleration
+    function easeInOutCubic(t, b, c, d) {
+        t /= d / 2;
+        if (t < 1) return (c / 2) * t * t * t + b;
+        t -= 2;
+        return (c / 2) * (t * t * t + 2) + b;
+    }
+
+    requestAnimationFrame(animation);
 }
 
 // Hero animation on load
