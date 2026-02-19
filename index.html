@@ -3,644 +3,453 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
         <title>Artjom Japins – Creative Technology Portfolio</title>
-        <meta
-            name="description"
-            content="Artjom Japins – Creative Technology Enthusiast focused on solving technical problems and building efficient systems."
-        />
-
-        <!-- Favicon -->
+        <meta name="description" content="Artjom Japins – Creative Technology Enthusiast focused on solving technical problems and building efficient systems." />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/favicon-192.png" />
-
-        <!-- Open Graph (THIS FIXES THE GREY GLOBE) -->
         <meta property="og:title" content="Artjom Japins – Portfolio" />
-        <meta
-            property="og:description"
-            content="Creative Technology Enthusiast focused on solving technical problems."
-        />
-        <meta
-            property="og:image"
-            content="https://artjomjapins.site/preview.jpg"
-        />
+        <meta property="og:description" content="Creative Technology Enthusiast focused on solving technical problems." />
+        <meta property="og:image" content="https://artjomjapins.site/preview.jpg" />
         <meta property="og:url" content="https://artjomjapins.site" />
         <meta property="og:type" content="website" />
-
-        <!-- Twitter preview -->
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-            name="twitter:image"
-            content="https://artjomjapins.site/preview.jpg"
-        />
-
-        <!-- Google structured data (THIS FIXES INDEXING) -->
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "Person",
-                "name": "Artjom Japins",
-                "url": "https://artjomjapins.site",
-                "image": "https://artjomjapins.site/preview.jpg",
-                "jobTitle": "Creative Technology Enthusiast",
-                "sameAs": [
-                    "https://github.com/zxtrk",
-                    "https://www.linkedin.com/in/artjom-japins-4b589b35b/"
-                ]
-            }
-        </script>
-
+        <meta name="twitter:image" content="https://artjomjapins.site/preview.jpg" />
+        <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Artjom Japins","url":"https://artjomjapins.site","jobTitle":"Creative Technology Enthusiast","sameAs":["https://github.com/zxtrk","https://www.linkedin.com/in/artjom-japins-4b589b35b/"]}</script>
         <link rel="stylesheet" href="style.css" />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap"
-            rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
         <style>
-            /* Quote of the Day Section */
+            /* ─── QUOTE ──────────────────────────────────────────── */
             .quote-section {
-                padding: var(--spacing-xl) var(--spacing-lg);
-                background: linear-gradient(
-                    to bottom,
-                    transparent,
-                    rgba(232, 228, 223, 0.1),
-                    transparent
-                );
+                padding: 2rem var(--spacing-lg);
+                background: linear-gradient(to bottom, transparent, rgba(232,228,223,0.1), transparent);
                 position: relative;
             }
-
-            body.dark-mode .quote-section {
-                background: linear-gradient(
-                    to bottom,
-                    transparent,
-                    rgba(42, 42, 42, 0.2),
-                    transparent
-                );
-            }
-
-            .quote-content {
-                max-width: 900px;
-                margin: 0 auto;
-                padding: var(--spacing-xl) var(--spacing-md);
-                text-align: center;
-                position: relative;
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            .quote-content.revealed {
-                animation: fadeInUp 0.8s ease forwards;
-            }
-
-            .quote-icon {
-                font-family: var(--font-display);
-                font-size: 120px;
-                color: var(--color-accent);
-                opacity: 0.15;
-                line-height: 1;
-                margin-bottom: -40px;
-                user-select: none;
-            }
-
-            .quote-text {
-                font-family: var(--font-display);
-                font-size: clamp(1.5rem, 4vw, 2.5rem);
-                font-weight: 400;
-                line-height: 1.6;
-                color: var(--color-text);
-                margin-bottom: var(--spacing-md);
-                font-style: italic;
-                position: relative;
-                padding: 0 var(--spacing-md);
-            }
-
-            .quote-author {
-                font-size: 18px;
-                color: var(--color-accent);
-                font-weight: 600;
-                margin-bottom: var(--spacing-sm);
-                letter-spacing: 0.05em;
-            }
-
-            .quote-tag {
-                display: inline-block;
-                font-size: 11px;
-                letter-spacing: 0.1em;
-                text-transform: uppercase;
-                color: var(--color-secondary);
-                padding: 6px 16px;
-                border: 1px solid var(--color-border);
-                border-radius: 20px;
-                margin-top: var(--spacing-md);
-                background: rgba(255, 255, 255, 0.5);
-            }
-
-            body.dark-mode .quote-tag {
-                background: rgba(42, 42, 42, 0.5);
-            }
-
+            body.dark-mode .quote-section { background: linear-gradient(to bottom, transparent, rgba(42,42,42,0.2), transparent); }
+            .quote-content { max-width: 900px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-md); text-align: center; position: relative; opacity: 0; transform: translateY(30px); }
+            .quote-content.revealed { animation: fadeInUp 0.8s ease forwards; }
+            .quote-icon { font-family: var(--font-display); font-size: 120px; color: var(--color-accent); opacity: 0.15; line-height: 1; margin-bottom: -40px; user-select: none; }
+            .quote-text { font-family: var(--font-display); font-size: clamp(1.5rem,4vw,2.5rem); font-weight: 400; line-height: 1.6; color: var(--color-text); margin-bottom: var(--spacing-md); font-style: italic; padding: 0 var(--spacing-md); }
+            .quote-author { font-size: 18px; color: var(--color-accent); font-weight: 600; margin-bottom: var(--spacing-sm); letter-spacing: 0.05em; }
+            .quote-tag { display: inline-block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); padding: 6px 16px; border: 1px solid var(--color-border); border-radius: 20px; margin-top: var(--spacing-md); background: rgba(255,255,255,0.5); }
+            body.dark-mode .quote-tag { background: rgba(42,42,42,0.5); }
             @media (max-width: 768px) {
-                .quote-section {
-                    padding: var(--spacing-lg) var(--spacing-md);
-                }
+                .quote-section { padding: 1.5rem var(--spacing-md); }
+                .quote-content { padding: var(--spacing-md); }
+                .quote-icon { font-size: 80px; margin-bottom: -30px; }
+                .quote-text { font-size: clamp(1.25rem,5vw,1.75rem); padding: 0 var(--spacing-sm); }
+                .quote-author { font-size: 16px; }
+            }
 
-                .quote-content {
-                    padding: var(--spacing-md);
-                }
+            /* ─── LOCK OVERLAY ───────────────────────────────────── */
+            .section-lock-overlay { display: none; }
+            #about.is-locked, #projects.is-locked, #contact.is-locked { overflow: hidden; }
+            #about.is-locked .section-lock-overlay,
+            #projects.is-locked .section-lock-overlay,
+            #contact.is-locked .section-lock-overlay {
+                display: flex; position: absolute; inset: 0; z-index: 20;
+                align-items: center; justify-content: center;
+                background: rgba(250,248,245,0.78);
+                backdrop-filter: blur(16px) saturate(1.2);
+                -webkit-backdrop-filter: blur(16px) saturate(1.2);
+                pointer-events: all; animation: lockOverlayFadeIn 0.7s ease both;
+            }
+            body.dark-mode #about.is-locked .section-lock-overlay,
+            body.dark-mode #projects.is-locked .section-lock-overlay,
+            body.dark-mode #contact.is-locked .section-lock-overlay { background: rgba(20,20,20,0.82); }
+            @keyframes lockOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .lock-overlay-inner { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 3rem 3.5rem; background: rgba(255,255,255,0.92); border: 1px solid rgba(193,122,90,0.15); border-top: 3px solid var(--color-accent); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04), 0 20px 60px -8px rgba(0,0,0,0.12); max-width: 440px; width: 90%; animation: lockCardSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
+            body.dark-mode .lock-overlay-inner { background: rgba(30,30,30,0.96); border: 1px solid rgba(216,144,119,0.18); border-top: 3px solid var(--color-accent); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 20px 60px -8px rgba(0,0,0,0.5); }
+            @keyframes lockCardSlideUp { from { opacity:0; transform: translateY(24px) scale(0.97); } to { opacity:1; transform: translateY(0) scale(1); } }
+            .lock-icon-wrap { position: relative; width: 88px; height: 88px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.6rem; }
+            .lock-svg { width: 56px; height: 56px; position: relative; z-index: 2; animation: lockBob 4s ease-in-out infinite; }
+            @keyframes lockBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+            .lock-shackle, .lock-body, .lock-keyhole, .lock-stem { stroke: var(--color-accent); }
+            .lock-shackle { animation: shackleSettle 0.9s cubic-bezier(0.22,1,0.36,1) 0.5s both; transform-origin: center bottom; }
+            @keyframes shackleSettle { 0% { transform: translateY(-8px); opacity:0; } 60% { transform: translateY(2px); } 100% { transform: translateY(0); opacity:1; } }
+            .lock-keyhole { animation: keyholePulse 3s ease-in-out 1s infinite; }
+            @keyframes keyholePulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+            .lock-ring { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--color-accent); opacity: 0; animation: ringPulse 3s ease-out infinite; }
+            .lock-ring-1 { animation-delay: 0s; } .lock-ring-2 { animation-delay: 1.2s; }
+            @keyframes ringPulse { 0% { transform: scale(0.7); opacity: 0.6; } 100% { transform: scale(1.7); opacity: 0; } }
+            .lock-label { font-family: var(--font-display); font-size: 1.75rem; font-weight: 400; color: var(--color-text); letter-spacing: -0.01em; margin-bottom: 0.65rem; line-height: 1.2; }
+            .lock-sub { font-family: var(--font-mono); font-size: 0.82rem; color: var(--color-secondary); line-height: 1.75; letter-spacing: 0.01em; }
+            .lock-divider { width: 44px; height: 1px; background: linear-gradient(90deg, transparent, var(--color-accent), transparent); margin: 1.5rem auto; opacity: 0.5; }
+            .lock-status { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-secondary); display: flex; align-items: center; gap: 0.55rem; }
+            .lock-dot-indicator { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); display: inline-block; flex-shrink: 0; animation: dotBlink 1.8s ease-in-out infinite; }
+            @keyframes dotBlink { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.3; transform: scale(0.7); } }
+            @media (max-width: 768px) {
+                #about.is-locked .section-lock-overlay, #projects.is-locked .section-lock-overlay, #contact.is-locked .section-lock-overlay { padding: 1rem; }
+                .lock-overlay-inner { padding: 2.25rem 1.75rem 2rem; max-width: 100%; width: calc(100% - 2rem); margin: 0 1rem; border-radius: 4px; }
+                .lock-icon-wrap { width: 76px; height: 76px; margin-bottom: 1.25rem; } .lock-svg { width: 48px; height: 48px; }
+                .lock-label { font-size: 1.5rem; margin-bottom: 0.5rem; } .lock-sub { font-size: 0.85rem; }
+                .lock-divider { margin: 1.2rem auto; width: 36px; } .lock-status { font-size: 0.7rem; } .lock-dot-indicator { width: 7px; height: 7px; }
+            }
+            @media (max-width: 480px) {
+                .lock-overlay-inner { padding: 2rem 1.25rem 1.75rem; width: calc(100% - 1.5rem); margin: 0 0.75rem; }
+                .lock-icon-wrap { width: 68px; height: 68px; margin-bottom: 1rem; } .lock-svg { width: 42px; height: 42px; }
+                .lock-label { font-size: 1.3rem; } .lock-sub { font-size: 0.8rem; }
+            }
 
-                .quote-icon {
-                    font-size: 80px;
-                    margin-bottom: -30px;
-                }
+            /* ════════════════════════════════════════════════════
+               CAROUSEL
+               ════════════════════════════════════════════════════ */
+            .projects-section { padding: var(--spacing-xl) var(--spacing-lg) 2rem; max-width: 1400px; margin: 0 auto; position: relative; }
+            .projects-header { margin-bottom: var(--spacing-md); }
+            .projects-intro { font-size: 16px; color: var(--color-secondary); max-width: 600px; opacity: 0; transform: translateY(20px); }
+            .projects-intro.revealed { animation: fadeInUp 0.8s ease forwards; animation-delay: 0.2s; }
+            .carousel-controls { display: flex; align-items: center; gap: 1rem; margin-bottom: 10px; opacity: 0; transform: translateY(14px); }
+            .carousel-controls.revealed { animation: fadeInUp 0.6s ease forwards; animation-delay: 0.3s; }
+            .carousel-counter-wrap { display: flex; flex-direction: column; gap: 4px; min-width: 58px; }
+            .carousel-counter { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; color: var(--color-secondary); }
+            .carousel-flash-bar { height: 2px; width: 0; border-radius: 2px; background: var(--color-accent); opacity: 0; transition: none; }
+            .carousel-flash-bar.flash-active { animation: flashSweep 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+            @keyframes flashSweep { 0% { width: 0; opacity: 1; } 60% { width: 100%; opacity: 1; } 100% { width: 100%; opacity: 0; } }
+            .carousel-progress-wrap { flex: 1; height: 2px; background: var(--color-border); border-radius: 2px; overflow: hidden; }
+            .carousel-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-accent), var(--color-secondary)); border-radius: 2px; transition: width 0.35s ease; }
+            .carousel-arrows { display: flex; gap: 0.5rem; }
+            .carousel-arrow { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.68,-0.55,0.265,1.55); position: relative; overflow: hidden; }
+            .carousel-arrow::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--color-accent); transform: scale(0); transition: transform 0.3s ease; z-index: 0; }
+            .carousel-arrow span { position: relative; z-index: 1; }
+            .carousel-arrow:hover { border-color: var(--color-accent); color: white; transform: scale(1.12); box-shadow: 0 4px 14px rgba(193,122,90,0.35); }
+            .carousel-arrow:hover::before { transform: scale(1); }
+            .carousel-arrow:active { transform: scale(0.95); }
+            .carousel-drag-hint { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.75; transition: opacity 0.5s ease; }
+            .drag-hint-icon { font-size: 18px; line-height: 1; }
+            .drag-hint-divider { flex: 1; height: 1px; background: var(--color-border); }
+            .carousel-swipe-hint { display: none; align-items: center; gap: 10px; margin-bottom: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.75; transition: opacity 0.5s ease; }
+            .swipe-hint-icon { font-size: 18px; line-height: 1; }
+            .swipe-hint-divider { flex: 1; height: 1px; background: var(--color-border); }
+            .carousel-drag-hint.hint-faded, .carousel-swipe-hint.hint-faded { opacity: 0; pointer-events: none; }
+            .carousel-track-outer { -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%); mask-image: linear-gradient(to right, black 80%, transparent 100%); margin: 0 calc(-1 * var(--spacing-lg)); padding: 0 var(--spacing-lg); overflow: hidden; }
+            .carousel-track { display: flex; gap: 24px; padding: 1.5rem 0 2rem; overflow-x: auto; scroll-behavior: smooth; cursor: grab; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; user-select: none; }
+            .carousel-track::-webkit-scrollbar { display: none; }
+            .carousel-track.is-dragging { cursor: grabbing; scroll-behavior: auto; }
+            .carousel-track::after { content: ''; flex: 0 0 var(--spacing-lg); }
+            .carousel-card { flex: 0 0 300px; width: 300px; border: 1px solid var(--color-border); background: rgba(255,255,255,0.97); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease, border-color 0.3s ease; position: relative; overflow: hidden; }
+            body.dark-mode .carousel-card { background: rgba(42,42,42,0.97); }
+            .carousel-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--color-accent), var(--color-secondary)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+            .carousel-card:hover { transform: translateY(-10px); box-shadow: 0 24px 48px rgba(0,0,0,0.13); border-color: var(--color-accent); }
+            body.dark-mode .carousel-card:hover { box-shadow: 0 24px 48px rgba(0,0,0,0.45); }
+            .carousel-card:hover::before { transform: scaleX(1); }
+            .carousel-card-inner { display: flex; flex-direction: column; height: 100%; }
+            .carousel-card-header { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.4rem 0; }
+            .carousel-card-num { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--color-accent); opacity: 0.22; font-weight: 400; transition: opacity 0.3s ease; }
+            .carousel-card:hover .carousel-card-num { opacity: 0.55; }
+            .carousel-card-year { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); }
+            .carousel-card-image { width: 100%; height: 170px; overflow: hidden; margin-top: 1rem; position: relative; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); background: var(--color-light); }
+            .carousel-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1); filter: grayscale(0.15); pointer-events: none; }
+            .carousel-card:hover .carousel-card-image img { transform: scale(1.08); filter: grayscale(0); }
+            .carousel-card-image--empty { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-light), rgba(193,122,90,0.06)); }
+            .image-placeholder-text { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.45; }
+            .carousel-card-body { padding: 1.2rem 1.4rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
+            .carousel-card-title { font-family: var(--font-display); font-size: 21px; font-weight: 400; line-height: 1.25; color: var(--color-text); margin-bottom: 0.7rem; transition: color 0.3s ease; }
+            .carousel-card:hover .carousel-card-title { color: var(--color-accent); }
+            .carousel-card-desc { font-size: 13px; line-height: 1.65; color: var(--color-secondary); margin-bottom: 1rem; flex: 1; }
+            .carousel-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
+            .carousel-tag { padding: 3px 10px; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; background: var(--color-light); color: var(--color-text); border: 1px solid var(--color-border); transition: all 0.3s ease; }
+            .carousel-card:hover .carousel-tag { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+            .carousel-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent); text-decoration: none; align-self: flex-start; transition: gap 0.3s ease; }
+            .carousel-link:hover { gap: 0.7rem; }
+            .carousel-link-arrow { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+            .carousel-link:hover .carousel-link-arrow { transform: translateX(4px); }
+            @media (max-width: 768px) {
+                .projects-section { padding: var(--spacing-lg) var(--spacing-md) 1.5rem; }
+                .carousel-arrows { display: none; }
+                .carousel-drag-hint { display: none !important; }
+                .carousel-swipe-hint { display: flex; }
+                .carousel-track-outer { margin: 0 calc(-1 * var(--spacing-md)); padding: 0 var(--spacing-md); -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%); mask-image: linear-gradient(to right, black 80%, transparent 100%); }
+                .carousel-track { padding: 1rem 0 1.5rem; gap: 16px; scroll-snap-type: x mandatory; -webkit-scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+                .carousel-card { flex: 0 0 calc(100vw - 2 * var(--spacing-md) - 20px); width: calc(100vw - 2 * var(--spacing-md) - 20px); scroll-snap-align: start; }
+                .carousel-card-image { height: 150px; }
+                .carousel-card-title { font-size: 19px; }
+                .carousel-progress-wrap { max-width: 100px; }
+                .carousel-track::after { flex: 0 0 var(--spacing-md); }
+                .carousel-card:hover { transform: none; box-shadow: none; }
+            }
+            @media (max-width: 480px) {
+                .carousel-card { flex: 0 0 calc(100vw - 1.5 * var(--spacing-md) - 20px); width: calc(100vw - 1.5 * var(--spacing-md) - 20px); }
+                .carousel-card-title { font-size: 18px; }
+                .carousel-controls { flex-wrap: wrap; gap: 0.5rem; }
+            }
 
-                .quote-text {
-                    font-size: clamp(1.25rem, 5vw, 1.75rem);
-                    padding: 0 var(--spacing-sm);
-                }
-
-                .quote-author {
-                    font-size: 16px;
-                }
+            /* ════════════════════════════════════════════════════
+               LOADING SCREEN
+               ════════════════════════════════════════════════════ */
+            .loader-screen {
+                position: fixed; inset: 0; z-index: 99999;
+                display: flex; align-items: center; justify-content: center;
+                overflow: hidden; background: var(--color-bg, #faf8f5);
+            }
+            .loader-bg {
+                position: absolute; inset: 0;
+                background:
+                    radial-gradient(ellipse 60% 50% at 30% 40%, rgba(193,122,90,0.08) 0%, transparent 70%),
+                    radial-gradient(ellipse 50% 60% at 70% 60%, rgba(122,142,126,0.06) 0%, transparent 70%);
+                animation: loaderBgShift 3s ease-in-out infinite alternate;
+            }
+            body.dark-mode .loader-bg {
+                background:
+                    radial-gradient(ellipse 60% 50% at 30% 40%, rgba(216,144,119,0.1) 0%, transparent 70%),
+                    radial-gradient(ellipse 50% 60% at 70% 60%, rgba(143,160,146,0.07) 0%, transparent 70%);
+            }
+            @keyframes loaderBgShift { from { transform: scale(1); } to { transform: scale(1.04); } }
+            .loader-corner { position: absolute; width: 28px; height: 28px; border-color: var(--color-accent, #c17a5a); border-style: solid; opacity: 0; animation: loaderCornerFade 0.5s ease forwards; }
+            .loader-corner--tl { top: 32px; left: 32px; border-width: 1.5px 0 0 1.5px; animation-delay: 0.1s; }
+            .loader-corner--tr { top: 32px; right: 32px; border-width: 1.5px 1.5px 0 0; animation-delay: 0.15s; }
+            .loader-corner--bl { bottom: 32px; left: 32px; border-width: 0 0 1.5px 1.5px; animation-delay: 0.2s; }
+            .loader-corner--br { bottom: 32px; right: 32px; border-width: 0 1.5px 1.5px 0; animation-delay: 0.25s; }
+            @keyframes loaderCornerFade { to { opacity: 0.55; } }
+            .loader-center { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 1; }
+            .loader-monogram-wrap { position: relative; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.8rem; opacity: 0; animation: loaderFadeIn 0.6s ease 0.2s forwards; }
+            .loader-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+            .loader-ring-track { stroke: rgba(26,26,26,0.1); }
+            body.dark-mode .loader-ring-track { stroke: rgba(250,248,245,0.1); }
+            .loader-ring-fill { stroke: var(--color-accent, #c17a5a); stroke-linecap: round; stroke-dasharray: 376.99; stroke-dashoffset: 376.99; animation: loaderRingFill 2s cubic-bezier(0.4,0,0.2,1) 0.3s forwards; }
+            @keyframes loaderRingFill { 0% { stroke-dashoffset: 376.99; } 100% { stroke-dashoffset: 0; } }
+            .loader-monogram { font-family: var(--font-display, 'Playwrite NZ', cursive); font-size: 2rem; font-weight: 400; color: var(--color-text, #1a1a1a); letter-spacing: -0.02em; position: relative; z-index: 1; opacity: 0; animation: loaderFadeIn 0.5s ease 0.55s forwards; }
+            .loader-name { display: flex; gap: 0.5em; font-family: var(--font-display, 'Playwrite NZ', cursive); font-size: clamp(1.6rem,5vw,2.6rem); font-weight: 400; color: var(--color-text, #1a1a1a); letter-spacing: -0.02em; margin-bottom: 0.6rem; overflow: hidden; }
+            .loader-name-first, .loader-name-last { display: inline-block; opacity: 0; transform: translateY(24px); }
+            .loader-name-first { animation: loaderNameReveal 0.7s cubic-bezier(0.22,1,0.36,1) 0.6s forwards; }
+            .loader-name-last  { animation: loaderNameReveal 0.7s cubic-bezier(0.22,1,0.36,1) 0.78s forwards; }
+            @keyframes loaderNameReveal { to { opacity: 1; transform: translateY(0); } }
+            .loader-line { width: clamp(40px,8vw,60px); height: 1px; background: linear-gradient(90deg, transparent, var(--color-accent, #c17a5a), transparent); opacity: 0; animation: loaderFadeIn 0.5s ease 1s forwards; margin-bottom: 1rem; }
+            .loader-subtitle { font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: clamp(0.65rem,2vw,0.78rem); letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-secondary, #7a8e7e); margin-bottom: 2.2rem; opacity: 0; animation: loaderFadeIn 0.6s ease 1.05s forwards; }
+            .loader-bar-wrap { width: clamp(140px,30vw,220px); height: 1.5px; background: rgba(26,26,26,0.1); border-radius: 2px; overflow: hidden; opacity: 0; animation: loaderFadeIn 0.4s ease 0.9s forwards; }
+            body.dark-mode .loader-bar-wrap { background: rgba(250,248,245,0.1); }
+            .loader-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-accent, #c17a5a), var(--color-secondary, #7a8e7e)); border-radius: 2px; animation: loaderBarGrow 1.95s cubic-bezier(0.4,0,0.2,1) 0.3s forwards; }
+            @keyframes loaderBarGrow { 0% { width: 0%; } 60% { width: 68%; } 100% { width: 100%; } }
+            .loader-bottom { position: absolute; bottom: 32px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-secondary, #7a8e7e); opacity: 0; animation: loaderFadeIn 0.5s ease 0.3s forwards; }
+            .loader-status { display: flex; align-items: center; gap: 8px; }
+            .loader-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent, #c17a5a); animation: loaderDotPulse 1.2s ease-in-out infinite; }
+            @keyframes loaderDotPulse { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.3; transform: scale(0.7); } }
+            @keyframes loaderFadeIn { to { opacity: 1; } }
+            .loader-exit { animation: loaderExit 0.85s cubic-bezier(0.77,0,0.175,1) forwards !important; pointer-events: none; }
+            @keyframes loaderExit { 0% { opacity:1; transform: scale(1); } 35% { opacity:1; transform: scale(1.015); } 100% { opacity:0; transform: scale(0.97); } }
+            @media (max-width: 480px) {
+                .loader-corner--tl, .loader-corner--tr { top: 20px; }
+                .loader-corner--bl, .loader-corner--br { bottom: 20px; }
+                .loader-corner--tl, .loader-corner--bl { left: 20px; }
+                .loader-corner--tr, .loader-corner--br { right: 20px; }
+                .loader-bottom { padding: 0 24px; bottom: 20px; }
+                .loader-monogram-wrap { width: 88px; height: 88px; margin-bottom: 1.4rem; }
+                .loader-monogram { font-size: 1.6rem; }
             }
         </style>
     </head>
 
     <body>
-        <div class="grain-overlay"></div>
 
-        <!-- Floating abstract shapes -->
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
+        <!-- ═══ LOADING SCREEN ════════════════════════════════════ -->
+        <div id="loadingScreen" class="loader-screen">
+            <div class="loader-bg"></div>
+            <div class="loader-corner loader-corner--tl"></div>
+            <div class="loader-corner loader-corner--tr"></div>
+            <div class="loader-corner loader-corner--bl"></div>
+            <div class="loader-corner loader-corner--br"></div>
+            <div class="loader-center">
+                <div class="loader-monogram-wrap">
+                    <svg class="loader-ring" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="loader-ring-track" cx="60" cy="60" r="59" stroke-width="1"/>
+                        <circle class="loader-ring-fill"  cx="60" cy="60" r="59" stroke-width="1.5"/>
+                    </svg>
+                    <div class="loader-monogram">AJ</div>
+                </div>
+                <div class="loader-name">
+                    <span class="loader-name-first">Artjom</span>
+                    <span class="loader-name-last">Japins</span>
+                </div>
+                <div class="loader-line"></div>
+                <p class="loader-subtitle">Creative Technology Enthusiast</p>
+                <div class="loader-bar-wrap">
+                    <div class="loader-bar-fill"></div>
+                </div>
+            </div>
+            <div class="loader-bottom">
+                <span>Portfolio / 2026</span>
+                <span class="loader-status"><span class="loader-dot"></span>Loading</span>
+            </div>
         </div>
+        <!-- ═══ END LOADING SCREEN ════════════════════════════════ -->
 
-        <!-- Decorative dots -->
+        <div class="grain-overlay"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div><div class="shape shape-2"></div>
+            <div class="shape shape-3"></div><div class="shape shape-4"></div>
+        </div>
         <div class="decorative-dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
         </div>
 
         <nav class="main-nav">
             <div class="nav-content">
                 <a href="#" class="logo">AJ</a>
-                <button
-                    class="burger-menu"
-                    id="burgerMenu"
-                    type="button"
-                    aria-label="Toggle menu"
-                >
-                    <span class="burger-line"></span>
-                    <span class="burger-line"></span>
-                    <span class="burger-line"></span>
+                <button class="burger-menu" id="burgerMenu" type="button" aria-label="Toggle menu">
+                    <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
                 </button>
                 <div class="nav-links" id="navLinks">
                     <a href="#about" data-nav>About</a>
                     <a href="#projects" data-nav>Projects</a>
                     <a href="#contact" data-nav>Contact</a>
-                    <button
-                        class="dark-mode-toggle mobile-only"
-                        id="darkModeToggle"
-                        type="button"
-                        aria-label="Toggle dark mode"
-                    >
-                        <svg
-                            class="sun-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <circle cx="12" cy="12" r="5"></circle>
-                            <line x1="12" y1="1" x2="12" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="23"></line>
-                            <line
-                                x1="4.22"
-                                y1="4.22"
-                                x2="5.64"
-                                y2="5.64"
-                            ></line>
-                            <line
-                                x1="18.36"
-                                y1="18.36"
-                                x2="19.78"
-                                y2="19.78"
-                            ></line>
-                            <line x1="1" y1="12" x2="3" y2="12"></line>
-                            <line x1="21" y1="12" x2="23" y2="12"></line>
-                            <line
-                                x1="4.22"
-                                y1="19.78"
-                                x2="5.64"
-                                y2="18.36"
-                            ></line>
-                            <line
-                                x1="18.36"
-                                y1="5.64"
-                                x2="19.78"
-                                y2="4.22"
-                            ></line>
-                        </svg>
-                        <svg
-                            class="moon-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path
-                                d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                            ></path>
-                        </svg>
+                    <button class="dark-mode-toggle mobile-only" id="darkModeToggle" type="button" aria-label="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                     </button>
                 </div>
-                <button
-                    class="dark-mode-toggle desktop-only"
-                    id="darkModeToggleDesktop"
-                    type="button"
-                    aria-label="Toggle dark mode"
-                >
-                    <svg
-                        class="sun-icon"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line
-                            x1="18.36"
-                            y1="18.36"
-                            x2="19.78"
-                            y2="19.78"
-                        ></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                    <svg
-                        class="moon-icon"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path
-                            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                        ></path>
-                    </svg>
+                <button class="dark-mode-toggle desktop-only" id="darkModeToggleDesktop" type="button" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
             </div>
         </nav>
         <div class="nav-overlay" id="navOverlay"></div>
 
+        <!-- HERO -->
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-tag">Portfolio / 2026</div>
-                <h1 class="hero-title">
-                    <span class="title-line" data-reveal>Artjom Japins</span>
-                </h1>
+                <h1 class="hero-title"><span class="title-line" data-reveal>Artjom Japins</span></h1>
                 <div class="hero-subtitle" data-reveal>
                     <p>Creative Technology Enthusiast</p>
                     <div class="subtitle-accent"></div>
                 </div>
             </div>
             <div class="scroll-indicator" id="scrollIndicator">
-                <div class="mouse-icon">
-                    <div class="mouse-wheel"></div>
-                </div>
+                <div class="mouse-icon"><div class="mouse-wheel"></div></div>
                 <span>Scroll</span>
                 <div class="scroll-line"></div>
             </div>
         </section>
 
+        <!-- ABOUT -->
         <section id="about" class="about-section">
             <div class="about-content">
                 <h2 class="section-title" data-reveal>About Me</h2>
-
                 <div class="about-main">
                     <div class="about-text-block" data-reveal>
-                        <p class="intro-paragraph">
-                            I enjoy working with technology and finding
-                            solutions to technical problems that help systems
-                            run more effectively. I'm naturally curious and like
-                            learning how different systems fit together, which
-                            allows me to approach issues carefully and
-                            logically. I pay close attention to detail and take
-                            pride in doing my work properly and reliably.
-                        </p>
-                        <p class="intro-paragraph">
-                            I also enjoy working through more challenging
-                            technical problems and taking the time to understand
-                            new technologies as they come up. I see learning as
-                            an ongoing process and aim to continually improve my
-                            skills by thinking problems through and building
-                            practical experience.
-                        </p>
+                        <p class="intro-paragraph">I enjoy working with technology and finding solutions to technical problems that help systems run more effectively. I'm naturally curious and like learning how different systems fit together, which allows me to approach issues carefully and logically. I pay close attention to detail and take pride in doing my work properly and reliably.</p>
+                        <p class="intro-paragraph">I also enjoy working through more challenging technical problems and taking the time to understand new technologies as they come up. I see learning as an ongoing process and aim to continually improve my skills by thinking problems through and building practical experience.</p>
                     </div>
-
                     <div class="about-features" data-reveal>
                         <div class="feature-item">
-                            <div class="feature-icon">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="48"
-                                    height="48"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        fill="none"
-                                        stroke="#c07b5b"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9-9v4m0 14v-3m-9-6h4m14 0h-3m-6 0v.01"
-                                    />
-                                </svg>
-                            </div>
-                            <div class="feature-content">
-                                <h3>Goal-Oriented</h3>
-                                <p>
-                                    Focused on delivering results that meet the
-                                    expectations and quality.
-                                </p>
-                            </div>
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9-9v4m0 14v-3m-9-6h4m14 0h-3m-6 0v.01"/></svg></div>
+                            <div class="feature-content"><h3>Goal-Oriented</h3><p>Focused on delivering results that meet the expectations and quality.</p></div>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="48"
-                                    height="48"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <g
-                                        fill="none"
-                                        stroke="#c07b5b"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M12 4a1 1 0 1 0 2 0a1 1 0 1 0-2 0M7 21l3-4m6 4l-2-4l-3-3l1-6"
-                                        />
-                                        <path d="m6 12l2-3l4-1l3 3l3 1" />
-                                    </g>
-                                </svg>
-                            </div>
-                            <div class="feature-content">
-                                <h3>Fast Learner</h3>
-                                <p>
-                                    Quickly adapting to new technologies that
-                                    are developed.
-                                </p>
-                            </div>
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><g fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 4a1 1 0 1 0 2 0a1 1 0 1 0-2 0M7 21l3-4m6 4l-2-4l-3-3l1-6"/><path d="m6 12l2-3l4-1l3 3l3 1"/></g></svg></div>
+                            <div class="feature-content"><h3>Fast Learner</h3><p>Quickly adapting to new technologies that are developed.</p></div>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="48"
-                                    height="48"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        fill="none"
-                                        stroke="#c07b5b"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 15V8a3 3 0 0 1 6 0v7m-6-4h6M5 19h14"
-                                    />
-                                </svg>
-                            </div>
-                            <div class="feature-content">
-                                <h3>Quality First</h3>
-                                <p>
-                                    Committed to crafting polished work with
-                                    attention to detail.
-                                </p>
-                            </div>
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15V8a3 3 0 0 1 6 0v7m-6-4h6M5 19h14"/></svg></div>
+                            <div class="feature-content"><h3>Quality First</h3><p>Committed to crafting polished work with attention to detail.</p></div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="section-lock-overlay" id="aboutLockOverlay">
+                <div class="lock-overlay-inner">
+                    <div class="lock-icon-wrap"><svg class="lock-svg" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="lock-shackle" d="M16 30V22C16 13.163 23.163 6 32 6s16 7.163 16 16v8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect class="lock-body" x="8" y="30" width="48" height="38" rx="6" stroke-width="4"/><circle class="lock-keyhole" cx="32" cy="49" r="5" stroke-width="3"/><line class="lock-stem" x1="32" y1="54" x2="32" y2="62" stroke-width="3" stroke-linecap="round"/></svg><div class="lock-ring lock-ring-1"></div><div class="lock-ring lock-ring-2"></div></div>
+                    <p class="lock-label">Under Construction</p>
+                    <p class="lock-sub">This section is being updated.<br>Check back soon.</p>
+                    <div class="lock-divider"></div>
+                    <p class="lock-status"><span class="lock-dot-indicator"></span>Currently Updating</p>
+                </div>
+            </div>
         </section>
 
+        <!-- PROJECTS -->
         <section id="projects" class="projects-section">
             <div class="projects-header">
                 <h2 class="section-title" data-reveal>Selected Projects</h2>
-                <p class="projects-intro" data-reveal>
-                    A collection of work that showcases my approach to
-                    problem-solving and design.
-                </p>
+                <p class="projects-intro" data-reveal>A collection of work that showcases my approach to problem-solving and design.</p>
             </div>
-            <div class="projects-grid" id="projectsGrid">
-                <!-- Projects will be dynamically loaded here -->
+            <div class="carousel-controls" data-reveal>
+                <div class="carousel-counter-wrap">
+                    <span class="carousel-counter" id="carouselCount">01 / 06</span>
+                    <div class="carousel-flash-bar" id="carouselFlash"></div>
+                </div>
+                <div class="carousel-progress-wrap">
+                    <div class="carousel-progress-fill" id="carouselProgress"></div>
+                </div>
+                <div class="carousel-arrows">
+                    <button class="carousel-arrow" id="carouselPrev" aria-label="Previous project"><span>←</span></button>
+                    <button class="carousel-arrow" id="carouselNext" aria-label="Next project"><span>→</span></button>
+                </div>
+            </div>
+            <div class="carousel-drag-hint" id="carouselDragHint">
+                <span class="drag-hint-icon">🖐</span>
+                <div class="drag-hint-divider"></div>
+                <span>Drag to scroll</span>
+            </div>
+            <div class="carousel-swipe-hint" id="carouselSwipeHint">
+                <span class="swipe-hint-icon">👆</span>
+                <div class="swipe-hint-divider"></div>
+                <span>Swipe to explore</span>
+            </div>
+            <div class="carousel-track-outer">
+                <div class="carousel-track" id="carouselTrack" tabindex="0" role="list" aria-label="Projects carousel"></div>
+            </div>
+            <div class="section-lock-overlay" id="projectsLockOverlay">
+                <div class="lock-overlay-inner">
+                    <div class="lock-icon-wrap"><svg class="lock-svg" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="lock-shackle" d="M16 30V22C16 13.163 23.163 6 32 6s16 7.163 16 16v8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect class="lock-body" x="8" y="30" width="48" height="38" rx="6" stroke-width="4"/><circle class="lock-keyhole" cx="32" cy="49" r="5" stroke-width="3"/><line class="lock-stem" x1="32" y1="54" x2="32" y2="62" stroke-width="3" stroke-linecap="round"/></svg><div class="lock-ring lock-ring-1"></div><div class="lock-ring lock-ring-2"></div></div>
+                    <p class="lock-label">Under Construction</p>
+                    <p class="lock-sub">New projects are being prepared.<br>Check back soon.</p>
+                    <div class="lock-divider"></div>
+                    <p class="lock-status"><span class="lock-dot-indicator"></span>Last Update 14/02/2026</p>
+                </div>
             </div>
         </section>
 
-        <!-- Quote of the Day Section -->
+        <!-- QUOTE -->
         <section class="quote-section">
             <div class="quote-content" data-reveal>
                 <div class="quote-icon">"</div>
-                <blockquote class="quote-text" id="quoteText">
-                    Loading quote...
-                </blockquote>
+                <blockquote class="quote-text" id="quoteText">Loading quote...</blockquote>
                 <p class="quote-author" id="quoteAuthor">— Author</p>
                 <div class="quote-tag">Quote of the Day</div>
             </div>
         </section>
 
+        <!-- CONTACT -->
         <section id="contact" class="contact-section">
             <div class="contact-content">
                 <h2 class="section-title" data-reveal>Get In Touch</h2>
                 <div class="contact-info" data-reveal>
                     <button class="contact-link" id="emailButton" type="button">
-                        <span class="contact-icon">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                            >
-                                <g
-                                    fill="none"
-                                    stroke="#c07b5b"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                >
-                                    <path
-                                        d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
-                                    />
-                                    <path d="m3 7l9 6l9-6" />
-                                </g>
-                            </svg>
-                        </span>
-                        <span class="contact-details">
-                            <span class="contact-label">Email</span>
-                            <span class="contact-value">Email.Hidden</span>
-                        </span>
+                        <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg></span>
+                        <span class="contact-details"><span class="contact-label">Email</span><span class="contact-value">Email.Hidden</span></span>
                     </button>
-
-                    <!-- Email Form with Web3Forms integration -->
                     <div class="email-form-container" id="emailFormContainer">
-                        <form
-                            class="email-form"
-                            id="emailForm"
-                            action="https://api.web3forms.com/submit"
-                            method="POST"
-                        >
+                        <form class="email-form" id="emailForm" action="https://api.web3forms.com/submit" method="POST">
                             <h3 class="form-title">Send me a message</h3>
-
-                            <input
-                                type="hidden"
-                                name="access_key"
-                                value="9e486bea-95fa-4d15-81f0-f98640a0e1b3"
-                            />
-
-                            <input
-                                type="hidden"
-                                name="redirect"
-                                value="false"
-                            />
-
-                            <div class="form-group">
-                                <label for="senderName">Your Name</label>
-                                <input
-                                    type="text"
-                                    id="senderName"
-                                    name="name"
-                                    required
-                                    placeholder="John Smith"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="senderEmail">Your Email</label>
-                                <input
-                                    type="email"
-                                    id="senderEmail"
-                                    name="email"
-                                    required
-                                    placeholder="your.email@example.com"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="message">Message</label>
-                                <textarea
-                                    id="message"
-                                    name="message"
-                                    rows="6"
-                                    required
-                                    placeholder="Your message here..."
-                                ></textarea>
-                            </div>
-
-                            <input
-                                type="checkbox"
-                                name="botcheck"
-                                class="hidden"
-                                style="display: none"
-                            />
-
-                            <button type="submit" class="submit-button">
-                                Send Message
-                            </button>
-                            <div
-                                class="form-confirmation"
-                                id="formConfirmation"
-                            >
-                                ✓ Message sent successfully! I'll get back to
-                                you soon.
-                            </div>
-                            <div class="form-error" id="formError">
-                                ✗ Something went wrong. Please try again.
-                            </div>
+                            <input type="hidden" name="access_key" value="9e486bea-95fa-4d15-81f0-f98640a0e1b3"/>
+                            <input type="hidden" name="redirect" value="false"/>
+                            <div class="form-group"><label for="senderName">Your Name</label><input type="text" id="senderName" name="name" required placeholder="John Smith"/></div>
+                            <div class="form-group"><label for="senderEmail">Your Email</label><input type="email" id="senderEmail" name="email" required placeholder="your.email@example.com"/></div>
+                            <div class="form-group"><label for="message">Message</label><textarea id="message" name="message" rows="6" required placeholder="Your message here..."></textarea></div>
+                            <input type="checkbox" name="botcheck" style="display:none"/>
+                            <button type="submit" class="submit-button">Send Message</button>
+                            <div class="form-confirmation" id="formConfirmation">✓ Message sent successfully! I'll get back to you soon.</div>
+                            <div class="form-error" id="formError">✗ Something went wrong. Please try again.</div>
                         </form>
                     </div>
-
-                    <a
-                        href="https://github.com/zxtrk"
-                        target="_blank"
-                        rel="noopener"
-                        class="contact-link"
-                    >
-                        <span class="contact-icon">
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-                                ></path>
-                            </svg>
-                        </span>
-                        <span class="contact-details">
-                            <span class="contact-label">GitHub</span>
-                            <span class="contact-value">@zxtrk</span>
-                        </span>
+                    <a href="https://github.com/zxtrk" target="_blank" rel="noopener" class="contact-link">
+                        <span class="contact-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></span>
+                        <span class="contact-details"><span class="contact-label">GitHub</span><span class="contact-value">@zxtrk</span></span>
                     </a>
-
-                    <a
-                        href="https://www.linkedin.com/in/artjom-japins-4b589b35b/"
-                        target="_blank"
-                        rel="noopener"
-                        class="contact-link"
-                    >
-                        <span class="contact-icon">
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                                ></path>
-                                <rect x="2" y="9" width="4" height="12"></rect>
-                                <circle cx="4" cy="4" r="2"></circle>
-                            </svg>
-                        </span>
-                        <span class="contact-details">
-                            <span class="contact-label">LinkedIn</span>
-                            <span class="contact-value">ArtjomJapins</span>
-                        </span>
+                    <a href="https://www.linkedin.com/in/artjom-japins-4b589b35b/" target="_blank" rel="noopener" class="contact-link">
+                        <span class="contact-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></span>
+                        <span class="contact-details"><span class="contact-label">LinkedIn</span><span class="contact-value">ArtjomJapins</span></span>
                     </a>
+                </div>
+            </div>
+            <div class="section-lock-overlay" id="contactLockOverlay">
+                <div class="lock-overlay-inner">
+                    <div class="lock-icon-wrap"><svg class="lock-svg" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="lock-shackle" d="M16 30V22C16 13.163 23.163 6 32 6s16 7.163 16 16v8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect class="lock-body" x="8" y="30" width="48" height="38" rx="6" stroke-width="4"/><circle class="lock-keyhole" cx="32" cy="49" r="5" stroke-width="3"/><line class="lock-stem" x1="32" y1="54" x2="32" y2="62" stroke-width="3" stroke-linecap="round"/></svg><div class="lock-ring lock-ring-1"></div><div class="lock-ring lock-ring-2"></div></div>
+                    <p class="lock-label">Unavailable</p>
+                    <p class="lock-sub">Contact is temporarily disabled.<br>Check back soon.</p>
+                    <div class="lock-divider"></div>
+                    <p class="lock-status"><span class="lock-dot-indicator"></span>Currently Updating</p>
                 </div>
             </div>
         </section>
@@ -652,7 +461,7 @@
             </div>
         </footer>
 
+        <script src="config.js"></script>
         <script src="script.js"></script>
     </body>
 </html>
-

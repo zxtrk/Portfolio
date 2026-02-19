@@ -1,155 +1,95 @@
 const projects = [
     {
         title: "Custom Wordle",
-        description:
-            "This is a custom Wordle game mode designed for two users, where one user chooses the target word and the other user tries to guess it.",
-        tags: ["HTML", "CSS", "JAVASCRIPT"],
+        description: "A two-player Wordle variant where one player sets the secret word and the other tries to guess it — turning the classic solo puzzle into a head-to-head challenge.",
+        tags: ["HTML", "CSS", "JavaScript"],
         pageUrl: "/Wordle/wordle.html",
         imageUrl: "/Assets/wordle.png",
+        year: "2025",
+        index: "01",
     },
     {
         title: "Chromatic Memory",
-        description:
-            "Chromatic Memory is a minimalistic game, where the player has to memorise the color pattern to win. ",
-        tags: ["HTML", "CSS", "JAVASCRIPT"],
+        description: "A minimalist color-pattern memory game. Watch the sequence, memorise the colors, and repeat — how far can you go before your memory breaks?",
+        tags: ["HTML", "CSS", "JavaScript"],
         pageUrl: "/chromatic/chromatic.html",
         imageUrl: "/Assets/ChromaticMemory.png",
+        year: "2025",
+        index: "02",
     },
     {
-        title: "Temp/Noth",
-        description: "Temp/Noth",
-        tags: ["Temp/Noth", "Temp/Noth", "Temp/Noth"],
-        pageUrl: "project3.html",
+        title: "Portfolio Site",
+        description: "This very portfolio — designed and built from scratch with vanilla HTML, CSS and JS. Focused on clean animation, dark mode, and mobile responsiveness.",
+        tags: ["HTML", "CSS", "JavaScript"],
+        pageUrl: "#",
         imageUrl: "",
+        year: "2026",
+        index: "03",
+    },
+    {
+        title: "CLI Task Manager",
+        description: "A lightweight command-line task manager built in Python. Create, complete, and archive tasks with keyboard shortcuts and a minimal terminal UI.",
+        tags: ["Python", "CLI", "Terminal"],
+        pageUrl: "#",
+        imageUrl: "",
+        year: "2025",
+        index: "04",
+    },
+    {
+        title: "Pixel Canvas",
+        description: "A shared browser-based pixel art canvas where multiple users can draw simultaneously. Built with WebSockets for real-time collaboration.",
+        tags: ["JavaScript", "WebSocket", "Canvas"],
+        pageUrl: "#",
+        imageUrl: "",
+        year: "2026",
+        index: "05",
+    },
+    {
+        title: "Weather Dashboard",
+        description: "A clean, real-time weather dashboard pulling live data from an open API. Displays hourly forecasts, wind, UV index and animated weather icons.",
+        tags: ["JavaScript", "API", "CSS"],
+        pageUrl: "#",
+        imageUrl: "",
+        year: "2025",
+        index: "06",
     },
 ];
 
-// Daily quotes collection
 const dailyQuotes = [
-    {
-        text: "The only way to do great work is to love what you do.",
-        author: "Steve Jobs",
-    },
-    {
-        text: "Innovation distinguishes between a leader and a follower.",
-        author: "Steve Jobs",
-    },
-    {
-        text: "Code is like humor. When you have to explain it, it's bad.",
-        author: "Cory House",
-    },
-    {
-        text: "First, solve the problem. Then, write the code.",
-        author: "John Johnson",
-    },
-    {
-        text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
-        author: "Martin Fowler",
-    },
-    {
-        text: "The best way to predict the future is to invent it.",
-        author: "Alan Kay",
-    },
-    {
-        text: "Simplicity is the soul of efficiency.",
-        author: "Austin Freeman",
-    },
-    {
-        text: "Make it work, make it right, make it fast.",
-        author: "Kent Beck",
-    },
-    {
-        text: "Technology is best when it brings people together.",
-        author: "Matt Mullenweg",
-    },
-    {
-        text: "The function of good software is to make the complex appear to be simple.",
-        author: "Grady Booch",
-    },
-    {
-        text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.",
-        author: "Antoine de Saint-Exupéry",
-    },
-    {
-        text: "I have no special talents. I am only passionately curious",
-        author: "Albert Einstein",
-    },
-    {
-        text: "Continuous improvement is better than delayed perfection.",
-        author: "Mark Twain",
-    },
-    {
-        text: "Programs must be written for people to read, and only incidentally for machines to execute.",
-        author: "Harold Abelson",
-    },
-    {
-        text: "The most disastrous thing that you can ever learn is your first programming language.",
-        author: "Alan Kay",
-    },
-    {
-        text: "Software is a great combination between artistry and engineering.",
-        author: "Bill Gates",
-    },
-    {
-        text: "Good design is as little design as possible.",
-        author: "Dieter Rams",
-    },
-    {
-        text: "Debugging is twice as hard as writing the code in the first place.",
-        author: "Brian Kernighan",
-    },
-    {
-        text: "Every great developer you know got there by solving problems they were unqualified to solve until they actually did it.",
-        author: "Patrick McKenzie",
-    },
-    {
-        text: "Walking on water and developing software from a specification are easy if both are frozen.",
-        author: "Edward V. Berard",
-    },
-    {
-        text: "The best error message is the one that never shows up.",
-        author: "Thomas Fuchs",
-    },
-    {
-        text: "Don't comment bad code — rewrite it.",
-        author: "Brian Kernighan",
-    },
-    {
-        text: "Experience is the name everyone gives to their mistakes.",
-        author: "Oscar Wilde",
-    },
-    {
-        text: "Quality is not an act, it is a habit.",
-        author: "Aristotle",
-    },
-    {
-        text: "Design is not just what it looks like and feels like. Design is how it works.",
-        author: "Steve Jobs",
-    },
-    {
-        text: "The only impossible journey is the one you never begin.",
-        author: "Tony Robbins",
-    },
-    {
-        text: "It's not a bug – it's an undocumented feature.",
-        author: "Anonymous",
-    },
-    {
-        text: "Talk is cheap. Show me the code.",
-        author: "Linus Torvalds",
-    },
-    {
-        text: "Learning to write programs stretches your mind and helps you think better.",
-        author: "Bill Gates",
-    },
-    {
-        text: "The computer was born to solve problems that did not exist before.",
-        author: "Bill Gates",
-    },
+    { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+    { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
+    { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+    { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+    { text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", author: "Martin Fowler" },
+    { text: "The best way to predict the future is to invent it.", author: "Alan Kay" },
+    { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+    { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
+    { text: "Technology is best when it brings people together.", author: "Matt Mullenweg" },
+    { text: "The function of good software is to make the complex appear to be simple.", author: "Grady Booch" },
+    { text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.", author: "Antoine de Saint-Exupéry" },
+    { text: "I have no special talents. I am only passionately curious", author: "Albert Einstein" },
+    { text: "Continuous improvement is better than delayed perfection.", author: "Mark Twain" },
+    { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" },
+    { text: "The most disastrous thing that you can ever learn is your first programming language.", author: "Alan Kay" },
+    { text: "Software is a great combination between artistry and engineering.", author: "Bill Gates" },
+    { text: "Good design is as little design as possible.", author: "Dieter Rams" },
+    { text: "Debugging is twice as hard as writing the code in the first place.", author: "Brian Kernighan" },
+    { text: "Every great developer you know got there by solving problems they were unqualified to solve until they actually did it.", author: "Patrick McKenzie" },
+    { text: "Walking on water and developing software from a specification are easy if both are frozen.", author: "Edward V. Berard" },
+    { text: "The best error message is the one that never shows up.", author: "Thomas Fuchs" },
+    { text: "Don't comment bad code — rewrite it.", author: "Brian Kernighan" },
+    { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+    { text: "Quality is not an act, it is a habit.", author: "Aristotle" },
+    { text: "Design is not just what it looks like and feels like. Design is how it works.", author: "Steve Jobs" },
+    { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+    { text: "It's not a bug – it's an undocumented feature.", author: "Anonymous" },
+    { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
+    { text: "Learning to write programs stretches your mind and helps you think better.", author: "Bill Gates" },
+    { text: "The computer was born to solve problems that did not exist before.", author: "Bill Gates" },
 ];
 
-// Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
+    initLoadingScreen();
     initProjects();
     initScrollAnimations();
     initSmoothScroll();
@@ -160,466 +100,374 @@ document.addEventListener("DOMContentLoaded", () => {
     initDarkMode();
     initScrollIndicator();
     initQuoteOfTheDay();
+    applyAllLocks();
 });
 
-// Initialize Quote of the Day
-function initQuoteOfTheDay() {
-    const quoteText = document.getElementById("quoteText");
-    const quoteAuthor = document.getElementById("quoteAuthor");
-
-    if (!quoteText || !quoteAuthor) return;
-
-    // Get the day of the year (1-365/366)
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const diff = now - start;
-    const oneDay = 1000 * 60 * 60 * 24;
-    const dayOfYear = Math.floor(diff / oneDay);
-
-    // Use the day of year to select a quote (cycles through the quotes array)
-    const quoteIndex = dayOfYear % dailyQuotes.length;
-    const todaysQuote = dailyQuotes[quoteIndex];
-
-    // Set the quote and author
-    quoteText.textContent = todaysQuote.text;
-    quoteAuthor.textContent = `— ${todaysQuote.author}`;
+// ─── LOADING SCREEN ──────────────────────────────────────────────────
+function initLoadingScreen() {
+    const loader = document.getElementById("loadingScreen");
+    if (!loader) return;
+    document.body.style.overflow = "hidden";
+    setTimeout(() => {
+        loader.classList.add("loader-exit");
+        setTimeout(() => {
+            loader.style.display = "none";
+            document.body.style.overflow = "";
+        }, 900);
+    }, 2300);
 }
 
-// Populate projects grid
+// ─── LOCK SYSTEM ─────────────────────────────────────────────────────
+const LOCK_CONFIG = {
+    projectsLocked: {
+        sectionId: "projects",
+        overlayId: "projectsLockOverlay",
+        interactiveSelectors: [".carousel-card", ".carousel-link", ".carousel-track"],
+    },
+    aboutLocked: {
+        sectionId: "about",
+        overlayId: "aboutLockOverlay",
+        interactiveSelectors: [".feature-item", ".about-text-block", ".intro-paragraph"],
+    },
+    contactLocked: {
+        sectionId: "contact",
+        overlayId: "contactLockOverlay",
+        interactiveSelectors: [".contact-link", ".email-form-container", "#emailButton"],
+    },
+};
+
+function applyAllLocks() {
+    if (typeof SiteConfig === "undefined") return;
+    Object.entries(LOCK_CONFIG).forEach(([key, opts]) => applySectionLock(SiteConfig[key] === true, opts));
+}
+
+function applySectionLock(isLocked, opts) {
+    const section = document.getElementById(opts.sectionId);
+    const overlay = document.getElementById(opts.overlayId);
+    if (!section || !overlay) return;
+    const els = opts.interactiveSelectors
+        ? opts.interactiveSelectors.flatMap(s => [...document.querySelectorAll(s)])
+        : [];
+    if (isLocked) {
+        section.classList.add("is-locked");
+        els.forEach(el => { el.setAttribute("tabindex", "-1"); el.setAttribute("aria-hidden", "true"); });
+        section._lockHandler = (e) => {
+            if (!e.target.closest(".section-lock-overlay")) { e.preventDefault(); e.stopPropagation(); }
+        };
+        section.addEventListener("click",      section._lockHandler, true);
+        section.addEventListener("touchstart", section._lockHandler, { capture: true, passive: false });
+        section.addEventListener("touchend",   section._lockHandler, { capture: true, passive: false });
+    } else {
+        section.classList.remove("is-locked");
+        els.forEach(el => { el.removeAttribute("tabindex"); el.removeAttribute("aria-hidden"); });
+        if (section._lockHandler) {
+            section.removeEventListener("click",      section._lockHandler, true);
+            section.removeEventListener("touchstart", section._lockHandler, true);
+            section.removeEventListener("touchend",   section._lockHandler, true);
+        }
+    }
+}
+
+// ─── CAROUSEL ────────────────────────────────────────────────────────
 function initProjects() {
-    const projectsGrid = document.getElementById("projectsGrid");
+    const track        = document.getElementById("carouselTrack");
+    const progressFill = document.getElementById("carouselProgress");
+    const prevBtn      = document.getElementById("carouselPrev");
+    const nextBtn      = document.getElementById("carouselNext");
+    const countEl      = document.getElementById("carouselCount");
+    const flashBar     = document.getElementById("carouselFlash");
+    const swipeHint    = document.querySelector(".carousel-swipe-hint");
+    const dragHint     = document.querySelector(".carousel-drag-hint");
 
-    projects.forEach((project, index) => {
-        const projectCard = createProjectCard(project, index);
-        projectsGrid.appendChild(projectCard);
+    if (!track) return;
+
+    // Build cards
+    projects.forEach((p, i) => track.appendChild(createCarouselCard(p, i)));
+
+    const total = projects.length;
+    let currentIndex = 0;
+    let flashTimeout = null;
+
+    // ── Flash bar ──────────────────────────────────────────────────
+    const triggerFlash = () => {
+        if (!flashBar) return;
+        clearTimeout(flashTimeout);
+        flashBar.classList.remove("flash-active");
+        void flashBar.offsetWidth; // reflow to restart animation
+        flashBar.classList.add("flash-active");
+        flashTimeout = setTimeout(() => flashBar.classList.remove("flash-active"), 600);
+    };
+
+    // ── Update counter + progress from a given index ───────────────
+    const setActiveIndex = (idx) => {
+        const clamped = Math.max(0, Math.min(total - 1, idx));
+        const changed = clamped !== currentIndex;
+        currentIndex = clamped;
+
+        if (countEl) {
+            countEl.textContent = `${String(currentIndex + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+        }
+        if (progressFill) {
+            const pct = total > 1 ? (currentIndex / (total - 1)) * 100 : 100;
+            progressFill.style.width = pct + "%";
+        }
+        if (changed) triggerFlash();
+
+        if (currentIndex > 0) {
+            swipeHint?.classList.add("hint-faded");
+            dragHint?.classList.add("hint-faded");
+        }
+    };
+
+    // ── Calculate active index from scroll position ─────────────────
+    // Find which card's left edge is closest to the track's scroll left + padding.
+    // This is reliable on both desktop (drag/wheel) and mobile (snap).
+    const getCardEls = () => [...track.querySelectorAll(".carousel-card")];
+
+    const updateIndexFromScroll = () => {
+        const cards = getCardEls();
+        if (!cards.length) return;
+        const paddingLeft = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+        const scrollLeft  = track.scrollLeft;
+        let bestIdx = 0;
+        let bestDist = Infinity;
+        cards.forEach((card, i) => {
+            const dist = Math.abs(card.offsetLeft - paddingLeft - scrollLeft);
+            if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+        });
+        setActiveIndex(bestIdx);
+    };
+
+    // Listen to scroll on the track for real-time counter updates
+    track.addEventListener("scroll", updateIndexFromScroll, { passive: true });
+
+    // ── Scroll a specific card into view ──────────────────────────
+    const scrollToCard = (idx) => {
+        const cards = getCardEls();
+        const card  = cards[Math.max(0, Math.min(total - 1, idx))];
+        if (!card) return;
+        const paddingLeft = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+        track.scrollTo({ left: card.offsetLeft - paddingLeft, behavior: "smooth" });
+    };
+
+    // ── Arrow buttons ──────────────────────────────────────────────
+    prevBtn?.addEventListener("click", () => scrollToCard(currentIndex - 1));
+    nextBtn?.addEventListener("click", () => scrollToCard(currentIndex + 1));
+
+    // ── Desktop pointer drag ───────────────────────────────────────
+    const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+    let isDragging = false, startX = 0, scrollStart = 0, velX = 0, lastX = 0, lastT = 0, rafId = null;
+
+    track.addEventListener("pointerdown", (e) => {
+        if (isMobile() || e.pointerType === "touch") return;
+        isDragging = true; startX = e.clientX; scrollStart = track.scrollLeft;
+        lastX = e.clientX; lastT = Date.now(); velX = 0;
+        track.setPointerCapture(e.pointerId);
+        track.classList.add("is-dragging");
+        cancelAnimationFrame(rafId);
     });
+    track.addEventListener("pointermove", (e) => {
+        if (!isDragging) return;
+        track.scrollLeft = scrollStart - (e.clientX - startX);
+        const now = Date.now(), dt = now - lastT || 1;
+        velX = (lastX - e.clientX) / dt; lastX = e.clientX; lastT = now;
+    });
+    track.addEventListener("pointerup", () => {
+        if (!isDragging) return;
+        isDragging = false; track.classList.remove("is-dragging");
+        const momentum = () => {
+            if (Math.abs(velX) < 0.05) return;
+            track.scrollLeft += velX * 16; velX *= 0.93;
+            rafId = requestAnimationFrame(momentum);
+        };
+        rafId = requestAnimationFrame(momentum);
+    });
+    track.addEventListener("pointercancel", () => { isDragging = false; track.classList.remove("is-dragging"); });
+
+    // ── Scroll wheel → horizontal ──────────────────────────────────
+    track.addEventListener("wheel", (e) => {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+        e.preventDefault();
+        track.scrollLeft += e.deltaY * 1.5;
+    }, { passive: false });
+
+    // ── Keyboard navigation ────────────────────────────────────────
+    track.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") scrollToCard(currentIndex + 1);
+        if (e.key === "ArrowLeft")  scrollToCard(currentIndex - 1);
+    });
+
+    // ── Init display ───────────────────────────────────────────────
+    if (countEl) countEl.textContent = `01 / ${String(total).padStart(2, "0")}`;
+    if (progressFill) progressFill.style.width = "0%";
 }
 
-// Create a project card element
-function createProjectCard(project, index) {
+function createCarouselCard(project, index) {
     const card = document.createElement("div");
-    card.className = "project-card";
-    card.style.animationDelay = `${index * 0.1}s`;
-    card.setAttribute("data-reveal", "");
+    card.className = "carousel-card";
+    card.setAttribute("role", "listitem");
+    card.dataset.index = index;
+
+    const hasImage = project.imageUrl && project.imageUrl.trim() !== "";
+    const imageHtml = hasImage
+        ? `<div class="carousel-card-image"><img src="${project.imageUrl}" alt="${project.title}" draggable="false" /></div>`
+        : `<div class="carousel-card-image carousel-card-image--empty"><span class="image-placeholder-text">No Preview</span></div>`;
 
     card.innerHTML = `
-        <div class="project-number">Project ${String(index + 1).padStart(2, "0")}</div>
-        <h3 class="project-title">${project.title}</h3>
-        <div class="project-image">
-            <img src="${project.imageUrl}" alt="${project.title}" />
+        <div class="carousel-card-inner">
+            <div class="carousel-card-header">
+                <span class="carousel-card-num">${project.index}</span>
+                <span class="carousel-card-year">${project.year}</span>
+            </div>
+            ${imageHtml}
+            <div class="carousel-card-body">
+                <h3 class="carousel-card-title">${project.title}</h3>
+                <p class="carousel-card-desc">${project.description}</p>
+                <div class="carousel-card-tags">
+                    ${project.tags.map(t => `<span class="carousel-tag">${t}</span>`).join("")}
+                </div>
+                <a href="${project.pageUrl}" class="carousel-link" draggable="false">
+                    View Project <span class="carousel-link-arrow">→</span>
+                </a>
+            </div>
         </div>
-        <p class="project-description">${project.description}</p>
-        <div class="project-tags">
-            ${project.tags.map((tag) => `<span class="project-tag">${tag}</span>`).join("")}
-        </div>
-        <a href="${project.pageUrl}" class="project-link">
-            View Project
-        </a>
     `;
-
-    // Add click handler to open project page
-    card.addEventListener("click", (e) => {
-        // Don't trigger if clicking directly on the link
-        if (e.target.classList.contains("project-link")) return;
-        window.location.href = project.pageUrl;
-    });
-
     return card;
 }
 
-// Initialize scroll-triggered animations
-function initScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -100px 0px",
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("revealed");
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    // Observe all elements with data-reveal attribute
-    const revealElements = document.querySelectorAll("[data-reveal]");
-    revealElements.forEach((el) => observer.observe(el));
+// ─── QUOTE ─────────────────────────────────────────────────────────────
+function initQuoteOfTheDay() {
+    const quoteText   = document.getElementById("quoteText");
+    const quoteAuthor = document.getElementById("quoteAuthor");
+    if (!quoteText || !quoteAuthor) return;
+    const now = new Date();
+    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    const q = dailyQuotes[dayOfYear % dailyQuotes.length];
+    quoteText.textContent   = q.text;
+    quoteAuthor.textContent = `— ${q.author}`;
 }
 
-// Smooth scroll for navigation links - UPDATED WITH CUSTOM EASING
-function initSmoothScroll() {
-    const navLinks = document.querySelectorAll("[data-nav]");
+// ─── SCROLL ANIMATIONS ─────────────────────────────────────────────────
+function initScrollAnimations() {
+    const observer = new IntersectionObserver(
+        (entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("revealed"); observer.unobserve(e.target); } }),
+        { threshold: 0.1, rootMargin: "0px 0px -100px 0px" }
+    );
+    document.querySelectorAll("[data-reveal]").forEach(el => observer.observe(el));
+}
 
-    navLinks.forEach((link) => {
+function initSmoothScroll() {
+    document.querySelectorAll("[data-nav]").forEach(link => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
-            const targetId = link.getAttribute("href");
-            const targetSection = document.querySelector(targetId);
-
-            if (targetSection) {
-                const offsetTop = targetSection.offsetTop - 80;
-
-                // Custom smooth scroll with easing for slower, more elegant animation
-                smoothScrollTo(offsetTop, 1200); // 1200ms duration
-            }
+            const target = document.querySelector(link.getAttribute("href"));
+            if (target) smoothScrollTo(target.offsetTop - 80, 1200);
         });
     });
 }
 
-// Custom smooth scroll function with easing
-function smoothScrollTo(targetPosition, duration) {
-    const startPosition = window.pageYOffset;
-    const distance = targetPosition - startPosition;
-    let startTime = null;
-
-    function animation(currentTime) {
-        if (startTime === null) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        const run = easeInOutCubic(
-            timeElapsed,
-            startPosition,
-            distance,
-            duration,
-        );
-        window.scrollTo(0, run);
-        if (timeElapsed < duration) requestAnimationFrame(animation);
-    }
-
-    // Easing function for smooth deceleration
-    function easeInOutCubic(t, b, c, d) {
-        t /= d / 2;
-        if (t < 1) return (c / 2) * t * t * t + b;
-        t -= 2;
-        return (c / 2) * (t * t * t + 2) + b;
-    }
-
-    requestAnimationFrame(animation);
+function smoothScrollTo(to, dur) {
+    const start = window.pageYOffset, dist = to - start;
+    let t0 = null;
+    const ease = (t, b, c, d) => { t /= d/2; if(t<1) return c/2*t*t*t+b; t-=2; return c/2*(t*t*t+2)+b; };
+    const tick = (now) => { if (!t0) t0 = now; const e = now-t0; window.scrollTo(0, ease(e,start,dist,dur)); if(e<dur) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
 }
 
-// Hero animation on load
 function initHeroAnimation() {
-    // Trigger hero animations after a short delay
     setTimeout(() => {
-        const titleLine = document.querySelector(".title-line");
-        const heroSubtitle = document.querySelector(".hero-subtitle");
-
-        if (titleLine) titleLine.classList.add("revealed");
-        if (heroSubtitle) heroSubtitle.classList.add("revealed");
+        document.querySelector(".title-line")?.classList.add("revealed");
+        document.querySelector(".hero-subtitle")?.classList.add("revealed");
     }, 300);
 }
 
-// Initialize scroll indicator visibility based on scroll position
 function initScrollIndicator() {
-    const scrollIndicator = document.getElementById("scrollIndicator");
-
-    if (!scrollIndicator) return;
-
-    function updateScrollIndicator() {
-        const scrollPosition =
-            window.pageYOffset || document.documentElement.scrollTop;
-
-        // Hide indicator when scrolled down more than 100px
-        if (scrollPosition > 100) {
-            scrollIndicator.classList.add("hidden");
-        } else {
-            scrollIndicator.classList.remove("hidden");
-        }
-    }
-
-    // Check on scroll
-    window.addEventListener("scroll", updateScrollIndicator);
-
-    // Initial check
-    updateScrollIndicator();
+    const el = document.getElementById("scrollIndicator");
+    if (!el) return;
+    const up = () => el.classList.toggle("hidden", window.pageYOffset > 100);
+    window.addEventListener("scroll", up); up();
 }
 
-// Add parallax effect to section numbers on scroll
 let ticking = false;
 window.addEventListener("scroll", () => {
     if (!ticking) {
-        window.requestAnimationFrame(() => {
-            const scrolled = window.pageYOffset;
-            const sectionNumbers = document.querySelectorAll(".section-number");
-
-            sectionNumbers.forEach((number) => {
-                const speed = 0.5;
-                const yPos = -(scrolled * speed);
-                number.style.transform = `translateY(${yPos}px)`;
-            });
-
-            // Parallax for floating shapes
-            const shapes = document.querySelectorAll(".shape");
-            shapes.forEach((shape, index) => {
-                const speed = 0.05 + index * 0.02;
-                const yPos = scrolled * speed;
-                shape.style.transform = `translateY(${yPos}px)`;
-            });
-
-            // Parallax for decorative dots
-            const dots = document.querySelectorAll(".dot");
-            dots.forEach((dot, index) => {
-                const speed = 0.03 + index * 0.01;
-                const yPos = -scrolled * speed;
-                dot.style.transform = `translateY(${yPos}px) scale(${1 + scrolled * 0.0001})`;
-            });
-
-            // Check if user scrolled away from form
-            if (window.checkFormVisibility) {
-                window.checkFormVisibility();
-            }
-
+        requestAnimationFrame(() => {
+            const s = window.pageYOffset;
+            document.querySelectorAll(".shape").forEach((sh, i) => { sh.style.transform = `translateY(${s*(0.05+i*0.02)}px)`; });
+            document.querySelectorAll(".dot").forEach((d, i) => { d.style.transform = `translateY(${-s*(0.03+i*0.01)}px) scale(${1+s*0.0001})`; });
+            if (window.checkFormVisibility) window.checkFormVisibility();
             ticking = false;
         });
         ticking = true;
     }
 });
 
-// Email form functionality with Web3Forms integration
 function initEmailForm() {
-    const emailButton = document.getElementById("emailButton");
+    const emailButton        = document.getElementById("emailButton");
     const emailFormContainer = document.getElementById("emailFormContainer");
-    const emailForm = document.getElementById("emailForm");
-    const formConfirmation = document.getElementById("formConfirmation");
-    const formError = document.getElementById("formError");
-    const submitButton = emailForm.querySelector(".submit-button");
-
+    const emailForm          = document.getElementById("emailForm");
+    const formConfirmation   = document.getElementById("formConfirmation");
+    const formError          = document.getElementById("formError");
+    const submitButton       = emailForm.querySelector(".submit-button");
     let formIsOpen = false;
 
-    // Toggle form on email button click
     emailButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        formIsOpen = !formIsOpen;
-
-        if (formIsOpen) {
-            emailFormContainer.classList.add("active");
-            // Scroll to form smoothly
-            setTimeout(() => {
-                emailFormContainer.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest",
-                });
-            }, 100);
-        } else {
-            emailFormContainer.classList.remove("active");
-            formConfirmation.classList.remove("show");
-            formError.classList.remove("show");
-        }
+        e.preventDefault(); formIsOpen = !formIsOpen;
+        if (formIsOpen) { emailFormContainer.classList.add("active"); setTimeout(() => emailFormContainer.scrollIntoView({ behavior: "smooth", block: "nearest" }), 100); }
+        else { emailFormContainer.classList.remove("active"); formConfirmation.classList.remove("show"); formError.classList.remove("show"); }
     });
 
-    // Handle form submission with Web3Forms
     emailForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        // Disable submit button
-        submitButton.disabled = true;
-        submitButton.textContent = "Sending...";
-
-        // Hide any previous messages
-        formConfirmation.classList.remove("show");
-        formError.classList.remove("show");
-
-        // Get form data
-        const formData = new FormData(emailForm);
-
+        e.preventDefault(); submitButton.disabled = true; submitButton.textContent = "Sending...";
+        formConfirmation.classList.remove("show"); formError.classList.remove("show");
         try {
-            // Submit to Web3Forms
-            const response = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                body: formData,
-            });
-
-            const data = await response.json();
-
+            const res  = await fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(emailForm) });
+            const data = await res.json();
             if (data.success) {
-                // Show success message
-                formConfirmation.classList.add("show");
-
-                // Reset form
-                emailForm.reset();
-
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.textContent = "Send Message";
-
-                // Hide form and scroll back after 3 seconds
-                setTimeout(() => {
-                    formConfirmation.classList.remove("show");
-                    setTimeout(() => {
-                        emailFormContainer.classList.remove("active");
-                        formIsOpen = false;
-
-                        // Scroll back to contact section
-                        document.getElementById("contact").scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                        });
-                    }, 500);
-                }, 3000);
-            } else {
-                // Show error message
-                formError.textContent = `✗ ${data.message || "Something went wrong. Please try again."}`;
-                formError.classList.add("show");
-
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.textContent = "Send Message";
-
-                // Hide error after 5 seconds
-                setTimeout(() => {
-                    formError.classList.remove("show");
-                }, 5000);
-            }
-        } catch (error) {
-            console.error("Form submission error:", error);
-
-            // Show error message
-            formError.textContent =
-                "✗ Network error. Please check your connection and try again.";
-            formError.classList.add("show");
-
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.textContent = "Send Message";
-
-            // Hide error after 5 seconds
-            setTimeout(() => {
-                formError.classList.remove("show");
-            }, 5000);
+                formConfirmation.classList.add("show"); emailForm.reset(); submitButton.disabled = false; submitButton.textContent = "Send Message";
+                setTimeout(() => { formConfirmation.classList.remove("show"); setTimeout(() => { emailFormContainer.classList.remove("active"); formIsOpen = false; document.getElementById("contact").scrollIntoView({ behavior: "smooth", block: "start" }); }, 500); }, 3000);
+            } else throw new Error(data.message || "Something went wrong.");
+        } catch (err) {
+            formError.textContent = `✗ ${err.message || "Network error."}`; formError.classList.add("show");
+            submitButton.disabled = false; submitButton.textContent = "Send Message";
+            setTimeout(() => formError.classList.remove("show"), 5000);
         }
     });
 
-    // Check if form is visible in viewport
-    function checkFormVisibility() {
+    window.checkFormVisibility = () => {
         if (!formIsOpen) return;
-
-        const formRect = emailFormContainer.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-
-        // If form is completely out of view (above or below viewport)
-        if (formRect.bottom < 0 || formRect.top > windowHeight + 200) {
-            emailFormContainer.classList.remove("active");
-            formConfirmation.classList.remove("show");
-            formError.classList.remove("show");
-            formIsOpen = false;
+        const r = emailFormContainer.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight + 200) {
+            emailFormContainer.classList.remove("active"); formConfirmation.classList.remove("show"); formError.classList.remove("show"); formIsOpen = false;
         }
-    }
-
-    // Export checkFormVisibility for use in scroll handler
-    window.checkFormVisibility = checkFormVisibility;
+    };
 }
 
-// Handle navigation background on scroll
 function initNavScroll() {
     const nav = document.querySelector(".main-nav");
-
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > 50) {
-            nav.classList.add("scrolled");
-        } else {
-            nav.classList.remove("scrolled");
-        }
-    });
+    window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 50));
 }
 
-// Burger menu functionality
 function initBurgerMenu() {
-    const burgerMenu = document.getElementById("burgerMenu");
-    const navLinks = document.getElementById("navLinks");
-    const navOverlay = document.getElementById("navOverlay");
-    const navLinkItems = document.querySelectorAll(".nav-links a");
-
-    if (!burgerMenu) return; // Exit if burger menu doesn't exist
-
-    // Toggle menu
-    function toggleMenu() {
-        const isActive = burgerMenu.classList.contains("active");
-
-        if (isActive) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
-    }
-
-    // Open menu
-    function openMenu() {
-        burgerMenu.classList.add("active");
-        navLinks.classList.add("active");
-        navOverlay.classList.add("active");
-        document.body.style.overflow = "hidden";
-    }
-
-    // Close menu
-    function closeMenu() {
-        burgerMenu.classList.remove("active");
-        navLinks.classList.remove("active");
-        navOverlay.classList.remove("active");
-        document.body.style.overflow = "";
-    }
-
-    // Burger menu click
-    burgerMenu.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleMenu();
-    });
-
-    // Overlay click
-    navOverlay.addEventListener("click", closeMenu);
-
-    // Close menu when clicking nav links
-    navLinkItems.forEach((link) => {
-        link.addEventListener("click", (e) => {
-            closeMenu();
-        });
-    });
-
-    // Close menu on escape key
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && navLinks.classList.contains("active")) {
-            closeMenu();
-        }
-    });
+    const burger  = document.getElementById("burgerMenu");
+    const links   = document.getElementById("navLinks");
+    const overlay = document.getElementById("navOverlay");
+    if (!burger) return;
+    const open  = () => { burger.classList.add("active"); links.classList.add("active"); overlay.classList.add("active"); document.body.style.overflow = "hidden"; };
+    const close = () => { burger.classList.remove("active"); links.classList.remove("active"); overlay.classList.remove("active"); document.body.style.overflow = ""; };
+    burger.addEventListener("click", (e) => { e.stopPropagation(); burger.classList.contains("active") ? close() : open(); });
+    overlay.addEventListener("click", close);
+    document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && links.classList.contains("active")) close(); });
 }
 
-// Dark mode functionality - MODIFIED to start in light mode by default
 function initDarkMode() {
-    const darkModeToggleDesktop = document.getElementById(
-        "darkModeToggleDesktop",
-    );
-    const darkModeToggleMobile = document.getElementById("darkModeToggle");
-    const body = document.body;
-
-    // Check for saved dark mode preference - only apply dark mode if explicitly saved as "true"
-    const savedDarkMode = localStorage.getItem("darkMode");
-    const isDarkMode = savedDarkMode === "true";
-
-    // Apply dark mode ONLY if it was previously enabled and saved
-    if (isDarkMode) {
-        body.classList.add("dark-mode");
-    } else {
-        // Explicitly ensure we're in light mode
-        body.classList.remove("dark-mode");
-        // If there's no saved preference, set it to false (light mode)
-        if (savedDarkMode === null) {
-            localStorage.setItem("darkMode", "false");
-        }
-    }
-
-    // Toggle dark mode function
-    function toggleDarkMode() {
-        body.classList.toggle("dark-mode");
-        const isDark = body.classList.contains("dark-mode");
-        localStorage.setItem("darkMode", isDark);
-    }
-
-    // Add event listeners to both toggle buttons
-    if (darkModeToggleDesktop) {
-        darkModeToggleDesktop.addEventListener("click", toggleDarkMode);
-    }
-
-    if (darkModeToggleMobile) {
-        darkModeToggleMobile.addEventListener("click", toggleDarkMode);
-    }
+    const d = document.getElementById("darkModeToggleDesktop");
+    const m = document.getElementById("darkModeToggle");
+    const b = document.body;
+    const s = localStorage.getItem("darkMode");
+    if (s === "true") b.classList.add("dark-mode");
+    else if (!s) localStorage.setItem("darkMode", "false");
+    const t = () => { b.classList.toggle("dark-mode"); localStorage.setItem("darkMode", b.classList.contains("dark-mode")); };
+    d?.addEventListener("click", t); m?.addEventListener("click", t);
 }
