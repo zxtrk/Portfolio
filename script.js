@@ -198,7 +198,7 @@ function initProjects() {
         flashTimeout = setTimeout(() => flashBar.classList.remove("flash-active"), 600);
     };
 
-    // ── Update counter + progress from a given index ───────────────
+    // ── Update counter + progress ──────────────────────────────────
     const setActiveIndex = (idx) => {
         const clamped = Math.max(0, Math.min(total - 1, idx));
         const changed = clamped !== currentIndex;
@@ -219,35 +219,52 @@ function initProjects() {
         }
     };
 
-    // ── Calculate active index from scroll position ─────────────────
-    // Find which card's left edge is closest to the track's scroll left + padding.
-    // This is reliable on both desktop (drag/wheel) and mobile (snap).
     const getCardEls = () => [...track.querySelectorAll(".carousel-card")];
 
+    // ── Calculate active index using card centers vs track center ──
+    // This is reliable across all breakpoints unlike the old offsetLeft approach
     const updateIndexFromScroll = () => {
         const cards = getCardEls();
         if (!cards.length) return;
-        const paddingLeft = parseFloat(getComputedStyle(track).paddingLeft) || 0;
-        const scrollLeft  = track.scrollLeft;
+
+        const trackRect = track.getBoundingClientRect();
+        const trackCenter = trackRect.left + trackRect.width / 2;
+
         let bestIdx = 0;
         let bestDist = Infinity;
+
         cards.forEach((card, i) => {
-            const dist = Math.abs(card.offsetLeft - paddingLeft - scrollLeft);
-            if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+            const rect = card.getBoundingClientRect();
+            const cardCenter = rect.left + rect.width / 2;
+            const dist = Math.abs(cardCenter - trackCenter);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestIdx = i;
+            }
         });
+
         setActiveIndex(bestIdx);
     };
 
-    // Listen to scroll on the track for real-time counter updates
-    track.addEventListener("scroll", updateIndexFromScroll, { passive: true });
+    // Use rAF to debounce scroll events for smooth counter updates
+    let scrollRaf = null;
+    track.addEventListener("scroll", () => {
+        if (scrollRaf) cancelAnimationFrame(scrollRaf);
+        scrollRaf = requestAnimationFrame(updateIndexFromScroll);
+    }, { passive: true });
 
     // ── Scroll a specific card into view ──────────────────────────
     const scrollToCard = (idx) => {
         const cards = getCardEls();
-        const card  = cards[Math.max(0, Math.min(total - 1, idx))];
+        const clampedIdx = Math.max(0, Math.min(total - 1, idx));
+        const card = cards[clampedIdx];
         if (!card) return;
+
         const paddingLeft = parseFloat(getComputedStyle(track).paddingLeft) || 0;
         track.scrollTo({ left: card.offsetLeft - paddingLeft, behavior: "smooth" });
+
+        // Update counter optimistically so it feels instant
+        setActiveIndex(clampedIdx);
     };
 
     // ── Arrow buttons ──────────────────────────────────────────────
@@ -260,29 +277,46 @@ function initProjects() {
 
     track.addEventListener("pointerdown", (e) => {
         if (isMobile() || e.pointerType === "touch") return;
-        isDragging = true; startX = e.clientX; scrollStart = track.scrollLeft;
-        lastX = e.clientX; lastT = Date.now(); velX = 0;
+        isDragging = true;
+        startX = e.clientX;
+        scrollStart = track.scrollLeft;
+        lastX = e.clientX;
+        lastT = Date.now();
+        velX = 0;
         track.setPointerCapture(e.pointerId);
         track.classList.add("is-dragging");
         cancelAnimationFrame(rafId);
     });
+
     track.addEventListener("pointermove", (e) => {
         if (!isDragging) return;
         track.scrollLeft = scrollStart - (e.clientX - startX);
         const now = Date.now(), dt = now - lastT || 1;
-        velX = (lastX - e.clientX) / dt; lastX = e.clientX; lastT = now;
+        velX = (lastX - e.clientX) / dt;
+        lastX = e.clientX;
+        lastT = now;
     });
+
     track.addEventListener("pointerup", () => {
         if (!isDragging) return;
-        isDragging = false; track.classList.remove("is-dragging");
+        isDragging = false;
+        track.classList.remove("is-dragging");
         const momentum = () => {
-            if (Math.abs(velX) < 0.05) return;
-            track.scrollLeft += velX * 16; velX *= 0.93;
+            if (Math.abs(velX) < 0.05) {
+                updateIndexFromScroll();
+                return;
+            }
+            track.scrollLeft += velX * 16;
+            velX *= 0.93;
             rafId = requestAnimationFrame(momentum);
         };
         rafId = requestAnimationFrame(momentum);
     });
-    track.addEventListener("pointercancel", () => { isDragging = false; track.classList.remove("is-dragging"); });
+
+    track.addEventListener("pointercancel", () => {
+        isDragging = false;
+        track.classList.remove("is-dragging");
+    });
 
     // ── Scroll wheel → horizontal ──────────────────────────────────
     track.addEventListener("wheel", (e) => {

@@ -5,7 +5,7 @@
 
 
 const SiteConfig = {
-    projectsLocked: true,
+    projectsLocked: false,
     aboutLocked:     false,
     contactLocked:  false,
 };
