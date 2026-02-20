@@ -182,22 +182,16 @@
                 background: var(--color-bg); color: var(--color-text);
                 font-size: 16px; cursor: pointer;
                 display: flex; align-items: center; justify-content: center;
-                transition: all 0.3s cubic-bezier(0.68,-0.55,0.265,1.55);
+                transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
                 position: relative; overflow: hidden;
-            }
-            .carousel-arrow::before {
-                content: ''; position: absolute; inset: 0; border-radius: 50%;
-                background: var(--color-accent); transform: scale(0);
-                transition: transform 0.3s ease; z-index: 0;
             }
             .carousel-arrow span { position: relative; z-index: 1; }
             .carousel-arrow:hover {
-                border-color: var(--color-accent); color: white;
-                transform: scale(1.12);
-                box-shadow: 0 4px 14px rgba(193,122,90,0.35);
+                border-color: var(--color-accent);
+                color: white;
+                background: var(--color-accent);
             }
-            .carousel-arrow:hover::before { transform: scale(1); }
-            .carousel-arrow:active { transform: scale(0.95); }
+            .carousel-arrow:active { opacity: 0.7; }
 
             /* Drag / swipe hints */
             .carousel-drag-hint {
@@ -265,10 +259,9 @@
                 flex: 0 0 300px;
                 width: 300px;
                 border: 1px solid var(--color-border);
+                border-radius: 6px;
                 background: rgba(255,255,255,0.97);
-                transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1),
-                            box-shadow 0.4s ease,
-                            border-color 0.3s ease;
+                transition: transform 0.2s ease, border-color 0.2s ease;
                 position: relative;
                 overflow: hidden;
                 display: flex;
@@ -277,18 +270,19 @@
             body.dark-mode .carousel-card { background: rgba(42,42,42,0.97); }
 
             .carousel-card::before {
-                content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-                background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
-                transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+                content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+                background: linear-gradient(to bottom, var(--color-accent), var(--color-secondary));
+                transform: scaleY(0); transform-origin: top; transition: transform 0.25s ease;
+                border-radius: 6px 0 0 6px;
             }
-            .carousel-card:hover { transform: translateY(-10px); box-shadow: 0 24px 48px rgba(0,0,0,0.13); border-color: var(--color-accent); }
-            body.dark-mode .carousel-card:hover { box-shadow: 0 24px 48px rgba(0,0,0,0.45); }
-            .carousel-card:hover::before { transform: scaleX(1); }
+            .carousel-card:hover { transform: translateY(-6px); border-color: var(--color-accent); }
+            body.dark-mode .carousel-card:hover { border-color: var(--color-accent); }
+            .carousel-card:hover::before { transform: scaleY(1); }
 
             .carousel-card-inner { display: flex; flex-direction: column; height: 100%; }
             .carousel-card-header { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.4rem 0; }
-            .carousel-card-num { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--color-accent); opacity: 0.22; font-weight: 400; transition: opacity 0.3s ease; }
-            .carousel-card:hover .carousel-card-num { opacity: 0.55; }
+            .carousel-card-num { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--color-accent); opacity: 0.22; font-weight: 400; transition: opacity 0.2s ease; }
+            .carousel-card:hover .carousel-card-num { opacity: 0.5; }
             .carousel-card-year { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); }
 
             .carousel-card-image {
@@ -298,24 +292,24 @@
                 border-bottom: 1px solid var(--color-border);
                 background: var(--color-light);
             }
-            .carousel-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1); filter: grayscale(0.15); pointer-events: none; }
-            .carousel-card:hover .carousel-card-image img { transform: scale(1.08); filter: grayscale(0); }
+            .carousel-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; filter: grayscale(0.1); pointer-events: none; }
+            .carousel-card:hover .carousel-card-image img { transform: scale(1.04); filter: grayscale(0); }
             .carousel-card-image--empty { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-light), rgba(193,122,90,0.06)); }
             .image-placeholder-text { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.45; }
 
             .carousel-card-body { padding: 1.2rem 1.4rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
-            .carousel-card-title { font-family: var(--font-display); font-size: 21px; font-weight: 400; line-height: 1.25; color: var(--color-text); margin-bottom: 0.7rem; transition: color 0.3s ease; }
+            .carousel-card-title { font-family: var(--font-display); font-size: 21px; font-weight: 400; line-height: 1.25; color: var(--color-text); margin-bottom: 0.7rem; transition: color 0.2s ease; }
             .carousel-card:hover .carousel-card-title { color: var(--color-accent); }
             .carousel-card-desc { font-size: 13px; line-height: 1.65; color: var(--color-secondary); margin-bottom: 1rem; flex: 1; }
 
             .carousel-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
-            .carousel-tag { padding: 3px 10px; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; background: var(--color-light); color: var(--color-text); border: 1px solid var(--color-border); transition: all 0.3s ease; }
+            .carousel-tag { padding: 3px 10px; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; background: var(--color-light); color: var(--color-text); border: 1px solid var(--color-border); transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; border-radius: 2px; }
             .carousel-card:hover .carousel-tag { background: var(--color-accent); color: white; border-color: var(--color-accent); }
 
-            .carousel-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent); text-decoration: none; align-self: flex-start; transition: gap 0.3s ease; }
-            .carousel-link:hover { gap: 0.7rem; }
-            .carousel-link-arrow { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-            .carousel-link:hover .carousel-link-arrow { transform: translateX(4px); }
+            .carousel-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent); text-decoration: none; align-self: flex-start; transition: gap 0.2s ease; }
+            .carousel-link:hover { gap: 0.65rem; }
+            .carousel-link-arrow { transition: transform 0.2s ease; }
+            .carousel-link:hover .carousel-link-arrow { transform: translateX(3px); }
 
             /* ── RESPONSIVE ─────────────────────────────────────── */
             @media (max-width: 768px) {
@@ -357,7 +351,8 @@
                 .carousel-track::after { flex: 0 0 var(--spacing-md); }
 
                 /* No lift on touch */
-                .carousel-card:hover { transform: none; box-shadow: none; }
+                .carousel-card:hover { transform: none; box-shadow: none; border-color: var(--color-border); }
+                .carousel-card:hover::before { transform: scaleY(0); }
 
                 /* Shrink progress bar so it fits between counter and (hidden) arrows */
                 .carousel-progress-wrap { min-width: 40px; }
