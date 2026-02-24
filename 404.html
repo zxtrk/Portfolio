@@ -175,12 +175,36 @@
             letter-spacing: -0.04em;
             color: var(--color-text);
             position: relative;
-            opacity: 0;
-            animation: revealUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+            /* Reveal once, then hand off to the lag-float loop */
+            animation: revealUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.5s forwards,
+                       lagFloat 6s ease-in-out 1.6s infinite;
             user-select: none;
         }
 
-        /* Glitch layers */
+        /* Permanent lagging lag-float on the main number */
+        @keyframes lagFloat {
+            0%   { transform: translate(0, 0) skewX(0deg); }
+            8%   { transform: translate(-3px, 1px) skewX(-0.6deg); }
+            16%  { transform: translate(0, 0) skewX(0deg); }
+            /* lag stutter — number freezes then snaps */
+            38%  { transform: translate(0, 0) skewX(0deg); }
+            39%  { transform: translate(5px, -2px) skewX(1.2deg); }
+            40%  { transform: translate(-4px, 1px) skewX(-0.8deg); }
+            41%  { transform: translate(2px, 0px) skewX(0.4deg); }
+            42%  { transform: translate(0, 0) skewX(0deg); }
+            /* slow breathe */
+            60%  { transform: translate(0, -4px) skewX(0deg); }
+            80%  { transform: translate(0, 0) skewX(0deg); }
+            /* second stutter burst */
+            88%  { transform: translate(0, 0) skewX(0deg); }
+            89%  { transform: translate(-6px, 2px) skewX(-1deg); }
+            90%  { transform: translate(4px, -1px) skewX(0.7deg); }
+            91%  { transform: translate(-2px, 0) skewX(-0.3deg); }
+            92%  { transform: translate(0, 0) skewX(0deg); }
+            100% { transform: translate(0, 0) skewX(0deg); }
+        }
+
+        /* Glitch ghost layers — always visible with their own staggered loops */
         .error-number::before,
         .error-number::after {
             content: '404';
@@ -188,30 +212,59 @@
             top: 0; left: 0; right: 0;
             font-family: inherit; font-size: inherit; font-weight: inherit;
             line-height: inherit; letter-spacing: inherit;
+            pointer-events: none;
         }
+
+        /* Accent ghost — top slice, lags behind the main number */
         .error-number::before {
             color: var(--color-accent);
-            opacity: 0.25;
-            animation: glitchA 4s ease-in-out 2s infinite;
-            clip-path: polygon(0 30%, 100% 30%, 100% 55%, 0 55%);
+            clip-path: polygon(0 0%, 100% 0%, 100% 45%, 0 45%);
+            animation: ghostLag 6s ease-in-out 1.85s infinite;
+            opacity: 0;
         }
+
+        /* Secondary ghost — bottom slice, slightly different timing */
         .error-number::after {
             color: var(--color-secondary);
-            opacity: 0.2;
-            animation: glitchB 4s ease-in-out 2.15s infinite;
-            clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+            animation: ghostLag2 6s ease-in-out 2.1s infinite;
+            opacity: 0;
         }
-        @keyframes glitchA {
-            0%, 85%, 100% { transform: translate(0,0); opacity: 0; }
-            87% { transform: translate(-4px, 2px); opacity: 0.25; }
-            89% { transform: translate(3px, -1px); opacity: 0.25; }
-            91% { transform: translate(0,0); opacity: 0; }
+
+        /* Ghost lags visibly behind then snaps back */
+        @keyframes ghostLag {
+            0%, 35%, 100% { transform: translate(0,0); opacity: 0; }
+            /* stutter window — ghost appears offset */
+            38%  { transform: translate(-10px, 3px); opacity: 0.35; }
+            39%  { transform: translate(8px, -2px); opacity: 0.35; }
+            40%  { transform: translate(-5px, 1px); opacity: 0.28; }
+            41%  { transform: translate(3px, 0); opacity: 0.2; }
+            43%  { transform: translate(0, 0); opacity: 0; }
+            /* second burst */
+            87%, 95% { transform: translate(0,0); opacity: 0; }
+            88%  { transform: translate(-8px, 2px); opacity: 0.3; }
+            89%  { transform: translate(6px, -3px); opacity: 0.3; }
+            90%  { transform: translate(-3px, 1px); opacity: 0.2; }
+            92%  { transform: translate(0, 0); opacity: 0; }
         }
-        @keyframes glitchB {
-            0%, 85%, 100% { transform: translate(0,0); opacity: 0; }
-            88% { transform: translate(4px, 1px); opacity: 0.2; }
-            90% { transform: translate(-2px, 2px); opacity: 0.2; }
-            92% { transform: translate(0,0); opacity: 0; }
+
+        @keyframes ghostLag2 {
+            0%, 35%, 100% { transform: translate(0,0); opacity: 0; }
+            38%  { transform: translate(12px, -2px); opacity: 0.28; }
+            39%  { transform: translate(-7px, 3px); opacity: 0.28; }
+            40%  { transform: translate(4px, -1px); opacity: 0.2; }
+            42%  { transform: translate(0, 0); opacity: 0; }
+            /* second burst offset slightly from ::before */
+            89%, 96% { transform: translate(0,0); opacity: 0; }
+            90%  { transform: translate(10px, -2px); opacity: 0.25; }
+            91%  { transform: translate(-5px, 2px); opacity: 0.25; }
+            93%  { transform: translate(0, 0); opacity: 0; }
+        }
+
+        /* ── HOVER BURST (class toggled by JS, doesn't cancel base animation) ── */
+        .error-number.glitch-burst {
+            filter: drop-shadow(4px 0 0 var(--color-accent)) drop-shadow(-4px 0 0 var(--color-secondary));
+            transition: filter 0.05s ease;
         }
 
         /* ── DIVIDER LINE ── */
@@ -484,19 +537,13 @@
             });
         }
 
-        // ── GLITCH effect on 404 hover ──
+        // ── EXTRA GLITCH BURST on hover (without cancelling the running animation) ──
         const num = document.querySelector('.error-number');
         if (num) {
             num.addEventListener('mouseenter', () => {
-                num.style.animation = 'none';
-                // Brief forced glitch
-                num.style.transform = 'skewX(-1deg)';
-                setTimeout(() => {
-                    num.style.transform = 'skewX(0.5deg)';
-                    setTimeout(() => {
-                        num.style.transform = '';
-                    }, 60);
-                }, 60);
+                // Add a class that applies a quick extra skew — doesn't touch the base animation
+                num.classList.add('glitch-burst');
+                setTimeout(() => num.classList.remove('glitch-burst'), 300);
             });
         }
     </script>
