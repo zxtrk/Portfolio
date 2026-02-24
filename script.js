@@ -62,8 +62,6 @@ const dailyQuotes = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-    // NOTE: burger decoration is injected inside initBurgerMenu() only on mobile open
-
     initLoadingScreen();
     initProjects();
     initScrollAnimations();
@@ -77,34 +75,27 @@ document.addEventListener("DOMContentLoaded", () => {
     initQuoteOfTheDay();
     applyAllLocks();
 
-    // Mobile-specific inits
     initMobileSectionObserver();
 
-    // Delay tap feedback init slightly to let contact links render
     setTimeout(() => {
         initInstantTapFeedback();
     }, 600);
 });
 
 // ─── BURGER MENU DECORATION INJECTION ────────────────────────────────
-// Only called on mobile, only runs once (guarded by _decorated flag)
 let _burgerDecorated = false;
 
 function injectBurgerMenuDecoration() {
-    // Only on mobile viewports
     if (window.innerWidth > 768) return;
-    // Only inject once
     if (_burgerDecorated) return;
     _burgerDecorated = true;
 
     const navLinks = document.getElementById("navLinks");
     if (!navLinks) return;
 
-    // Augment each nav link with index span, text span, arrow span
     const links = navLinks.querySelectorAll("a[data-nav]");
     const indices = ["01", "02", "03"];
     links.forEach((link, i) => {
-        // Store plain text before rewriting
         const text = link.textContent.trim();
         link.innerHTML = `
             <span class="menu-index">${indices[i] || "0" + (i + 1)}</span>
@@ -113,13 +104,11 @@ function injectBurgerMenuDecoration() {
         `;
     });
 
-    // Top bar
     const topbar = document.createElement("div");
     topbar.className = "nav-menu-topbar";
     topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
     navLinks.appendChild(topbar);
 
-    // Bottom bar
     const bottombar = document.createElement("div");
     bottombar.className = "nav-menu-bottombar";
     bottombar.innerHTML = `
@@ -130,19 +119,16 @@ function injectBurgerMenuDecoration() {
     `;
     navLinks.appendChild(bottombar);
 
-    // Corner brackets
     ["tl", "tr", "bl", "br"].forEach((pos) => {
         const corner = document.createElement("div");
         corner.className = `nav-menu-corner nav-menu-corner--${pos}`;
         navLinks.appendChild(corner);
     });
 
-    // Vertical accent line
     const line = document.createElement("div");
     line.className = "nav-menu-line";
     navLinks.appendChild(line);
 
-    // Dot column
     const dotsWrap = document.createElement("div");
     dotsWrap.className = "nav-menu-dots";
     dotsWrap.innerHTML = `
@@ -172,11 +158,9 @@ function initMobileSectionObserver() {
                 } else {
                     const rect = el.getBoundingClientRect();
                     if (rect.top < 0) {
-                        // Already scrolled past — above viewport
                         el.classList.add("section-above");
                         el.classList.remove("section-visible");
                     } else {
-                        // Not yet reached — below viewport
                         el.classList.remove("section-visible");
                         el.classList.remove("section-above");
                     }
@@ -190,14 +174,11 @@ function initMobileSectionObserver() {
 }
 
 // ─── INSTANT TAP FEEDBACK (mobile) ───────────────────────────────────
-// Provides brief visual flash on touch without CSS :active sticky states
-
 function initInstantTapFeedback() {
     if (window.innerWidth > 768) return;
 
     const FLASH_DURATION = 150;
 
-    // Logo — scale + color flash
     const logo = document.querySelector(".logo");
     if (logo) {
         logo.addEventListener("touchstart", () => {
@@ -216,7 +197,6 @@ function initInstantTapFeedback() {
         logo.addEventListener("touchcancel", logoReset, { passive: true });
     }
 
-    // Contact links — brief border + translate flash
     document.querySelectorAll(".contact-link").forEach((el) => {
         el.addEventListener("touchstart", () => {
             el.style.transition = "border-color 0.1s ease, transform 0.1s ease";
@@ -234,7 +214,6 @@ function initInstantTapFeedback() {
         el.addEventListener("touchcancel", reset, { passive: true });
     });
 
-    // Submit button — brief opacity + scale flash
     const submitBtn = document.querySelector(".submit-button");
     if (submitBtn) {
         submitBtn.addEventListener("touchstart", () => {
@@ -253,7 +232,6 @@ function initInstantTapFeedback() {
         submitBtn.addEventListener("touchcancel", reset, { passive: true });
     }
 
-    // Feature items — brief translate flash
     document.querySelectorAll(".feature-item").forEach((el) => {
         el.addEventListener("touchstart", () => {
             el.style.transition = "transform 0.1s ease, border-left-width 0.1s ease";
@@ -271,7 +249,6 @@ function initInstantTapFeedback() {
         el.addEventListener("touchcancel", reset, { passive: true });
     });
 
-    // Project cards — brief border flash
     document.querySelectorAll(".project-grid-card").forEach((el) => {
         el.addEventListener("touchstart", () => {
             el.style.transition = "border-color 0.1s ease";
@@ -448,19 +425,62 @@ function initScrollAnimations() {
     document.querySelectorAll("[data-reveal]").forEach((el) => observer.observe(el));
 }
 
-function initSmoothScroll() {
-    document.querySelectorAll("[data-nav]").forEach((link) => {
-        link.addEventListener("click", (e) => {
-            e.preventDefault();
-            const target = document.querySelector(link.getAttribute("href"));
-            if (target) smoothScrollTo(target.offsetTop - 80, 1200);
-        });
-    });
+// ─── SMOOTH SCROLL ────────────────────────────────────────────────────
+// iOS Safari has a known bug where JS-driven requestAnimationFrame scroll
+// combined with css scroll-behavior:smooth causes stuttering/glitching.
+// On mobile we disable css smooth-scroll on <html> and use a clean
+// JS easing scroll that doesn't fight the browser compositor.
+
+function isMobile() {
+    return window.innerWidth <= 768;
 }
 
-function smoothScrollTo(to, dur) {
-    const start = window.pageYOffset,
-        dist = to - start;
+/**
+ * iOS-safe smooth scroll.
+ * Uses a clean easeInOutQuad and temporarily removes scroll-behavior:smooth
+ * on the html element to prevent iOS Safari double-interpolation glitches.
+ * Duration is slightly longer on mobile for a relaxed feel.
+ */
+function smoothScrollToMobile(targetY, duration) {
+    // Disable native smooth scroll during our animation to avoid iOS glitch
+    document.documentElement.style.scrollBehavior = "auto";
+    document.body.style.scrollBehavior = "auto";
+
+    const startY = window.pageYOffset;
+    const distance = targetY - startY;
+    let startTime = null;
+
+    // easeInOutQuad — smooth start and end, no bounce
+    function ease(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function step(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = ease(progress);
+
+        window.scrollTo(0, startY + distance * easedProgress);
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else {
+            // Restore smooth scroll behaviour after animation completes
+            document.documentElement.style.scrollBehavior = "";
+            document.body.style.scrollBehavior = "";
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
+/**
+ * Desktop smooth scroll — original cubic easing, unchanged.
+ */
+function smoothScrollToDesktop(to, dur) {
+    const start = window.pageYOffset;
+    const dist = to - start;
     let t0 = null;
     const ease = (t, b, c, d) => {
         t /= d / 2;
@@ -477,6 +497,39 @@ function smoothScrollTo(to, dur) {
     requestAnimationFrame(tick);
 }
 
+function initSmoothScroll() {
+    document.querySelectorAll("[data-nav]").forEach((link) => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const target = document.querySelector(link.getAttribute("href"));
+            if (!target) return;
+
+            const targetY = target.offsetTop - 80;
+
+            if (isMobile()) {
+                // Mobile: close the burger menu first, then scroll after a short
+                // delay so the menu close animation doesn't fight the scroll.
+                // Duration: 900ms — noticeable but smooth, matches the AJ logo feel.
+                closeBurgerMenu();
+                setTimeout(() => {
+                    smoothScrollToMobile(targetY, 900);
+                }, 80);
+            } else {
+                // Desktop: original behaviour, unchanged
+                smoothScrollToDesktop(targetY, 1200);
+            }
+        });
+    });
+}
+
+// ─── BURGER MENU ─────────────────────────────────────────────────────
+// Extracted close logic into its own function so smoothScroll can call it.
+let _burgerCloseCallback = null;
+
+function closeBurgerMenu() {
+    if (_burgerCloseCallback) _burgerCloseCallback();
+}
+
 function initHeroAnimation() {
     setTimeout(() => {
         document.querySelector(".title-line")?.classList.add("revealed");
@@ -488,21 +541,17 @@ function initScrollIndicator() {
     const el = document.getElementById("scrollIndicator");
     if (!el) return;
 
-    // Skip on mobile — already hidden via CSS
     if (window.innerWidth <= 768) return;
 
     let visible = true;
     let fadeTimeout = null;
 
-    // Override any CSS animation once the indicator has appeared,
-    // so our JS-driven opacity transition works cleanly
     const enableFade = () => {
         el.style.animation = "none";
         el.style.transition = "opacity 0.9s ease, transform 0.9s ease";
         el.style.opacity = "1";
         el.style.transform = "translateX(-50%) translateY(0)";
         window.removeEventListener("scroll", enableFade);
-        // Now attach the real scroll handler
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
     };
@@ -513,7 +562,6 @@ function initScrollIndicator() {
             visible = false;
             el.style.opacity = "0";
             el.style.transform = "translateX(-50%) translateY(14px)";
-            // After fade completes, truly hide from layout/pointer events
             clearTimeout(fadeTimeout);
             fadeTimeout = setTimeout(() => {
                 el.style.visibility = "hidden";
@@ -527,8 +575,6 @@ function initScrollIndicator() {
         }
     };
 
-    // Wait for the initial fade-in animation to finish (~2.7s total: 1.2s delay + 1.5s anim)
-    // then hand off control to our JS fade logic
     setTimeout(enableFade, 2800);
 }
 
@@ -629,42 +675,48 @@ function initBurgerMenu() {
     const links = document.getElementById("navLinks");
     const overlay = document.getElementById("navOverlay");
     if (!burger) return;
+
     const open = () => {
-        // Inject decoration on first open (mobile only)
         injectBurgerMenuDecoration();
         burger.classList.add("active");
         links.classList.add("active");
         overlay.classList.add("active");
         document.body.style.overflow = "hidden";
     };
+
     const close = () => {
         burger.classList.remove("active");
         links.classList.remove("active");
         overlay.classList.remove("active");
         document.body.style.overflow = "";
     };
+
+    // Expose close to smoothScroll
+    _burgerCloseCallback = close;
+
     burger.addEventListener("click", (e) => {
         e.stopPropagation();
         burger.classList.contains("active") ? close() : open();
     });
     overlay.addEventListener("click", close);
-    document.querySelectorAll(".nav-links a").forEach((a) => a.addEventListener("click", close));
+
+    // Nav links: close is now handled inside initSmoothScroll for [data-nav] links.
+    // For any other links (non data-nav) inside the menu, close normally.
+    links.querySelectorAll("a:not([data-nav])").forEach((a) => a.addEventListener("click", close));
+
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && links.classList.contains("active")) close();
     });
 
-    // Reset nav state when resizing back to desktop width
     let resizeTimer;
     window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             if (window.innerWidth > 768) {
-                // Force-close mobile menu and clear all mobile state
                 burger.classList.remove("active");
                 links.classList.remove("active");
                 overlay.classList.remove("active");
                 document.body.style.overflow = "";
-                // Remove inline display that mobile JS may have set
                 links.style.display = "";
                 links.style.position = "";
                 links.style.top = "";

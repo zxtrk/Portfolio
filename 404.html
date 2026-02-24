@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 — Page Not Found | Artjom Japins</title>
+    <meta name="robots" content="noindex" />
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
+    <style>
+        /* ── VARIABLES ── */
+        :root {
+            --color-bg: #faf8f5;
+            --color-text: #1a1a1a;
+            --color-accent: #c17a5a;
+            --color-secondary: #7a8e7e;
+            --color-light: #e8e4df;
+            --color-border: rgba(26, 26, 26, 0.1);
+            --font-display: 'Playwrite NZ', cursive;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        body.dark-mode {
+            --color-bg: #1a1a1a;
+            --color-text: #faf8f5;
+            --color-accent: #d89077;
+            --color-secondary: #8fa092;
+            --color-light: #2a2a2a;
+            --color-border: rgba(250, 248, 245, 0.1);
+        }
+
+        /* ── RESET ── */
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+        *::selection { background: rgba(193,122,90,0.2); color: inherit; }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+        }
+
+        /* ── GRAIN ── */
+        .grain {
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        body.dark-mode .grain { opacity: 0.05; }
+
+        /* ── FLOATING SHAPES ── */
+        .shapes {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .shape {
+            position: absolute; opacity: 0.1;
+            animation: shapeFloat 20s ease-in-out infinite;
+        }
+        body.dark-mode .shape { opacity: 0.07; }
+        .shape-1 {
+            width: 280px; height: 280px;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
+            border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+            top: -5%; right: -5%; animation-duration: 25s;
+        }
+        .shape-2 {
+            width: 180px; height: 180px;
+            background: linear-gradient(225deg, var(--color-secondary), var(--color-accent));
+            border-radius: 48% 52% 68% 32% / 42% 28% 72% 58%;
+            bottom: 10%; left: -5%; animation-delay: -8s; animation-duration: 30s;
+        }
+        @keyframes shapeFloat {
+            0%, 100% { transform: translate(0,0) rotate(0deg); }
+            33% { transform: translate(15px, -20px) rotate(120deg); }
+            66% { transform: translate(-10px, 15px) rotate(240deg); }
+        }
+
+        /* ── DECORATIVE DOTS ── */
+        .dots { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .dot {
+            position: absolute; width: 3px; height: 3px;
+            background: var(--color-accent); border-radius: 50%; opacity: 0.2;
+            animation: dotPulse 4s ease-in-out infinite;
+        }
+        .dot:nth-child(1) { top: 15%; left: 8%; animation-delay: 0s; }
+        .dot:nth-child(2) { top: 72%; right: 12%; animation-delay: 1s; }
+        .dot:nth-child(3) { top: 40%; left: 5%; animation-delay: 2s; }
+        .dot:nth-child(4) { top: 85%; right: 30%; animation-delay: 0.5s; }
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.4); opacity: 0.45; }
+        }
+
+        /* ── CORNER BRACKETS ── */
+        .corner {
+            position: fixed; width: 22px; height: 22px;
+            border-color: var(--color-accent); border-style: solid;
+            opacity: 0; pointer-events: none; z-index: 2;
+            animation: cornerFadeIn 0.6s ease forwards;
+        }
+        .corner--tl { top: 24px; left: 24px; border-width: 1.5px 0 0 1.5px; animation-delay: 0.2s; }
+        .corner--tr { top: 24px; right: 24px; border-width: 1.5px 1.5px 0 0; animation-delay: 0.3s; }
+        .corner--bl { bottom: 24px; left: 24px; border-width: 0 0 1.5px 1.5px; animation-delay: 0.4s; }
+        .corner--br { bottom: 24px; right: 24px; border-width: 0 1.5px 1.5px 0; animation-delay: 0.5s; }
+        @keyframes cornerFadeIn { to { opacity: 0.4; } }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 1.5rem 2.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+            border-bottom: 1px solid transparent;
+            background: linear-gradient(180deg, var(--color-bg) 0%, transparent 100%);
+        }
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 22px; font-weight: 400;
+            color: var(--color-text); text-decoration: none;
+            letter-spacing: -0.02em;
+            opacity: 0; animation: fadeInDown 0.6s ease 0.3s forwards;
+            transition: color 0.3s ease;
+        }
+        .nav-logo:hover { color: var(--color-accent); }
+
+        .dark-toggle {
+            width: 38px; height: 38px; border-radius: 50%;
+            border: 1.5px solid var(--color-border);
+            background: var(--color-bg); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+            transition: border-color 0.3s ease, transform 0.4s ease;
+            opacity: 0; animation: fadeInDown 0.6s ease 0.4s forwards;
+        }
+        .dark-toggle:hover { border-color: var(--color-accent); transform: scale(1.1) rotate(15deg); }
+        .dark-toggle svg {
+            position: absolute; width: 16px; height: 16px;
+            stroke: var(--color-text); transition: all 0.5s ease;
+        }
+        .dark-toggle .sun { opacity: 1; transform: scale(1) rotate(0); }
+        .dark-toggle .moon { opacity: 0; transform: scale(0) rotate(180deg); }
+        body.dark-mode .dark-toggle .sun { opacity: 0; transform: scale(0) rotate(-180deg); }
+        body.dark-mode .dark-toggle .moon { opacity: 1; transform: scale(1) rotate(0); }
+
+        /* ── MAIN LAYOUT ── */
+        main {
+            position: relative; z-index: 1;
+            width: 100%; height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* ── 404 GIANT NUMBER ── */
+        .error-number {
+            font-family: var(--font-display);
+            font-size: clamp(7rem, 22vw, 16rem);
+            font-weight: 400;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            color: var(--color-text);
+            position: relative;
+            opacity: 0;
+            animation: revealUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+            user-select: none;
+        }
+
+        /* Glitch layers */
+        .error-number::before,
+        .error-number::after {
+            content: '404';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            font-family: inherit; font-size: inherit; font-weight: inherit;
+            line-height: inherit; letter-spacing: inherit;
+        }
+        .error-number::before {
+            color: var(--color-accent);
+            opacity: 0.25;
+            animation: glitchA 4s ease-in-out 2s infinite;
+            clip-path: polygon(0 30%, 100% 30%, 100% 55%, 0 55%);
+        }
+        .error-number::after {
+            color: var(--color-secondary);
+            opacity: 0.2;
+            animation: glitchB 4s ease-in-out 2.15s infinite;
+            clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+        }
+        @keyframes glitchA {
+            0%, 85%, 100% { transform: translate(0,0); opacity: 0; }
+            87% { transform: translate(-4px, 2px); opacity: 0.25; }
+            89% { transform: translate(3px, -1px); opacity: 0.25; }
+            91% { transform: translate(0,0); opacity: 0; }
+        }
+        @keyframes glitchB {
+            0%, 85%, 100% { transform: translate(0,0); opacity: 0; }
+            88% { transform: translate(4px, 1px); opacity: 0.2; }
+            90% { transform: translate(-2px, 2px); opacity: 0.2; }
+            92% { transform: translate(0,0); opacity: 0; }
+        }
+
+        /* ── DIVIDER LINE ── */
+        .divider {
+            width: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+            margin: 1.5rem auto;
+            animation: lineGrow 0.8s cubic-bezier(0.77,0,0.175,1) 1.1s forwards;
+        }
+        @keyframes lineGrow { to { width: clamp(80px, 20vw, 160px); } }
+
+        /* ── MESSAGE BLOCK ── */
+        .error-label {
+            font-family: var(--font-mono);
+            font-size: 10px; letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            margin-bottom: 0.875rem;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease 1s forwards;
+        }
+
+        .error-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            font-weight: 400; line-height: 1.3;
+            letter-spacing: -0.02em;
+            color: var(--color-text);
+            margin-bottom: 0.75rem;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease 1.1s forwards;
+        }
+
+        .error-desc {
+            font-size: 13px; line-height: 1.75;
+            color: var(--color-secondary);
+            max-width: 380px;
+            margin: 0 auto 2rem;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease 1.2s forwards;
+        }
+
+        /* ── BUTTONS ── */
+        .btn-group {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease 1.35s forwards;
+        }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+            text-decoration: none; cursor: pointer; border: none;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
+                        box-shadow 0.3s ease,
+                        border-color 0.3s ease;
+        }
+        .btn-arrow { transition: transform 0.25s ease; display: inline-block; }
+        .btn:hover .btn-arrow { transform: translateX(4px); }
+
+        .btn-primary {
+            background: var(--color-accent); color: #fff;
+        }
+        .btn-primary::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--color-secondary);
+            transform: translateX(-101%);
+            transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+            z-index: 0;
+        }
+        .btn-primary:hover::before { transform: translateX(0); }
+        .btn-primary span { position: relative; z-index: 1; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(193,122,90,0.35); }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+            transform: translateY(-3px);
+        }
+
+        /* ── STATUS BAR ── */
+        .status-bar {
+            position: fixed; bottom: 28px; left: 0; right: 0;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 2.5rem;
+            font-family: var(--font-mono);
+            font-size: 10px; letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-secondary);
+            opacity: 0;
+            animation: fadeIn 0.6s ease 1.5s forwards;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .status-pulse {
+            display: flex; align-items: center; gap: 7px;
+        }
+        .pulse-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--color-accent);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.65); }
+        }
+
+        /* ── SCAN LINE ── */
+        .scanline {
+            position: fixed; inset: 0; pointer-events: none; z-index: 5;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                rgba(0,0,0,0.015) 3px,
+                rgba(0,0,0,0.015) 4px
+            );
+        }
+        body.dark-mode .scanline {
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                rgba(255,255,255,0.012) 3px,
+                rgba(255,255,255,0.012) 4px
+            );
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes revealUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── MOBILE ── */
+        @media (max-width: 600px) {
+            nav { padding: 1rem 1.25rem; }
+            .corner--tl { top: 16px; left: 16px; }
+            .corner--tr { top: 16px; right: 16px; }
+            .corner--bl { bottom: 16px; left: 16px; }
+            .corner--br { bottom: 16px; right: 16px; }
+            .error-desc { font-size: 12px; max-width: 290px; }
+            .status-bar { padding: 0 1.25rem; bottom: 20px; font-size: 9px; }
+            .btn { padding: 0.625rem 1.125rem; font-size: 10px; }
+            .btn-group { gap: 0.625rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Decorative layers -->
+    <div class="grain"></div>
+    <div class="scanline"></div>
+    <div class="shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+    <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+
+    <!-- Corner brackets -->
+    <div class="corner corner--tl"></div>
+    <div class="corner corner--tr"></div>
+    <div class="corner corner--bl"></div>
+    <div class="corner corner--br"></div>
+
+    <!-- Nav -->
+    <nav>
+        <a href="/" class="nav-logo">AJ</a>
+        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
+            <!-- Sun -->
+            <svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <!-- Moon -->
+            <svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Main content -->
+    <main>
+        <div class="error-number">404</div>
+
+        <div class="divider"></div>
+
+        <p class="error-label">Error — Page Not Found</p>
+        <h1 class="error-title">This page doesn't exist</h1>
+        <p class="error-desc">
+            The page you're looking for has either been moved, deleted,
+            or perhaps never existed in the first place.
+        </p>
+
+        <div class="btn-group">
+            <a href="/" class="btn btn-primary">
+                <span>← Return Home</span>
+            </a>
+            <a href="/#contact" class="btn btn-secondary">
+                Get In Touch <span class="btn-arrow">→</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+        <span>Artjom Japins / Portfolio</span>
+        <span class="status-pulse">
+            <span class="pulse-dot"></span>
+            404 — Not Found
+        </span>
+    </div>
+
+    <script>
+        // ── DARK MODE ──
+        const body = document.body;
+        const toggle = document.getElementById('darkToggle');
+
+        // Default to dark on 404 page; respect saved preference if set
+        const saved = localStorage.getItem('darkMode');
+        if (saved === 'false') {
+            // User explicitly chose light on main site — honour it
+            body.classList.remove('dark-mode');
+        } else {
+            // Default: dark (including first visit or dark preference)
+            body.classList.add('dark-mode');
+        }
+
+        toggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+        });
+
+        // ── PARALLAX SHAPES on mousemove (desktop only) ──
+        if (window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth - 0.5) * 2;
+                const y = (e.clientY / window.innerHeight - 0.5) * 2;
+                const shapes = document.querySelectorAll('.shape');
+                shapes.forEach((s, i) => {
+                    const depth = (i + 1) * 12;
+                    s.style.transform = `translate(${x * depth}px, ${y * depth}px)`;
+                });
+            });
+        }
+
+        // ── GLITCH effect on 404 hover ──
+        const num = document.querySelector('.error-number');
+        if (num) {
+            num.addEventListener('mouseenter', () => {
+                num.style.animation = 'none';
+                // Brief forced glitch
+                num.style.transform = 'skewX(-1deg)';
+                setTimeout(() => {
+                    num.style.transform = 'skewX(0.5deg)';
+                    setTimeout(() => {
+                        num.style.transform = '';
+                    }, 60);
+                }, 60);
+            });
+        }
+    </script>
+</body>
+</html>
