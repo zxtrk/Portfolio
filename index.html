@@ -91,11 +91,153 @@
             }
 
             /* ════════════════════════════════════════════════════
-               CAROUSEL — FIXED
+               HERO
+               ════════════════════════════════════════════════════ */
+
+            .hero {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                padding: var(--spacing-lg);
+                padding-top: 120px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero-content {
+                max-width: 1400px;
+                width: 100%;
+                position: relative;
+                z-index: 2;
+            }
+
+            .hero-layout { display: flex; flex-direction: column; }
+
+            /* ── Small label sitting above the name ── */
+            .hero-label {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--color-accent);
+                margin-bottom: 1.5rem;
+                opacity: 0;
+                animation: fadeInUp 0.5s ease 0.3s forwards;
+            }
+
+            /* ── Name block — underline animates in ── */
+            .hero-name-block {
+                position: relative;
+                padding-bottom: 2.5rem;
+                margin-bottom: 2.5rem;
+            }
+            .hero-name-block::after {
+                content: '';
+                position: absolute;
+                bottom: 0; left: 0;
+                height: 1px; width: 0;
+                background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%);
+                animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards;
+            }
+            @keyframes heroLineGrow { to { width: 100%; } }
+
+            .hero-title {
+                font-family: var(--font-display);
+                font-size: clamp(3.5rem, 10.5vw, 9rem);
+                font-weight: 400;
+                line-height: 1.0;
+                letter-spacing: -0.03em;
+            }
+
+            .title-line { display: block; opacity: 0; transform: translateY(40px); }
+            .title-line.revealed { animation: revealText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards; }
+
+            /* ── Two-column row under the name ── */
+            .hero-info-row {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 3rem;
+                opacity: 0;
+                animation: fadeInUp 0.6s ease 1.05s forwards;
+            }
+
+            .hero-info-left { display: flex; flex-direction: column; gap: 0.55rem; }
+
+            .hero-role {
+                font-size: 17px;
+                color: var(--color-text);
+                letter-spacing: 0.005em;
+            }
+            .hero-desc {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                letter-spacing: 0.04em;
+                color: var(--color-secondary);
+                max-width: 380px;
+                line-height: 1.7;
+            }
+
+            .hero-info-right {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 0.6rem;
+                flex-shrink: 0;
+            }
+
+            .hero-status {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--color-text);
+            }
+            .hero-status-dot {
+                width: 7px; height: 7px;
+                border-radius: 50%;
+                background: var(--color-secondary);
+                flex-shrink: 0;
+                animation: statusPulse 2.5s ease-in-out infinite;
+            }
+            @keyframes statusPulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.45; transform: scale(0.7); }
+            }
+            .hero-meta-item {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                opacity: 0.45;
+            }
+
+            /* Mobile */
+            @media (max-width: 768px) {
+                .hero { padding: var(--spacing-md); padding-top: 100px; padding-bottom: var(--spacing-md); min-height: 65vh; }
+                .hero-label { margin-bottom: 1.25rem; }
+                .hero-name-block { padding-bottom: 1.75rem; margin-bottom: 1.75rem; }
+                .hero-title { font-size: clamp(2.2rem, 8.5vw, 3.8rem); white-space: nowrap; }
+                .hero-info-row { flex-direction: column; gap: 1.25rem; }
+                .hero-info-right { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 1.25rem; }
+                .hero-role { font-size: 15px; }
+            }
+            @media (max-width: 480px) {
+                .hero { padding-top: 88px; }
+                .hero-title { font-size: clamp(1.9rem, 7.8vw, 2.6rem); }
+                .hero-desc { font-size: 11px; }
+            }
+
+            /* ════════════════════════════════════════════════════
+               PROJECT GRID — 3 cards
                ════════════════════════════════════════════════════ */
 
             .projects-section {
-                padding: var(--spacing-xl) var(--spacing-lg) 2rem;
+                padding: var(--spacing-xl) var(--spacing-lg);
                 max-width: 1400px;
                 margin: 0 auto;
                 position: relative;
@@ -112,269 +254,195 @@
             }
             .projects-intro.revealed { animation: fadeInUp 0.8s ease forwards; animation-delay: 0.2s; }
 
-            /* Controls bar */
-            .carousel-controls {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 10px;
-                opacity: 0;
-                transform: translateY(14px);
-                flex-wrap: nowrap;
-                min-height: 44px;
+            /* Grid */
+            .project-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+                margin-top: var(--spacing-lg);
             }
-            .carousel-controls.revealed { animation: fadeInUp 0.6s ease forwards; animation-delay: 0.3s; }
 
-            /* Counter — fixed width so layout never jumps */
-            .carousel-counter-wrap {
+            /* Card shell — simplified hover */
+            .project-grid-card {
+                position: relative;
+                background: rgba(255,255,255,0.97);
+                border: 1px solid var(--color-border);
                 display: flex;
                 flex-direction: column;
-                gap: 4px;
-                min-width: 64px;
-                flex-shrink: 0;
-            }
-            .carousel-counter {
-                font-family: var(--font-mono);
-                font-size: 12px;
-                letter-spacing: 0.1em;
-                color: var(--color-secondary);
-                white-space: nowrap;
-            }
-
-            /* Flash bar */
-            .carousel-flash-bar {
-                height: 2px;
-                width: 0;
-                border-radius: 2px;
-                background: var(--color-accent);
+                overflow: hidden;
                 opacity: 0;
-                transition: none;
+                transform: translateY(30px);
+                transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, box-shadow 0.35s ease;
             }
-            .carousel-flash-bar.flash-active { animation: flashSweep 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-            @keyframes flashSweep {
-                0%   { width: 0;    opacity: 1; }
-                60%  { width: 100%; opacity: 1; }
-                100% { width: 100%; opacity: 0; }
-            }
+            body.dark-mode .project-grid-card { background: rgba(34,34,34,0.97); }
+            .project-grid-card.revealed { animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
 
-            /* Progress bar — fills remaining space */
-            .carousel-progress-wrap {
-                flex: 1;
-                height: 2px;
-                background: var(--color-border);
-                border-radius: 2px;
-                overflow: hidden;
-                min-width: 60px;
-            }
-            .carousel-progress-fill {
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
-                border-radius: 2px;
-                transition: width 0.35s ease;
-            }
-
-            /* Arrows */
-            .carousel-arrows { display: flex; gap: 0.5rem; flex-shrink: 0; }
-            .carousel-arrow {
-                width: 40px; height: 40px; border-radius: 50%;
-                border: 1.5px solid var(--color-border);
-                background: var(--color-bg); color: var(--color-text);
-                font-size: 16px; cursor: pointer;
-                display: flex; align-items: center; justify-content: center;
-                transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-                position: relative; overflow: hidden;
-            }
-            .carousel-arrow span { position: relative; z-index: 1; }
-            .carousel-arrow:hover {
+            /* Clean hover — just lift + border glow, no left bar */
+            .project-grid-card:hover {
+                transform: translateY(-6px);
                 border-color: var(--color-accent);
-                color: white;
-                background: var(--color-accent);
+                box-shadow: 0 12px 32px -6px rgba(0,0,0,0.12), 0 4px 8px -2px rgba(193,122,90,0.1);
             }
-            .carousel-arrow:active { opacity: 0.7; }
-
-            /* Drag / swipe hints */
-            .carousel-drag-hint {
-                display: flex; align-items: center; gap: 10px;
-                margin-bottom: 12px;
-                font-family: var(--font-mono); font-size: 11px;
-                letter-spacing: 0.08em; text-transform: uppercase;
-                color: var(--color-secondary); opacity: 0.75;
-                transition: opacity 0.5s ease;
-            }
-            .drag-hint-icon { font-size: 18px; line-height: 1; }
-            .drag-hint-divider { flex: 1; height: 1px; background: var(--color-border); }
-
-            .carousel-swipe-hint {
-                display: none; align-items: center; gap: 10px;
-                margin-bottom: 12px;
-                font-family: var(--font-mono); font-size: 11px;
-                letter-spacing: 0.08em; text-transform: uppercase;
-                color: var(--color-secondary); opacity: 0.75;
-                transition: opacity 0.5s ease;
-            }
-            .swipe-hint-icon { font-size: 18px; line-height: 1; }
-            .swipe-hint-divider { flex: 1; height: 1px; background: var(--color-border); }
-
-            .carousel-drag-hint.hint-faded,
-            .carousel-swipe-hint.hint-faded { opacity: 0; pointer-events: none; }
-
-            /* Outer wrapper — clips + fades the right edge */
-            .carousel-track-outer {
-                -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-                mask-image: linear-gradient(to right, black 80%, transparent 100%);
-                /* Bleed to page edges so cards flush with section padding */
-                margin: 0 calc(-1 * var(--spacing-lg));
-                overflow: hidden;
+            body.dark-mode .project-grid-card:hover {
+                box-shadow: 0 12px 32px -6px rgba(0,0,0,0.4), 0 4px 8px -2px rgba(216,144,119,0.12);
             }
 
-            /* Track — padding lives HERE so offsetLeft is consistent */
-            .carousel-track {
-                display: flex;
-                gap: 24px;
-                /* Left padding = section padding so first card lines up with content above */
-                padding: 1.5rem var(--spacing-lg) 2rem;
-                overflow-x: auto;
-                scroll-behavior: smooth;
-                /* scroll-padding-left matches track padding so scrollToCard lands perfectly */
-                scroll-padding-left: var(--spacing-lg);
-                cursor: grab;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                user-select: none;
-            }
-            .carousel-track::-webkit-scrollbar { display: none; }
-            .carousel-track.is-dragging { cursor: grabbing; scroll-behavior: auto; }
+            /* No left accent bar */
+            .project-grid-card::before { display: none; }
 
-            /* Trailing sentinel — keeps last card scrollable into view */
-            .carousel-track::after {
-                content: '';
-                flex: 0 0 var(--spacing-lg);
+            /* Corner brackets — kept, they look cool */
+            .pgc-corner {
+                position: absolute;
+                width: 14px; height: 14px;
+                border-color: var(--color-accent);
+                border-style: solid;
+                opacity: 0;
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                z-index: 4;
                 pointer-events: none;
             }
+            .pgc-corner--tl { top:8px; left:8px; border-width:2px 0 0 2px; transform:translate(-3px,-3px); }
+            .pgc-corner--tr { top:8px; right:8px; border-width:2px 2px 0 0; transform:translate(3px,-3px); }
+            .pgc-corner--bl { bottom:8px; left:8px; border-width:0 0 2px 2px; transform:translate(-3px,3px); }
+            .pgc-corner--br { bottom:8px; right:8px; border-width:0 2px 2px 0; transform:translate(3px,3px); }
+            .project-grid-card:hover .pgc-corner { opacity:1; transform:translate(0,0); }
 
-            /* Cards */
-            .carousel-card {
-                flex: 0 0 300px;
-                width: 300px;
+            /* Year badge */
+            .pgc-year {
+                position: absolute;
+                top: 10px; right: 14px;
+                font-family: var(--font-mono);
+                font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+                color: var(--color-secondary);
+                z-index: 3;
+                padding: 3px 8px;
                 border: 1px solid var(--color-border);
-                border-radius: 6px;
-                background: rgba(255,255,255,0.97);
-                transition: transform 0.2s ease, border-color 0.2s ease;
-                position: relative;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
+                background: var(--color-bg);
+                transition: border-color 0.3s ease, color 0.3s ease;
             }
-            body.dark-mode .carousel-card { background: rgba(42,42,42,0.97); }
+            .project-grid-card:hover .pgc-year { border-color: var(--color-accent); color: var(--color-accent); }
 
-            .carousel-card::before {
-                content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
-                background: linear-gradient(to bottom, var(--color-accent), var(--color-secondary));
-                transform: scaleY(0); transform-origin: top; transition: transform 0.25s ease;
-                border-radius: 6px 0 0 6px;
-            }
-            .carousel-card:hover { transform: translateY(-6px); border-color: var(--color-accent); }
-            body.dark-mode .carousel-card:hover { border-color: var(--color-accent); }
-            .carousel-card:hover::before { transform: scaleY(1); }
-
-            .carousel-card-inner { display: flex; flex-direction: column; height: 100%; }
-            .carousel-card-header { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.4rem 0; }
-            .carousel-card-num { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--color-accent); opacity: 0.22; font-weight: 400; transition: opacity 0.2s ease; }
-            .carousel-card:hover .carousel-card-num { opacity: 0.5; }
-            .carousel-card-year { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); }
-
-            .carousel-card-image {
-                width: 100%; height: 170px; overflow: hidden;
-                margin-top: 1rem; position: relative;
-                border-top: 1px solid var(--color-border);
+            /* Image — no shine overlay animation */
+            .pgc-image {
+                width: 100%; height: 180px;
+                overflow: hidden; position: relative;
                 border-bottom: 1px solid var(--color-border);
                 background: var(--color-light);
+                flex-shrink: 0;
             }
-            .carousel-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; filter: grayscale(0.1); pointer-events: none; }
-            .carousel-card:hover .carousel-card-image img { transform: scale(1.04); filter: grayscale(0); }
-            .carousel-card-image--empty { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-light), rgba(193,122,90,0.06)); }
-            .image-placeholder-text { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.45; }
+            .pgc-image img {
+                width: 100%; height: 100%; object-fit: cover;
+                filter: grayscale(0.1);
+                transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+                pointer-events: none;
+            }
+            .project-grid-card:hover .pgc-image img { transform: scale(1.04); }
 
-            .carousel-card-body { padding: 1.2rem 1.4rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
-            .carousel-card-title { font-family: var(--font-display); font-size: 21px; font-weight: 400; line-height: 1.25; color: var(--color-text); margin-bottom: 0.7rem; transition: color 0.2s ease; }
-            .carousel-card:hover .carousel-card-title { color: var(--color-accent); }
-            .carousel-card-desc { font-size: 13px; line-height: 1.65; color: var(--color-secondary); margin-bottom: 1rem; flex: 1; }
-
-            .carousel-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
-            .carousel-tag { padding: 3px 10px; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; background: var(--color-light); color: var(--color-text); border: 1px solid var(--color-border); transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; border-radius: 2px; }
-            .carousel-card:hover .carousel-tag { background: var(--color-accent); color: white; border-color: var(--color-accent); }
-
-            .carousel-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent); text-decoration: none; align-self: flex-start; transition: gap 0.2s ease; }
-            .carousel-link:hover { gap: 0.65rem; }
-            .carousel-link-arrow { transition: transform 0.2s ease; }
-            .carousel-link:hover .carousel-link-arrow { transform: translateX(3px); }
-
-            /* ── RESPONSIVE ─────────────────────────────────────── */
-            @media (max-width: 768px) {
-                .projects-section { padding: var(--spacing-lg) var(--spacing-md) 1.5rem; }
-
-                /* Compact controls, never wrap */
-                .carousel-controls { gap: 0.6rem; min-height: 40px; margin-bottom: 8px; }
-
-                /* Hide arrows — swipe only */
-                .carousel-arrows { display: none; }
-
-                /* Show swipe hint, hide drag hint */
-                .carousel-drag-hint { display: none !important; }
-                .carousel-swipe-hint { display: flex; }
-
-                /* Outer wrapper bleeds to mobile section edges */
-                .carousel-track-outer {
-                    margin: 0 calc(-1 * var(--spacing-md));
-                    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-                    mask-image: linear-gradient(to right, black 80%, transparent 100%);
-                }
-
-                /* Track: padding matches section, snap enabled */
-                .carousel-track {
-                    padding: 1rem var(--spacing-md) 1.5rem;
-                    gap: 16px;
-                    scroll-snap-type: x mandatory;
-                    -webkit-scroll-snap-type: x mandatory;
-                    scroll-padding-left: var(--spacing-md);
-                }
-
-                /* Cards fill viewport width minus section padding + a peek gap */
-                .carousel-card {
-                    flex: 0 0 calc(100vw - 2 * var(--spacing-md) - 20px);
-                    width: calc(100vw - 2 * var(--spacing-md) - 20px);
-                    scroll-snap-align: start;
-                }
-
-                .carousel-track::after { flex: 0 0 var(--spacing-md); }
-
-                /* No lift on touch */
-                .carousel-card:hover { transform: none; box-shadow: none; border-color: var(--color-border); }
-                .carousel-card:hover::before { transform: scaleY(0); }
-
-                /* Shrink progress bar so it fits between counter and (hidden) arrows */
-                .carousel-progress-wrap { min-width: 40px; }
-
-                .carousel-card-image { height: 150px; }
-                .carousel-card-title { font-size: 19px; }
+            /* Empty/placeholder image */
+            .pgc-image--empty {
+                display: flex; align-items: center; justify-content: center;
+                background: linear-gradient(135deg, var(--color-light), rgba(193,122,90,0.04));
+            }
+            .pgc-empty-grid {
+                position: absolute; inset: 0;
+                background-image:
+                    linear-gradient(var(--color-border) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+                background-size: 28px 28px;
+                opacity: 0.6;
+            }
+            .pgc-empty-label {
+                font-family: var(--font-mono);
+                font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+                color: var(--color-secondary); opacity: 0.5;
+                position: relative; z-index: 1;
+                padding: 5px 12px;
+                border: 1px dashed var(--color-border);
+                background: var(--color-bg);
             }
 
-            @media (max-width: 480px) {
-                .carousel-track-outer { margin: 0 calc(-1 * var(--spacing-sm)); }
-                .carousel-track {
-                    padding: 1rem var(--spacing-sm) 1.5rem;
-                    scroll-padding-left: var(--spacing-sm);
-                }
-                .carousel-card {
-                    flex: 0 0 calc(100vw - var(--spacing-sm) - 20px);
-                    width: calc(100vw - var(--spacing-sm) - 20px);
-                }
-                .carousel-track::after { flex: 0 0 var(--spacing-sm); }
-                .carousel-card-title { font-size: 18px; }
-                .carousel-controls { gap: 0.4rem; }
-                .carousel-counter-wrap { min-width: 56px; }
+            /* Body */
+            .pgc-body {
+                padding: 1.4rem 1.5rem 1.3rem;
+                display: flex; flex-direction: column; flex: 1;
+                position: relative; z-index: 1;
+            }
+
+            .pgc-title-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+
+            .pgc-title {
+                font-family: var(--font-display);
+                font-size: 22px; font-weight: 400; line-height: 1.2;
+                color: var(--color-text); flex-shrink: 0;
+            }
+
+            .pgc-title-line {
+                flex: 1; height: 1px;
+                background: linear-gradient(90deg, var(--color-border), transparent);
+            }
+
+            .pgc-desc {
+                font-size: 13px; line-height: 1.7;
+                color: var(--color-secondary);
+                flex: 1; margin-bottom: 1.1rem;
+            }
+
+            /* Tags — no color change on hover */
+            .pgc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
+            .pgc-tag {
+                padding: 3px 10px;
+                font-family: var(--font-mono);
+                font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+                color: var(--color-text);
+                background: var(--color-light);
+                border: 1px solid var(--color-border);
+                border-radius: 2px;
+            }
+
+            /* Footer */
+            .pgc-footer {
+                display: flex; align-items: center; justify-content: space-between;
+                padding-top: 1rem;
+                border-top: 1px solid var(--color-border);
+            }
+
+            .pgc-link {
+                display: inline-flex; align-items: center; gap: 6px;
+                font-family: var(--font-mono);
+                font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
+                color: var(--color-accent); text-decoration: none;
+                transition: gap 0.25s ease;
+            }
+            .pgc-link:hover { gap: 10px; }
+            .pgc-link-arrow { display: inline-block; transition: transform 0.25s ease; }
+            .pgc-link:hover .pgc-link-arrow { transform: translateX(3px); }
+
+            .pgc-link--disabled {
+                color: var(--color-secondary); opacity: 0.5; cursor: default;
+                display: inline-flex; align-items: center; gap: 6px;
+                font-family: var(--font-mono);
+                font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
+            }
+
+            /* Ghost index number — static, no hover change */
+            .pgc-index-ghost {
+                font-family: var(--font-display);
+                font-size: 2.8rem; line-height: 1;
+                color: var(--color-accent); opacity: 0.07;
+                font-weight: 400; user-select: none;
+            }
+
+            /* Responsive */
+            @media (max-width: 900px) {
+                .project-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+                .project-grid-card:nth-child(3) { grid-column: 1 / -1; max-width: 440px; justify-self: center; width: 100%; }
+            }
+            @media (max-width: 600px) {
+                .project-grid { grid-template-columns: 1fr; gap: 1.25rem; margin-top: var(--spacing-md); }
+                .project-grid-card:nth-child(3) { grid-column: auto; max-width: none; justify-self: stretch; }
+                .pgc-image { height: 155px; }
+                .pgc-title { font-size: 20px; }
+                .project-grid-card:hover { transform: none; }
             }
 
             /* ════════════════════════════════════════════════════
@@ -512,13 +580,33 @@
         <!-- HERO -->
         <section class="hero">
             <div class="hero-content">
-                <div class="hero-tag">Portfolio / 2026</div>
-                <h1 class="hero-title"><span class="title-line" data-reveal>Artjom Japins</span></h1>
-                <div class="hero-subtitle" data-reveal>
-                    <p>Creative Technology Enthusiast</p>
-                    <div class="subtitle-accent"></div>
+                <div class="hero-layout">
+
+                    <span class="hero-label">Portfolio — 2026</span>
+
+                    <div class="hero-name-block">
+                        <h1 class="hero-title">
+                            <span class="title-line" data-reveal>Artjom Japins</span>
+                        </h1>
+                    </div>
+
+                    <div class="hero-info-row">
+                        <div class="hero-info-left">
+                            <span class="hero-role">Creative Technology Enthusiast</span>
+                            <span class="hero-desc">Focused on solving technical problems and building efficient, well-crafted systems.</span>
+                        </div>
+                        <div class="hero-info-right">
+                            <span class="hero-status">
+                                <span class="hero-status-dot"></span>
+                                Available for work
+                            </span>
+                            <span class="hero-meta-item">Based in Latvia</span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+
             <div class="scroll-indicator" id="scrollIndicator">
                 <div class="mouse-icon"><div class="mouse-wheel"></div></div>
                 <span>Scroll</span>
@@ -568,32 +656,10 @@
                 <h2 class="section-title" data-reveal>Selected Projects</h2>
                 <p class="projects-intro" data-reveal>A collection of work that showcases my approach to problem-solving and design.</p>
             </div>
-            <div class="carousel-controls" data-reveal>
-                <div class="carousel-counter-wrap">
-                    <span class="carousel-counter" id="carouselCount">01 / 06</span>
-                    <div class="carousel-flash-bar" id="carouselFlash"></div>
-                </div>
-                <div class="carousel-progress-wrap">
-                    <div class="carousel-progress-fill" id="carouselProgress"></div>
-                </div>
-                <div class="carousel-arrows">
-                    <button class="carousel-arrow" id="carouselPrev" aria-label="Previous project"><span>←</span></button>
-                    <button class="carousel-arrow" id="carouselNext" aria-label="Next project"><span>→</span></button>
-                </div>
-            </div>
-            <div class="carousel-drag-hint" id="carouselDragHint">
-                <span class="drag-hint-icon">🖐</span>
-                <div class="drag-hint-divider"></div>
-                <span>Drag to scroll</span>
-            </div>
-            <div class="carousel-swipe-hint" id="carouselSwipeHint">
-                <span class="swipe-hint-icon">👆</span>
-                <div class="swipe-hint-divider"></div>
-                <span>Swipe to explore</span>
-            </div>
-            <div class="carousel-track-outer">
-                <div class="carousel-track" id="carouselTrack" tabindex="0" role="list" aria-label="Projects carousel"></div>
-            </div>
+
+            <!-- 3-card grid, populated by script.js -->
+            <div class="project-grid" id="projectGrid"></div>
+
             <div class="section-lock-overlay" id="projectsLockOverlay">
                 <div class="lock-overlay-inner">
                     <div class="lock-icon-wrap"><svg class="lock-svg" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="lock-shackle" d="M16 30V22C16 13.163 23.163 6 32 6s16 7.163 16 16v8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect class="lock-body" x="8" y="30" width="48" height="38" rx="6" stroke-width="4"/><circle class="lock-keyhole" cx="32" cy="49" r="5" stroke-width="3"/><line class="lock-stem" x1="32" y1="54" x2="32" y2="62" stroke-width="3" stroke-linecap="round"/></svg><div class="lock-ring lock-ring-1"></div><div class="lock-ring lock-ring-2"></div></div>
