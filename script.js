@@ -1,26 +1,26 @@
 const projects = [
     {
-        title: "Custom Wordle",
-        description: "A two-player Wordle variant where one player sets the secret word and the other tries to guess it — turning the classic solo puzzle into a head-to-head challenge.",
+        title: "Temporary Removed",
+        description: "Project has been temporarily removed due to issues with the code - last updated 14/02/26",
         tags: ["HTML", "CSS", "JavaScript"],
-        pageUrl: "/Wordle/wordle.html",
-        imageUrl: "/Assets/wordle.png",
-        year: "2025",
+        pageUrl: "404.html",
+        imageUrl: "",
+        year: "202?",
         index: "01",
-    },
-    {
-        title: "Chromatic Memory",
-        description: "A minimalist color-pattern memory game. Watch the sequence, memorise the colors, and repeat — how far can you go before your memory breaks?",
-        tags: ["HTML", "CSS", "JavaScript"],
-        pageUrl: "/chromatic/chromatic.html",
-        imageUrl: "/Assets/ChromaticMemory.png",
-        year: "2026",
-        index: "02",
     },
     {
         title: "Coming Soon",
         description: "A new project is currently in development. Something interesting is on the way — check back soon.",
         tags: ["In Progress"],
+        pageUrl: "404.html",
+        imageUrl: "",
+        year: "202?",
+        index: "02",
+    },
+    {
+        title: "Coming Soon",
+        description: "A new project is currently in development. Something interesting is on the way — check back soon.",
+        tags: ["Not Started"],
         pageUrl: "404.html",
         imageUrl: "",
         year: "202?",
@@ -113,9 +113,9 @@ function injectBurgerMenuDecoration() {
     bottombar.className = "nav-menu-bottombar";
     bottombar.innerHTML = `
         <span style="display:flex;align-items:center;gap:6px">
-            <span class="nav-menu-statusdot"></span>Online
+            <span class="nav-menu-statusdot"></span>Available for work
         </span>
-        <span>Based in United Kingdom</span>
+        <span>Based in Latvia</span>
     `;
     navLinks.appendChild(bottombar);
 
@@ -359,20 +359,19 @@ function createProjectCard(project, index) {
     card.style.animationDelay = `${index * 0.15}s`;
 
     const hasImage = project.imageUrl && project.imageUrl.trim() !== "";
-    const isPlaceholder = project.title === "Coming Soon";
 
     const imageHtml = hasImage
         ? `<div class="pgc-image"><img src="${project.imageUrl}" alt="${project.title}" /></div>`
         : `<div class="pgc-image pgc-image--empty">
                <div class="pgc-empty-grid"></div>
-               <span class="pgc-empty-label">${isPlaceholder ? "In Development" : "No Preview"}</span>
+               <span class="pgc-empty-label">${project.emptyLabel || "In Development"}</span>
            </div>`;
 
     const tagsHtml = project.tags.map((t) => `<span class="pgc-tag">${t}</span>`).join("");
 
-    const linkHtml = isPlaceholder
-        ? `<span class="pgc-link pgc-link--disabled">Coming Soon <span class="pgc-link-arrow">·</span></span>`
-        : `<a href="${project.pageUrl}" class="pgc-link">View Project <span class="pgc-link-arrow">→</span></a>`;
+    const linkHtml = project.pageUrl && project.pageUrl !== "#"
+        ? `<a href="${project.pageUrl}" class="pgc-link">View Project <span class="pgc-link-arrow">→</span></a>`
+        : `<span class="pgc-link pgc-link--disabled">Coming Soon <span class="pgc-link-arrow">·</span></span>`;
 
     card.innerHTML = `
         <span class="pgc-corner pgc-corner--tl"></span>

@@ -36,7 +36,7 @@
                 .quote-section { padding: 1.5rem var(--spacing-md); }
                 .quote-content { padding: var(--spacing-md); }
                 .quote-icon { font-size: 80px; margin-bottom: -30px; }
-                .quote-text { font-size: clamp(1.25rem,5vw,1.75rem); padding: 0 var(--spacing-sm); }
+                .quote-text { font-size: clamp(1.3rem,5vw,1.9rem); padding: 0 var(--spacing-sm); }
                 .quote-author { font-size: 16px; }
             }
 
@@ -113,7 +113,6 @@
 
             .hero-layout { display: flex; flex-direction: column; }
 
-            /* ── Small label sitting above the name ── */
             .hero-label {
                 font-family: var(--font-mono);
                 font-size: 11px;
@@ -125,7 +124,6 @@
                 animation: fadeInUp 0.5s ease 0.3s forwards;
             }
 
-            /* ── Name block — underline animates in ── */
             .hero-name-block {
                 position: relative;
                 padding-bottom: 2.5rem;
@@ -152,7 +150,6 @@
             .title-line { display: block; opacity: 0; transform: translateY(40px); }
             .title-line.revealed { animation: revealText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards; }
 
-            /* ── Two-column row under the name ── */
             .hero-info-row {
                 display: flex;
                 align-items: flex-start;
@@ -216,7 +213,6 @@
                 opacity: 0.45;
             }
 
-            /* Mobile */
             @media (max-width: 768px) {
                 .hero { padding: var(--spacing-md); padding-top: 100px; padding-bottom: var(--spacing-md); min-height: 65vh; }
                 .hero-label { margin-bottom: 1.25rem; }
@@ -230,219 +226,6 @@
                 .hero { padding-top: 88px; }
                 .hero-title { font-size: clamp(1.9rem, 7.8vw, 2.6rem); }
                 .hero-desc { font-size: 11px; }
-            }
-
-            /* ════════════════════════════════════════════════════
-               PROJECT GRID — 3 cards
-               ════════════════════════════════════════════════════ */
-
-            .projects-section {
-                padding: var(--spacing-xl) var(--spacing-lg);
-                max-width: 1400px;
-                margin: 0 auto;
-                position: relative;
-            }
-
-            .projects-header { margin-bottom: var(--spacing-md); }
-
-            .projects-intro {
-                font-size: 16px;
-                color: var(--color-secondary);
-                max-width: 600px;
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            .projects-intro.revealed { animation: fadeInUp 0.8s ease forwards; animation-delay: 0.2s; }
-
-            /* Grid */
-            .project-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 2rem;
-                margin-top: var(--spacing-lg);
-            }
-
-            /* Card shell — simplified hover */
-            .project-grid-card {
-                position: relative;
-                background: rgba(255,255,255,0.97);
-                border: 1px solid var(--color-border);
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                opacity: 0;
-                transform: translateY(30px);
-                transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, box-shadow 0.35s ease;
-            }
-            body.dark-mode .project-grid-card { background: rgba(34,34,34,0.97); }
-            .project-grid-card.revealed { animation: fadeInUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
-
-            /* Clean hover — just lift + border glow, no left bar */
-            .project-grid-card:hover {
-                transform: translateY(-6px);
-                border-color: var(--color-accent);
-                box-shadow: 0 12px 32px -6px rgba(0,0,0,0.12), 0 4px 8px -2px rgba(193,122,90,0.1);
-            }
-            body.dark-mode .project-grid-card:hover {
-                box-shadow: 0 12px 32px -6px rgba(0,0,0,0.4), 0 4px 8px -2px rgba(216,144,119,0.12);
-            }
-
-            /* No left accent bar */
-            .project-grid-card::before { display: none; }
-
-            /* Corner brackets — kept, they look cool */
-            .pgc-corner {
-                position: absolute;
-                width: 14px; height: 14px;
-                border-color: var(--color-accent);
-                border-style: solid;
-                opacity: 0;
-                transition: opacity 0.3s ease, transform 0.3s ease;
-                z-index: 4;
-                pointer-events: none;
-            }
-            .pgc-corner--tl { top:8px; left:8px; border-width:2px 0 0 2px; transform:translate(-3px,-3px); }
-            .pgc-corner--tr { top:8px; right:8px; border-width:2px 2px 0 0; transform:translate(3px,-3px); }
-            .pgc-corner--bl { bottom:8px; left:8px; border-width:0 0 2px 2px; transform:translate(-3px,3px); }
-            .pgc-corner--br { bottom:8px; right:8px; border-width:0 2px 2px 0; transform:translate(3px,3px); }
-            .project-grid-card:hover .pgc-corner { opacity:1; transform:translate(0,0); }
-
-            /* Year badge */
-            .pgc-year {
-                position: absolute;
-                top: 10px; right: 14px;
-                font-family: var(--font-mono);
-                font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-                color: var(--color-secondary);
-                z-index: 3;
-                padding: 3px 8px;
-                border: 1px solid var(--color-border);
-                background: var(--color-bg);
-                transition: border-color 0.3s ease, color 0.3s ease;
-            }
-            .project-grid-card:hover .pgc-year { border-color: var(--color-accent); color: var(--color-accent); }
-
-            /* Image — no shine overlay animation */
-            .pgc-image {
-                width: 100%; height: 180px;
-                overflow: hidden; position: relative;
-                border-bottom: 1px solid var(--color-border);
-                background: var(--color-light);
-                flex-shrink: 0;
-            }
-            .pgc-image img {
-                width: 100%; height: 100%; object-fit: cover;
-                filter: grayscale(0.1);
-                transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
-                pointer-events: none;
-            }
-            .project-grid-card:hover .pgc-image img { transform: scale(1.04); }
-
-            /* Empty/placeholder image */
-            .pgc-image--empty {
-                display: flex; align-items: center; justify-content: center;
-                background: linear-gradient(135deg, var(--color-light), rgba(193,122,90,0.04));
-            }
-            .pgc-empty-grid {
-                position: absolute; inset: 0;
-                background-image:
-                    linear-gradient(var(--color-border) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
-                background-size: 28px 28px;
-                opacity: 0.6;
-            }
-            .pgc-empty-label {
-                font-family: var(--font-mono);
-                font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
-                color: var(--color-secondary); opacity: 0.5;
-                position: relative; z-index: 1;
-                padding: 5px 12px;
-                border: 1px dashed var(--color-border);
-                background: var(--color-bg);
-            }
-
-            /* Body */
-            .pgc-body {
-                padding: 1.4rem 1.5rem 1.3rem;
-                display: flex; flex-direction: column; flex: 1;
-                position: relative; z-index: 1;
-            }
-
-            .pgc-title-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-
-            .pgc-title {
-                font-family: var(--font-display);
-                font-size: 22px; font-weight: 400; line-height: 1.2;
-                color: var(--color-text); flex-shrink: 0;
-            }
-
-            .pgc-title-line {
-                flex: 1; height: 1px;
-                background: linear-gradient(90deg, var(--color-border), transparent);
-            }
-
-            .pgc-desc {
-                font-size: 13px; line-height: 1.7;
-                color: var(--color-secondary);
-                flex: 1; margin-bottom: 1.1rem;
-            }
-
-            /* Tags — no color change on hover */
-            .pgc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
-            .pgc-tag {
-                padding: 3px 10px;
-                font-family: var(--font-mono);
-                font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
-                color: var(--color-text);
-                background: var(--color-light);
-                border: 1px solid var(--color-border);
-                border-radius: 2px;
-            }
-
-            /* Footer */
-            .pgc-footer {
-                display: flex; align-items: center; justify-content: space-between;
-                padding-top: 1rem;
-                border-top: 1px solid var(--color-border);
-            }
-
-            .pgc-link {
-                display: inline-flex; align-items: center; gap: 6px;
-                font-family: var(--font-mono);
-                font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
-                color: var(--color-accent); text-decoration: none;
-                transition: gap 0.25s ease;
-            }
-            .pgc-link:hover { gap: 10px; }
-            .pgc-link-arrow { display: inline-block; transition: transform 0.25s ease; }
-            .pgc-link:hover .pgc-link-arrow { transform: translateX(3px); }
-
-            .pgc-link--disabled {
-                color: var(--color-secondary); opacity: 0.5; cursor: default;
-                display: inline-flex; align-items: center; gap: 6px;
-                font-family: var(--font-mono);
-                font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
-            }
-
-            /* Ghost index number — static, no hover change */
-            .pgc-index-ghost {
-                font-family: var(--font-display);
-                font-size: 2.8rem; line-height: 1;
-                color: var(--color-accent); opacity: 0.07;
-                font-weight: 400; user-select: none;
-            }
-
-            /* Responsive */
-            @media (max-width: 900px) {
-                .project-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-                .project-grid-card:nth-child(3) { grid-column: 1 / -1; max-width: 440px; justify-self: center; width: 100%; }
-            }
-            @media (max-width: 600px) {
-                .project-grid { grid-template-columns: 1fr; gap: 1.25rem; margin-top: var(--spacing-md); }
-                .project-grid-card:nth-child(3) { grid-column: auto; max-width: none; justify-self: stretch; }
-                .pgc-image { height: 155px; }
-                .pgc-title { font-size: 20px; }
-                .project-grid-card:hover { transform: none; }
             }
 
             /* ════════════════════════════════════════════════════
@@ -491,19 +274,33 @@
             body.dark-mode .loader-bar-wrap { background: rgba(250,248,245,0.1); }
             .loader-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-accent, #c17a5a), var(--color-secondary, #7a8e7e)); border-radius: 2px; animation: loaderBarGrow 1.95s cubic-bezier(0.4,0,0.2,1) 0.3s forwards; }
             @keyframes loaderBarGrow { 0% { width: 0%; } 60% { width: 68%; } 100% { width: 100%; } }
-            .loader-bottom { position: absolute; bottom: 32px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-secondary, #7a8e7e); opacity: 0; animation: loaderFadeIn 0.5s ease 0.3s forwards; }
+
+            /* ── LOADER BOTTOM: lifted up and text brought inward away from brackets ── */
+            .loader-bottom {
+                position: absolute;
+                bottom: 50px;       /* was 32px — lifted well above bracket corners */
+                left: 0; right: 0;
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 0 62px;    /* was 40px — text moves inward, away from corner brackets */
+                font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+                font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+                color: var(--color-secondary, #7a8e7e);
+                opacity: 0; animation: loaderFadeIn 0.5s ease 0.3s forwards;
+            }
             .loader-status { display: flex; align-items: center; gap: 8px; }
             .loader-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent, #c17a5a); animation: loaderDotPulse 1.2s ease-in-out infinite; }
             @keyframes loaderDotPulse { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.3; transform: scale(0.7); } }
             @keyframes loaderFadeIn { to { opacity: 1; } }
             .loader-exit { animation: loaderExit 0.85s cubic-bezier(0.77,0,0.175,1) forwards !important; pointer-events: none; }
             @keyframes loaderExit { 0% { opacity:1; transform: scale(1); } 35% { opacity:1; transform: scale(1.015); } 100% { opacity:0; transform: scale(0.97); } }
+
             @media (max-width: 480px) {
                 .loader-corner--tl, .loader-corner--tr { top: 20px; }
                 .loader-corner--bl, .loader-corner--br { bottom: 20px; }
                 .loader-corner--tl, .loader-corner--bl { left: 20px; }
                 .loader-corner--tr, .loader-corner--br { right: 20px; }
-                .loader-bottom { padding: 0 24px; bottom: 20px; }
+                /* On small screens: lift text up and pull inward to clear brackets */
+                .loader-bottom { padding: 0 38px; bottom: 38px; }
                 .loader-monogram-wrap { width: 88px; height: 88px; margin-bottom: 1.4rem; }
                 .loader-monogram { font-size: 1.6rem; }
             }
