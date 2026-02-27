@@ -70,7 +70,9 @@ const dailyQuotes = [
     { text: "The computer was born to solve problems that did not exist before.", author: "Bill Gates" },
 ];
 
-// ─── SOUND ENGINE ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════
+   SOUND ENGINE
+   ═══════════════════════════════════════════════════════════════ */
 const SoundEngine = (() => {
     let ctx = null;
 
@@ -79,74 +81,429 @@ const SoundEngine = (() => {
         return ctx;
     }
 
-    // Soft chime / page-load sound
-    function playPageLoad() {
+    // ── Bell tone helper ───────────────────────────────────────
+    function bell(ac, freq, startTime, vol = 0.07, decay = 1.2) {
+        // Fundamental
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(ac.destination);
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(vol, startTime + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + decay);
+        osc.start(startTime);
+        osc.stop(startTime + decay + 0.05);
+
+        // Octave shimmer for warmth
+        const osc2 = ac.createOscillator();
+        const gain2 = ac.createGain();
+        osc2.type = "sine";
+        osc2.frequency.value = freq * 2.756; // harmonic shimmer
+        osc2.connect(gain2);
+        gain2.connect(ac.destination);
+        gain2.gain.setValueAtTime(0, startTime);
+        gain2.gain.linearRampToValueAtTime(vol * 0.22, startTime + 0.008);
+        gain2.gain.exponentialRampToValueAtTime(0.001, startTime + decay * 0.55);
+        osc2.start(startTime);
+        osc2.stop(startTime + decay * 0.6);
+    }
+
+    // ── Professional loading-complete chime ────────────────────
+    // Called when the loading screen finishes — soft, warm, ascending
+    function playLoadComplete() {
         try {
             const ac = getCtx();
-            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+            // E5 → G5 → C6  (rising third + fourth — feels "open" and resolved)
+            const notes = [659.25, 783.99, 1046.50];
             notes.forEach((freq, i) => {
-                const osc = ac.createOscillator();
-                const gain = ac.createGain();
-                osc.connect(gain);
-                gain.connect(ac.destination);
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(freq, ac.currentTime);
-                const start = ac.currentTime + i * 0.13;
-                gain.gain.setValueAtTime(0, start);
-                gain.gain.linearRampToValueAtTime(0.12, start + 0.06);
-                gain.gain.exponentialRampToValueAtTime(0.001, start + 0.7);
-                osc.start(start);
-                osc.stop(start + 0.8);
+                bell(ac, freq, ac.currentTime + i * 0.13, 0.07, 1.4);
             });
         } catch (e) { /* silently ignore if AudioContext blocked */ }
     }
 
-    // Glitchy unlock / admin open sound
+    // ── Professional admin-open chime ─────────────────────────
+    // Two clean bell tones: C6 followed by E6, with a soft bass C4 for weight
     function playAdminOpen() {
         try {
             const ac = getCtx();
-            // Low thud
-            const buf = ac.createBuffer(1, ac.sampleRate * 0.08, ac.sampleRate);
-            const data = buf.getChannelData(0);
-            for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2) * 0.4;
-            const src = ac.createBufferSource();
-            src.buffer = buf;
-            const bpf = ac.createBiquadFilter();
-            bpf.type = "bandpass";
-            bpf.frequency.value = 120;
-            bpf.Q.value = 0.8;
-            src.connect(bpf);
-            bpf.connect(ac.destination);
-            src.start(ac.currentTime);
 
-            // Glitch sweep
-            const osc = ac.createOscillator();
-            const gain = ac.createGain();
-            osc.connect(gain);
-            gain.connect(ac.destination);
-            osc.type = "sawtooth";
-            osc.frequency.setValueAtTime(80, ac.currentTime + 0.05);
-            osc.frequency.exponentialRampToValueAtTime(400, ac.currentTime + 0.18);
-            gain.gain.setValueAtTime(0.08, ac.currentTime + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
-            osc.start(ac.currentTime + 0.05);
-            osc.stop(ac.currentTime + 0.3);
+            // Soft bass anchor
+            const bassOsc = ac.createOscillator();
+            const bassGain = ac.createGain();
+            bassOsc.type = "sine";
+            bassOsc.frequency.value = 261.63; // C4
+            bassOsc.connect(bassGain);
+            bassGain.connect(ac.destination);
+            bassGain.gain.setValueAtTime(0, ac.currentTime);
+            bassGain.gain.linearRampToValueAtTime(0.035, ac.currentTime + 0.018);
+            bassGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.38);
+            bassOsc.start(ac.currentTime);
+            bassOsc.stop(ac.currentTime + 0.45);
 
-            // High tick
-            const osc2 = ac.createOscillator();
-            const gain2 = ac.createGain();
-            osc2.connect(gain2);
-            gain2.connect(ac.destination);
-            osc2.type = "square";
-            osc2.frequency.value = 1200;
-            gain2.gain.setValueAtTime(0.05, ac.currentTime + 0.15);
-            gain2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.22);
-            osc2.start(ac.currentTime + 0.15);
-            osc2.stop(ac.currentTime + 0.25);
+            // Two bright chime notes
+            bell(ac, 1046.50, ac.currentTime + 0.02,  0.065, 1.1); // C6
+            bell(ac, 1318.51, ac.currentTime + 0.195, 0.055, 1.0); // E6
         } catch (e) { /* silently ignore */ }
     }
 
-    return { playPageLoad, playAdminOpen };
+    return { playLoadComplete, playAdminOpen };
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   FLOATING IMAGE SYSTEM
+   Handles flag-sweep entry animation, low-gravity physics floating,
+   drag interaction, multi-image support, and Firebase sync so
+   every connected visitor sees the same images.
+   ═══════════════════════════════════════════════════════════════ */
+const FloatingImageSystem = (() => {
+    const floaters = new Map(); // key → floater object
+    let _db = null;
+    let _dragging = null; // which floater is currently being dragged
+    let _globalHandlersReady = false;
+
+    // ── Responsive image size ─────────────────────────────────
+    function getSize() {
+        return window.innerWidth <= 768 ? 230 : 340;
+    }
+
+    // ── One-time global pointer/touch handlers ────────────────
+    function setupGlobalHandlers() {
+        if (_globalHandlersReady) return;
+        _globalHandlersReady = true;
+
+        const move = (cx, cy) => {
+            if (!_dragging) return;
+            const f = _dragging;
+            const size = getSize();
+
+            // Velocity tracking for throw
+            const now = performance.now();
+            const dt = now - f._lastT;
+            if (dt > 0) {
+                f._velX = (cx - f._lastX) / dt * 16;
+                f._velY = (cy - f._lastY) / dt * 16;
+            }
+            f._lastX = cx; f._lastY = cy; f._lastT = now;
+
+            f.x = Math.max(0, Math.min(window.innerWidth - size, cx - f._dragOffX));
+            f.y = Math.max(0, Math.min(window.innerHeight - 80, cy - f._dragOffY));
+
+            const tilt = Math.max(-18, Math.min(18, f._velX * 0.35));
+            f.el.style.transform = `translate(${f.x}px,${f.y}px) rotate(${tilt}deg) scale(1.06)`;
+        };
+
+        const up = () => {
+            if (!_dragging) return;
+            const f = _dragging;
+            f.vx = f._velX * 0.65;
+            f.vy = f._velY * 0.65;
+            f.dragging = false;
+            f.el.style.cursor = "grab";
+            f.el.style.filter = "drop-shadow(0 10px 36px rgba(0,0,0,0.32))";
+            f.el.style.zIndex = "9999990";
+            _dragging = null;
+        };
+
+        document.addEventListener("mousemove",   e => move(e.clientX, e.clientY));
+        document.addEventListener("mouseup",     up);
+        document.addEventListener("touchmove",   e => {
+            if (!_dragging) return;
+            e.preventDefault();
+            move(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+        document.addEventListener("touchend",    up);
+        document.addEventListener("touchcancel", up);
+    }
+
+    // ── Firebase initialisation ───────────────────────────────
+    function init(db) {
+        _db = db;
+        if (!_db) return;
+
+        _db.ref("funnyImages").on("child_added", snap => {
+            if (!floaters.has(snap.key)) spawnFloater(snap.key, snap.val().src);
+        });
+        _db.ref("funnyImages").on("child_removed", snap => {
+            dismiss(snap.key);
+        });
+    }
+
+    // ── Public: add an image (compresses before storing) ──────
+    async function add(rawSrc) {
+        const src = await _compressImage(rawSrc, 420, 0.74);
+        if (_db) {
+            _db.ref("funnyImages").push({ src, ts: Date.now() });
+            // spawnFloater will fire via child_added listener
+        } else {
+            spawnFloater("local_" + Date.now(), src);
+        }
+    }
+
+    // ── Public: clear every floating image for all viewers ────
+    function clearAll() {
+        if (_db) {
+            _db.ref("funnyImages").remove();
+            // child_removed fires for each, calling dismiss()
+        } else {
+            [...floaters.keys()].forEach(dismiss);
+        }
+    }
+
+    // ── Compress/resize before storing ────────────────────────
+    function _compressImage(src, maxDim, quality) {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                try {
+                    const ratio = Math.min(1, maxDim / Math.max(img.width, img.height));
+                    const canvas = document.createElement("canvas");
+                    canvas.width  = Math.round(img.width  * ratio);
+                    canvas.height = Math.round(img.height * ratio);
+                    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL("image/jpeg", quality));
+                } catch { resolve(src); }
+            };
+            img.onerror = () => resolve(src);
+            img.src = src;
+        });
+    }
+
+    // ── Create and animate one floater ────────────────────────
+    function spawnFloater(key, src) {
+        setupGlobalHandlers();
+        const size = getSize();
+
+        // Wrapper element — positioned at left:0 top:0, moved via transform only
+        const el = document.createElement("div");
+        el.style.cssText = `
+            position:fixed; left:0; top:0;
+            width:${size}px;
+            z-index:9999990;
+            pointer-events:none;
+            cursor:grab;
+            user-select:none; -webkit-user-select:none;
+            touch-action:none;
+            filter:drop-shadow(0 10px 36px rgba(0,0,0,0.32));
+            will-change:transform;
+            opacity:0;
+        `;
+
+        const img = document.createElement("img");
+        img.src = src;
+        img.draggable = false;
+        img.style.cssText = `
+            width:100%; height:auto; display:block;
+            border-radius:16px;
+            pointer-events:none;
+        `;
+        el.appendChild(img);
+        document.body.appendChild(el);
+
+        // Inject shared keyframe CSS once
+        if (!document.getElementById("fis-css")) {
+            const style = document.createElement("style");
+            style.id = "fis-css";
+            style.textContent = `
+                @keyframes fisWave {
+                    0%,100% { transform: skewX(0deg) scaleY(1); }
+                    30%      { transform: skewX(3.5deg) scaleY(1.015); }
+                    70%      { transform: skewX(-2.5deg) scaleY(0.985); }
+                }
+                @keyframes fisBob {
+                    0%,100% { transform: translateY(0px) rotate(0deg); }
+                    50%      { transform: translateY(-9px) rotate(0.6deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        const f = {
+            key, el,
+            x: 0, y: 0, vx: 0, vy: 0,
+            dragging: false, alive: true,
+            phase: "entry", floatT: 0,
+            _dragOffX: 0, _dragOffY: 0,
+            _velX: 0, _velY: 0,
+            _lastX: 0, _lastY: 0, _lastT: 0,
+        };
+        floaters.set(key, f);
+
+        // Interaction: start drag on this element
+        el.addEventListener("mousedown", e => {
+            if (f.phase !== "floating") return;
+            e.preventDefault();
+            _startDrag(f, e.clientX, e.clientY);
+        });
+        el.addEventListener("touchstart", e => {
+            if (f.phase !== "floating") return;
+            e.preventDefault();
+            _startDrag(f, e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+
+        _runEntryAnimation(f, img, size);
+    }
+
+    // ── Initiate drag ─────────────────────────────────────────
+    function _startDrag(f, cx, cy) {
+        _dragging = f;
+        f.dragging = true;
+        f._dragOffX = cx - f.x;
+        f._dragOffY = cy - f.y;
+        f._lastX = cx; f._lastY = cy;
+        f._lastT = performance.now();
+        f._velX = 0; f._velY = 0;
+        f.el.style.cursor = "grabbing";
+        f.el.style.filter = "drop-shadow(0 20px 56px rgba(0,0,0,0.45))";
+        f.el.style.zIndex = "9999996";
+    }
+
+    // ── Flag-sweep entry animation ─────────────────────────────
+    //  The image enters from off-screen left, makes 2–3 big sweeps
+    //  left and right (like a flag on a string in the wind) with
+    //  decaying amplitude, then gracefully settles at a random spot.
+    function _runEntryAnimation(f, imgEl, size) {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        // Random final resting position
+        const finalX = size * 0.4 + Math.random() * (vw - size * 1.6);
+        const finalY = 100   + Math.random() * (vh - size - 220);
+
+        // Center Y for the sweep arc
+        const sweepY = vh * 0.3 + Math.random() * vh * 0.25;
+
+        // Keyframes: [progress 0-1, x, y, rotation, scale, opacity]
+        //  The horizontal keyframes create the "flag in wind" pendulum feel
+        const KF = [
+            [0.00, -size - 80, sweepY,      -10, 0.80, 0.0],
+            [0.03, -size * 0.1, sweepY,      -7, 0.92, 1.0], // fade in instantly
+            [0.20, vw * 0.80,  sweepY - 110,  7, 1.10, 1.0], // first big sweep right
+            [0.37, vw * 0.04,  sweepY + 85,  -5, 1.05, 1.0], // swing back left
+            [0.52, vw * 0.72,  sweepY - 55,   5, 1.07, 1.0], // second right (smaller)
+            [0.65, vw * 0.10,  sweepY + 38,  -3, 1.03, 1.0], // back left (smaller)
+            [0.76, vw * 0.60,  sweepY - 22,   3, 1.02, 1.0], // smaller right
+            [0.86, finalX,     finalY,         1, 1.01, 1.0], // heading to rest
+            [1.00, finalX,     finalY,         0, 1.00, 1.0], // settled
+        ];
+
+        const DURATION = 3600; // ms — long enough to be dramatic
+        const start = performance.now();
+
+        const easeInOut = t => t < 0.5 ? 2*t*t : -1 + (4-2*t)*t;
+        const lerp = (a, b, t) => a + (b-a)*t;
+
+        // Interpolate over keyframes
+        const sample = (prog) => {
+            let i = 0;
+            while (i < KF.length - 2 && KF[i+1][0] <= prog) i++;
+            const k0 = KF[i], k1 = KF[i+1];
+            const span = k1[0] - k0[0];
+            const local = span === 0 ? 1 : easeInOut((prog - k0[0]) / span);
+            return {
+                x:   lerp(k0[1], k1[1], local),
+                y:   lerp(k0[2], k1[2], local),
+                rot: lerp(k0[3], k1[3], local),
+                sc:  lerp(k0[4], k1[4], local),
+                op:  lerp(k0[5], k1[5], local),
+            };
+        };
+
+        // Add flag-wave to the img during entry
+        imgEl.style.animation = "fisWave 0.55s ease-in-out infinite";
+
+        const tick = (now) => {
+            if (!f.alive) return;
+            const prog = Math.min((now - start) / DURATION, 1);
+            const s = sample(prog);
+
+            f.el.style.opacity   = String(s.op);
+            f.el.style.transform = `translate(${s.x}px,${s.y}px) rotate(${s.rot}deg) scale(${s.sc})`;
+
+            if (prog < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                // Entry done — switch to floating physics
+                imgEl.style.animation = "";
+                f.x = finalX;
+                f.y = finalY;
+                f.vx = 0;
+                f.vy = 0;
+                f.phase = "floating";
+                f.el.style.pointerEvents = "all";
+                _startPhysics(f, size);
+            }
+        };
+
+        requestAnimationFrame(tick);
+    }
+
+    // ── Low-gravity physics loop ──────────────────────────────
+    function _startPhysics(f, size) {
+        const GRAVITY = 0.038;  // very gentle pull
+        const DAMPING = 0.972;  // slow energy loss — floaty feel
+        const BOUNCE  = 0.42;   // partial bounce off walls
+        const BOB_AMP = 9;      // px — gentle idle bob amplitude
+        const BOB_SPD = 0.00165;// radians per ms
+
+        let lastT = performance.now();
+
+        const loop = (now) => {
+            if (!f.alive || f.phase !== "floating") return;
+            requestAnimationFrame(loop);
+            if (f.dragging) return;
+
+            const dt = Math.min(now - lastT, 33);
+            lastT = now;
+            f.floatT += dt;
+
+            // Physics step
+            f.vy += GRAVITY;
+            f.x  += f.vx;
+            f.y  += f.vy;
+            f.vx *= DAMPING;
+            f.vy *= DAMPING;
+
+            // Wall collisions
+            const vw = window.innerWidth, vh = window.innerHeight;
+            if (f.x < 0)        { f.x = 0;         f.vx =  Math.abs(f.vx) * BOUNCE; }
+            if (f.x > vw - size){ f.x = vw - size;  f.vx = -Math.abs(f.vx) * BOUNCE; }
+            if (f.y < 0)        { f.y = 0;          f.vy =  Math.abs(f.vy) * BOUNCE; }
+            if (f.y > vh - 85)  { f.y = vh - 85;    f.vy = -Math.abs(f.vy) * BOUNCE; }
+
+            const speed = Math.sqrt(f.vx*f.vx + f.vy*f.vy);
+
+            let bobX = 0, bobY = 0;
+            if (speed < 0.6) {
+                // Gentle idle bob when nearly at rest
+                bobY = Math.sin(f.floatT * BOB_SPD) * BOB_AMP;
+                bobX = Math.sin(f.floatT * BOB_SPD * 0.71 + 1.3) * BOB_AMP * 0.38;
+            }
+
+            const tilt = speed < 0.6 ? 0 : Math.max(-14, Math.min(14, f.vx * 1.6));
+
+            f.el.style.transform =
+                `translate(${f.x + bobX}px,${f.y + bobY}px) rotate(${tilt}deg)`;
+        };
+
+        requestAnimationFrame(loop);
+    }
+
+    // ── Dismiss a single floater (animated) ──────────────────
+    function dismiss(key) {
+        const f = floaters.get(key);
+        if (!f) return;
+        f.alive = false;
+        if (_dragging === f) _dragging = null;
+        // Pop-out exit
+        f.el.style.transition = "opacity 0.45s ease, transform 0.45s cubic-bezier(0.4,0,1,1)";
+        f.el.style.opacity    = "0";
+        f.el.style.transform += " scale(0.4) rotate(25deg)";
+        setTimeout(() => { f.el.remove(); floaters.delete(key); }, 500);
+    }
+
+    return { init, add, clearAll };
 })();
 
 // ─── INIT ──────────────────────────────────────────────────────────────
@@ -201,8 +558,7 @@ function initLoadingScreen() {
     document.body.style.overflow = "hidden";
     setTimeout(() => {
         loader.classList.add("loader-exit");
-        // Play page load sound when loader exits
-        SoundEngine.playPageLoad();
+        SoundEngine.playLoadComplete();   // ✓ professional completion chime
         setTimeout(() => {
             loader.style.display = "none";
             document.body.style.overflow = "";
@@ -254,17 +610,17 @@ function applySectionLock(isLocked, opts) {
             section._lockHandler = e => {
                 if (!e.target.closest(".section-lock-overlay")) { e.preventDefault(); e.stopPropagation(); }
             };
-            section.addEventListener("click", section._lockHandler, true);
+            section.addEventListener("click",      section._lockHandler, true);
             section.addEventListener("touchstart", section._lockHandler, { capture: true, passive: false });
-            section.addEventListener("touchend", section._lockHandler, { capture: true, passive: false });
+            section.addEventListener("touchend",   section._lockHandler, { capture: true, passive: false });
         }
     } else {
         section.classList.remove("is-locked");
         els.forEach(el => { el.removeAttribute("tabindex"); el.removeAttribute("aria-hidden"); });
         if (section._lockHandler) {
-            section.removeEventListener("click", section._lockHandler, true);
+            section.removeEventListener("click",      section._lockHandler, true);
             section.removeEventListener("touchstart", section._lockHandler, true);
-            section.removeEventListener("touchend", section._lockHandler, true);
+            section.removeEventListener("touchend",   section._lockHandler, true);
             section._lockHandler = null;
         }
     }
@@ -317,13 +673,13 @@ function createProjectCard(project, index) {
 
 // ─── QUOTE OF THE DAY ──────────────────────────────────────────────────
 function initQuoteOfTheDay() {
-    const quoteText = document.getElementById("quoteText");
+    const quoteText   = document.getElementById("quoteText");
     const quoteAuthor = document.getElementById("quoteAuthor");
     if (!quoteText || !quoteAuthor) return;
     const now = new Date();
     const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
     const q = dailyQuotes[dayOfYear % dailyQuotes.length];
-    quoteText.textContent = q.text;
+    quoteText.textContent   = q.text;
     quoteAuthor.textContent = `— ${q.author}`;
 }
 
@@ -346,14 +702,14 @@ function smoothScrollTo(targetY, duration) {
     document.body.style.scrollBehavior = "auto";
 
     const startY = window.pageYOffset;
-    const dist = targetY - startY;
+    const dist   = targetY - startY;
     let startTime = null;
 
-    const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const ease = t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
 
     const step = now => {
         if (!startTime) startTime = now;
-        const elapsed = now - startTime;
+        const elapsed  = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
         window.scrollTo(0, startY + dist * ease(progress));
         if (progress < 1) {
@@ -410,16 +766,16 @@ function initScrollIndicator() {
         const shouldHide = window.pageYOffset > 100;
         if (shouldHide && visible) {
             visible = false;
-            el.style.opacity = "0";
-            el.style.transform = "translateX(-50%) translateY(14px)";
+            el.style.opacity    = "0";
+            el.style.transform  = "translateX(-50%) translateY(14px)";
             clearTimeout(fadeTimeout);
             fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 900);
         } else if (!shouldHide && !visible) {
             visible = true;
             clearTimeout(fadeTimeout);
             el.style.visibility = "visible";
-            el.style.opacity = "1";
-            el.style.transform = "translateX(-50%) translateY(0)";
+            el.style.opacity    = "1";
+            el.style.transform  = "translateX(-50%) translateY(0)";
         }
     };
 
@@ -447,12 +803,12 @@ window.addEventListener("scroll", () => {
 
 // ─── EMAIL FORM ────────────────────────────────────────────────────────
 function initEmailForm() {
-    const emailButton = document.getElementById("emailButton");
-    const emailFormContainer = document.getElementById("emailFormContainer");
-    const emailForm = document.getElementById("emailForm");
-    const formConfirmation = document.getElementById("formConfirmation");
-    const formError = document.getElementById("formError");
-    const submitButton = emailForm?.querySelector(".submit-button");
+    const emailButton         = document.getElementById("emailButton");
+    const emailFormContainer  = document.getElementById("emailFormContainer");
+    const emailForm           = document.getElementById("emailForm");
+    const formConfirmation    = document.getElementById("formConfirmation");
+    const formError           = document.getElementById("formError");
+    const submitButton        = emailForm?.querySelector(".submit-button");
     if (!emailButton || !emailForm) return;
     let formIsOpen = false;
 
@@ -471,17 +827,17 @@ function initEmailForm() {
 
     emailForm.addEventListener("submit", async e => {
         e.preventDefault();
-        submitButton.disabled = true;
+        submitButton.disabled    = true;
         submitButton.textContent = "Sending...";
         formConfirmation?.classList.remove("show");
         formError?.classList.remove("show");
         try {
-            const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(emailForm) });
+            const res  = await fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(emailForm) });
             const data = await res.json();
             if (data.success) {
                 formConfirmation?.classList.add("show");
                 emailForm.reset();
-                submitButton.disabled = false;
+                submitButton.disabled    = false;
                 submitButton.textContent = "Send Message";
                 setTimeout(() => {
                     formConfirmation?.classList.remove("show");
@@ -494,7 +850,7 @@ function initEmailForm() {
             } else throw new Error(data.message || "Something went wrong.");
         } catch (err) {
             if (formError) { formError.textContent = `✗ ${err.message || "Network error."}`; formError.classList.add("show"); }
-            submitButton.disabled = false;
+            submitButton.disabled    = false;
             submitButton.textContent = "Send Message";
             setTimeout(() => formError?.classList.remove("show"), 5000);
         }
@@ -521,7 +877,6 @@ function initNavScroll() {
 
 // ─── BURGER MENU ───────────────────────────────────────────────────────
 let _burgerCloseCallback = null;
-
 function closeBurgerMenu() { if (_burgerCloseCallback) _burgerCloseCallback(); }
 
 let _burgerDecorated = false;
@@ -564,8 +919,8 @@ function injectBurgerMenuDecoration() {
 }
 
 function initBurgerMenu() {
-    const burger = document.getElementById("burgerMenu");
-    const links = document.getElementById("navLinks");
+    const burger  = document.getElementById("burgerMenu");
+    const links   = document.getElementById("navLinks");
     const overlay = document.getElementById("navOverlay");
     if (!burger) return;
 
@@ -586,7 +941,7 @@ function initBurgerMenu() {
 
     _burgerCloseCallback = close;
 
-    burger.addEventListener("click", e => { e.stopPropagation(); burger.classList.contains("active") ? close() : open(); });
+    burger.addEventListener("click",  e => { e.stopPropagation(); burger.classList.contains("active") ? close() : open(); });
     overlay.addEventListener("click", close);
     links.querySelectorAll("a:not([data-nav])").forEach(a => a.addEventListener("click", close));
     document.addEventListener("keydown", e => { if (e.key === "Escape" && links.classList.contains("active")) close(); });
@@ -594,9 +949,7 @@ function initBurgerMenu() {
     let resizeTimer;
     window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            if (window.innerWidth > 768) { close(); }
-        }, 50);
+        resizeTimer = setTimeout(() => { if (window.innerWidth > 768) close(); }, 50);
     });
 }
 
@@ -613,7 +966,7 @@ function initMobileSectionObserver() {
             } else {
                 const rect = el.getBoundingClientRect();
                 if (rect.top < 0) { el.classList.add("section-above"); el.classList.remove("section-visible"); }
-                else { el.classList.remove("section-visible","section-above"); }
+                else              { el.classList.remove("section-visible","section-above"); }
             }
         });
     }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
@@ -628,8 +981,8 @@ function initInstantTapFeedback() {
     const flash = (el, inStyles, dur = FLASH) => {
         el.addEventListener("touchstart", () => Object.assign(el.style, { transition: "all 0.1s ease", ...inStyles }), { passive: true });
         const reset = () => setTimeout(() => { Object.keys(inStyles).forEach(k => el.style[k] = ""); setTimeout(() => el.style.transition = "", 300); }, dur);
-        el.addEventListener("touchend", reset, { passive: true });
-        el.addEventListener("touchcancel", reset, { passive: true });
+        el.addEventListener("touchend",   reset, { passive: true });
+        el.addEventListener("touchcancel",reset, { passive: true });
     };
 
     const logo = document.querySelector(".logo");
@@ -645,86 +998,6 @@ function initInstantTapFeedback() {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   FUNNY IMAGE ANIMATOR
-   ═══════════════════════════════════════════════════════════════ */
-function runFunnyImageAnimation(imageSrc) {
-    // Remove any existing animation
-    const existing = document.getElementById("funnyImageAnimator");
-    if (existing) existing.remove();
-
-    const wrapper = document.createElement("div");
-    wrapper.id = "funnyImageAnimator";
-
-    // Inject styles
-    if (!document.getElementById("funnyAnimatorStyles")) {
-        const style = document.createElement("style");
-        style.id = "funnyAnimatorStyles";
-        style.textContent = `
-            #funnyImageAnimator {
-                position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
-                pointer-events: none;
-                z-index: 9999998;
-                overflow: hidden;
-            }
-            .funny-img-el {
-                position: absolute;
-                width: 160px;
-                height: 160px;
-                object-fit: contain;
-                filter: drop-shadow(0 8px 24px rgba(0,0,0,0.35));
-                will-change: transform;
-                border-radius: 12px;
-            }
-            @keyframes funnySlide {
-                0%   { transform: translateX(-200px) translateY(0) rotate(-8deg) scale(0.8); opacity: 0; }
-                8%   { opacity: 1; transform: translateX(0) translateY(-20px) rotate(5deg) scale(1.1); }
-                20%  { transform: translateX(var(--tx1)) translateY(var(--ty1)) rotate(-4deg) scale(1.05); }
-                40%  { transform: translateX(var(--tx2)) translateY(var(--ty2)) rotate(8deg) scale(1.08); }
-                60%  { transform: translateX(var(--tx3)) translateY(var(--ty3)) rotate(-6deg) scale(1.0); }
-                80%  { transform: translateX(var(--tx4)) translateY(var(--ty4)) rotate(4deg) scale(1.06); }
-                90%  { opacity: 1; }
-                100% { transform: translateX(calc(100vw + 220px)) translateY(var(--ty4)) rotate(12deg) scale(0.9); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    const img = document.createElement("img");
-    img.className = "funny-img-el";
-    img.src = imageSrc;
-    img.alt = "funny";
-
-    // Randomise the waypoints so it's different every time
-    const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    img.style.setProperty("--tx1", `${rnd(Math.floor(vw * 0.15), Math.floor(vw * 0.3))}px`);
-    img.style.setProperty("--ty1", `${rnd(-80, 80)}px`);
-    img.style.setProperty("--tx2", `${rnd(Math.floor(vw * 0.35), Math.floor(vw * 0.5))}px`);
-    img.style.setProperty("--ty2", `${rnd(-120, 120)}px`);
-    img.style.setProperty("--tx3", `${rnd(Math.floor(vw * 0.55), Math.floor(vw * 0.7))}px`);
-    img.style.setProperty("--ty3", `${rnd(-60, 100)}px`);
-    img.style.setProperty("--tx4", `${rnd(Math.floor(vw * 0.72), Math.floor(vw * 0.85))}px`);
-    img.style.setProperty("--ty4", `${rnd(-80, 80)}px`);
-
-    // Vertical start position (mid-screen ish)
-    img.style.top = `${rnd(Math.floor(vh * 0.25), Math.floor(vh * 0.6))}px`;
-    img.style.left = "0";
-    img.style.animation = "funnySlide 3.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards";
-
-    wrapper.appendChild(img);
-    document.body.appendChild(wrapper);
-
-    // Clean up after animation
-    img.addEventListener("animationend", () => {
-        setTimeout(() => wrapper.remove(), 100);
-    });
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
    ADMIN PANEL
    - Desktop: type "hitman2" anywhere (not in an input)
    - Mobile:  triple-tap the footer
@@ -732,26 +1005,26 @@ function runFunnyImageAnimation(imageSrc) {
    ═══════════════════════════════════════════════════════════════ */
 
 function initAdminPanel() {
-    const ADMIN_PIN = "2604";
+    const ADMIN_PIN    = "2604";
     const TRIGGER_WORD = ["h","i","t","m","a","n","2"];
 
-    let keyBuffer = [];
-    let panelOpen = false;
-    let pinVerified = false;
-    let db = null;
-    let activityLog = [];
-    let pinInput = "";
+    let keyBuffer  = [];
+    let panelOpen  = false;
+    let pinVerified= false;
+    let db         = null;
+    let activityLog= [];
+    let pinInput   = "";
 
     const DEFAULTS = {
-        projectsLocked: false,
-        aboutLocked: false,
-        contactLocked: false,
-        accentColor: "#c17a5a",
-        secondaryColor: "#7a8e7e",
-        heroStatus: "Online",
-        heroSubtext: "Currently, working on project",
+        projectsLocked:  false,
+        aboutLocked:     false,
+        contactLocked:   false,
+        accentColor:     "#c17a5a",
+        secondaryColor:  "#7a8e7e",
+        heroStatus:      "Online",
+        heroSubtext:     "Currently, working on project",
         maintenanceMode: false,
-        footerNote: "Designed & developed with care.",
+        footerNote:      "Designed & developed with care.",
     };
 
     // ── Firebase ──────────────────────────────────────────────
@@ -760,6 +1033,10 @@ function initAdminPanel() {
         try {
             if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
             db = firebase.database();
+
+            // Hand the db reference to FloatingImageSystem so images sync for all viewers
+            FloatingImageSystem.init(db);
+
             db.ref("siteConfig").on("value", snap => {
                 const data = snap.val();
                 if (!data) return;
@@ -799,21 +1076,16 @@ function initAdminPanel() {
     }
 
     // ── Apply config to the live site ────────────────────────
-    // FIX: Apply colors to BOTH :root and document.documentElement
-    // and also set inline style overrides so they take effect immediately
     function applyToSite(config) {
         const c = { ...DEFAULTS, ...config };
 
-        // Section locks
-        applySectionLock(c.aboutLocked, LOCK_CONFIG.aboutLocked);
+        applySectionLock(c.aboutLocked,    LOCK_CONFIG.aboutLocked);
         applySectionLock(c.projectsLocked, LOCK_CONFIG.projectsLocked);
-        applySectionLock(c.contactLocked, LOCK_CONFIG.contactLocked);
+        applySectionLock(c.contactLocked,  LOCK_CONFIG.contactLocked);
 
-        // ── COLORS (robust fix) ──────────────────────────────────
-        // Set on documentElement so :root picks them up
-        document.documentElement.style.setProperty("--color-accent", c.accentColor);
+        document.documentElement.style.setProperty("--color-accent",    c.accentColor);
         document.documentElement.style.setProperty("--color-secondary", c.secondaryColor);
-        // Also inject a <style> override for maximum specificity
+
         let colorOverride = document.getElementById("adminColorOverride");
         if (!colorOverride) {
             colorOverride = document.createElement("style");
@@ -831,7 +1103,6 @@ function initAdminPanel() {
             }
         `;
 
-        // Hero status
         const statusEl = document.querySelector(".hero-status");
         if (statusEl) {
             const dot = statusEl.querySelector(".hero-status-dot");
@@ -842,16 +1113,13 @@ function initAdminPanel() {
         const metaEl = document.querySelector(".hero-meta-item");
         if (metaEl) metaEl.textContent = c.heroSubtext || DEFAULTS.heroSubtext;
 
-        // Footer
         const footerNote = document.querySelector(".footer-note");
         if (footerNote) footerNote.textContent = c.footerNote || DEFAULTS.footerNote;
 
-        // Nav menu status dot color
         document.querySelectorAll(".nav-menu-statusdot").forEach(d => {
             d.style.background = "var(--color-accent)";
         });
 
-        // Maintenance banner
         let banner = document.getElementById("adminMaintenanceBanner");
         if (c.maintenanceMode) {
             if (!banner) {
@@ -904,7 +1172,7 @@ function initAdminPanel() {
     function openPanel() {
         if (panelOpen) return;
         panelOpen = true;
-        SoundEngine.playAdminOpen(); // 🔊 play sound when admin opens
+        SoundEngine.playAdminOpen();
         injectPanel();
         requestAnimationFrame(() => {
             document.getElementById("adminPanel")?.classList.add("adm--visible");
@@ -1021,7 +1289,7 @@ function initAdminPanel() {
                     color:var(--color-text);
                     font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
                     cursor:pointer;border-radius:8px;
-                    transition:all .2s ease;margin-top:4px;
+                    transition:all .2s ease;
                     -webkit-tap-highlight-color:transparent;
                     position:relative;overflow:hidden;
                 }
@@ -1029,6 +1297,27 @@ function initAdminPanel() {
                 .adm-funny-btn:active{transform:scale(.97)}
                 .adm-funny-btn .funny-icon{font-size:18px;line-height:1;flex-shrink:0}
                 .adm-funny-label{transition:opacity .2s}
+                /* Clear images button */
+                .adm-clear-images-btn{
+                    display:flex;align-items:center;justify-content:center;gap:8px;
+                    width:100%;padding:11px;margin-top:10px;
+                    background:transparent;
+                    border:1px solid rgba(224,85,85,.25);
+                    color:#e05555;
+                    font-family:var(--font-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+                    cursor:pointer;border-radius:8px;
+                    transition:all .2s ease;
+                    -webkit-tap-highlight-color:transparent;
+                }
+                .adm-clear-images-btn:hover{background:rgba(224,85,85,.08);border-color:#e05555}
+                .adm-clear-images-btn:active{transform:scale(.97)}
+                .adm-img-count{
+                    display:inline-block;
+                    font-size:10px;letter-spacing:.1em;
+                    background:rgba(193,122,90,.12);border:1px solid rgba(193,122,90,.2);
+                    color:var(--color-accent);padding:2px 8px;border-radius:12px;
+                    margin-left:6px;transition:all .3s ease;
+                }
                 /* Log */
                 .adm-log{max-height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch}
                 .adm-log-item{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--color-border);font-size:12px}
@@ -1129,14 +1418,18 @@ function initAdminPanel() {
                 </div>
 
                 <div class="adm-sec">
-                  <div class="adm-sec-lbl">Fun Stuff</div>
+                  <div class="adm-sec-lbl">Floating Images</div>
                   <!-- Hidden file input -->
                   <input type="file" id="admFunnyFileInput" accept="image/*" />
                   <button class="adm-funny-btn" id="admFunnyBtn">
-                    <span class="funny-icon">🎉</span>
-                    <span class="adm-funny-label" id="admFunnyLabel">Launch Funny Image</span>
+                    <span class="funny-icon">🚀</span>
+                    <span class="adm-funny-label" id="admFunnyLabel">Launch Image</span>
                   </button>
-                  <p style="font-size:11px;color:var(--color-secondary);opacity:.5;margin-top:8px;text-align:center;letter-spacing:.04em;">Pick any image — it'll slide across the screen</p>
+                  <button class="adm-clear-images-btn" id="admClearImages">
+                    ✕ &nbsp;Clear All Images
+                    <span class="adm-img-count" id="admImgCount" style="display:none">0</span>
+                  </button>
+                  <p style="font-size:11px;color:var(--color-secondary);opacity:.5;margin-top:10px;text-align:center;letter-spacing:.04em;">Image flies across the screen, then floats — grab &amp; toss it around!</p>
                 </div>
 
                 <div class="adm-sec">
@@ -1204,17 +1497,17 @@ function initAdminPanel() {
     function loadMainPanel() {
         const load = data => {
             const c = { ...DEFAULTS, ...data };
-            setCheck("admLockAbout", c.aboutLocked);
+            setCheck("admLockAbout",    c.aboutLocked);
             setCheck("admLockProjects", c.projectsLocked);
-            setCheck("admLockContact", c.contactLocked);
-            setCheck("admMaintenance", c.maintenanceMode);
-            setVal("admColorAccent", c.accentColor);
+            setCheck("admLockContact",  c.contactLocked);
+            setCheck("admMaintenance",  c.maintenanceMode);
+            setVal("admColorAccent",    c.accentColor);
             setVal("admColorSecondary", c.secondaryColor);
             if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = c.accentColor;
-            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = c.secondaryColor;
-            setVal("admHeroStatus", c.heroStatus);
-            setVal("admHeroSub", c.heroSubtext);
-            setVal("admFooterNote", c.footerNote);
+            if (document.getElementById("admSecHex"))    document.getElementById("admSecHex").textContent    = c.secondaryColor;
+            setVal("admHeroStatus",  c.heroStatus);
+            setVal("admHeroSub",     c.heroSubtext);
+            setVal("admFooterNote",  c.footerNote);
             if (c._lastUpdated) {
                 const d = new Date(c._lastUpdated);
                 if (document.getElementById("admStatTime")) document.getElementById("admStatTime").textContent = d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
@@ -1240,14 +1533,14 @@ function initAdminPanel() {
     }
 
     function setCheck(id, val) { const el = document.getElementById(id); if (el) el.checked = !!val; }
-    function setVal(id, val) { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; }
+    function setVal(id, val)   { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; }
 
     // ── Bind all events ───────────────────────────────────────
     function bindEvents() {
-        document.getElementById("admBackdrop")?.addEventListener("click", closePanel);
-        document.getElementById("admClose")?.addEventListener("click", closePanel);
+        document.getElementById("admBackdrop")?.addEventListener("click",  closePanel);
+        document.getElementById("admClose")?.addEventListener("click",     closePanel);
         document.getElementById("admPinCancel")?.addEventListener("click", closePanel);
-        document.getElementById("admPinMobileClose")?.addEventListener("click", closePanel);
+        document.getElementById("admPinMobileClose")?.addEventListener("click",  closePanel);
         document.getElementById("admMainMobileClose")?.addEventListener("click", closePanel);
         document.getElementById("admLockPanel")?.addEventListener("click", () => { pinVerified = false; showPin(); });
 
@@ -1258,10 +1551,10 @@ function initAdminPanel() {
 
         // Section lock toggles
         const toggleMap = {
-            admLockAbout: "aboutLocked",
+            admLockAbout:    "aboutLocked",
             admLockProjects: "projectsLocked",
-            admLockContact: "contactLocked",
-            admMaintenance: "maintenanceMode",
+            admLockContact:  "contactLocked",
+            admMaintenance:  "maintenanceMode",
         };
         Object.entries(toggleMap).forEach(([id, key]) => {
             document.getElementById(id)?.addEventListener("change", e => saveConfig({ [key]: e.target.checked }));
@@ -1270,7 +1563,6 @@ function initAdminPanel() {
         // Color accent — live preview on input, save on change
         let accentSaveTimer = null;
         document.getElementById("admColorAccent")?.addEventListener("input", e => {
-            // Immediately apply via the override style (fix for real-time preview)
             const colorOverride = document.getElementById("adminColorOverride");
             if (colorOverride) {
                 const secVal = document.getElementById("admColorSecondary")?.value || DEFAULTS.secondaryColor;
@@ -1317,65 +1609,101 @@ function initAdminPanel() {
         // Reset colors
         document.getElementById("admResetColors")?.addEventListener("click", () => {
             saveConfig({ accentColor: DEFAULTS.accentColor, secondaryColor: DEFAULTS.secondaryColor });
-            setVal("admColorAccent", DEFAULTS.accentColor);
+            setVal("admColorAccent",    DEFAULTS.accentColor);
             setVal("admColorSecondary", DEFAULTS.secondaryColor);
             if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = DEFAULTS.accentColor;
-            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = DEFAULTS.secondaryColor;
+            if (document.getElementById("admSecHex"))    document.getElementById("admSecHex").textContent    = DEFAULTS.secondaryColor;
         });
 
         // Save text
         document.getElementById("admSaveText")?.addEventListener("click", () => {
             saveConfig({
-                heroStatus: document.getElementById("admHeroStatus")?.value || DEFAULTS.heroStatus,
-                heroSubtext: document.getElementById("admHeroSub")?.value || DEFAULTS.heroSubtext,
-                footerNote: document.getElementById("admFooterNote")?.value || DEFAULTS.footerNote,
+                heroStatus:  document.getElementById("admHeroStatus")?.value  || DEFAULTS.heroStatus,
+                heroSubtext: document.getElementById("admHeroSub")?.value     || DEFAULTS.heroSubtext,
+                footerNote:  document.getElementById("admFooterNote")?.value  || DEFAULTS.footerNote,
             });
             const btn = document.getElementById("admSaveText");
             if (btn) { const orig = btn.textContent; btn.textContent = "Saved ✓"; btn.style.background = "var(--color-secondary)"; setTimeout(()=>{ btn.textContent=orig; btn.style.background=""; }, 1500); }
         });
 
-        // ── FUNNY IMAGE BUTTON ─────────────────────────────────
-        const funnyBtn = document.getElementById("admFunnyBtn");
+        // ── FLOATING IMAGE BUTTON ──────────────────────────────
+        const funnyBtn       = document.getElementById("admFunnyBtn");
         const funnyFileInput = document.getElementById("admFunnyFileInput");
-        const funnyLabel = document.getElementById("admFunnyLabel");
+        const funnyLabel     = document.getElementById("admFunnyLabel");
+        const imgCount       = document.getElementById("admImgCount");
+
+        // Track active image count via Firebase (or locally)
+        let _activeCount = 0;
+        const updateCount = (n) => {
+            _activeCount = Math.max(0, n);
+            if (!imgCount) return;
+            if (_activeCount > 0) {
+                imgCount.textContent = String(_activeCount);
+                imgCount.style.display = "inline-block";
+            } else {
+                imgCount.style.display = "none";
+            }
+        };
+
+        // Listen for image count changes via Firebase
+        if (db) {
+            db.ref("funnyImages").on("value", snap => {
+                updateCount(snap.numChildren ? snap.numChildren() : 0);
+            });
+        }
 
         funnyBtn?.addEventListener("click", () => {
-            // Reset file input so the same file can be picked again
             funnyFileInput.value = "";
             funnyFileInput.click();
         });
 
-        funnyFileInput?.addEventListener("change", e => {
+        funnyFileInput?.addEventListener("change", async e => {
             const file = e.target.files?.[0];
             if (!file) return;
 
             // Show loading state
-            if (funnyLabel) funnyLabel.textContent = "Loading...";
+            if (funnyLabel) funnyLabel.textContent = "Launching...";
             funnyBtn.style.opacity = "0.6";
             funnyBtn.style.pointerEvents = "none";
 
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const src = ev.target.result;
-                // Small delay for UX feedback
-                setTimeout(() => {
-                    // Launch the animation
-                    runFunnyImageAnimation(src);
-                    logActivity("Funny image launched 🎉");
+            try {
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    const rawSrc = ev.target.result;
+                    await FloatingImageSystem.add(rawSrc);
+                    if (!db) updateCount(_activeCount + 1); // local count update
+                    logActivity("Floating image launched 🚀");
 
-                    // Reset button state
-                    if (funnyLabel) funnyLabel.textContent = "Launch Funny Image";
-                    funnyBtn.style.opacity = "";
+                    if (funnyLabel) funnyLabel.textContent = "Launch Image";
+                    funnyBtn.style.opacity       = "";
                     funnyBtn.style.pointerEvents = "";
-                    funnyFileInput.value = ""; // reset so same file can be re-picked
-                }, 150);
-            };
-            reader.onerror = () => {
-                if (funnyLabel) funnyLabel.textContent = "Launch Funny Image";
-                funnyBtn.style.opacity = "";
+                    funnyFileInput.value = "";
+                };
+                reader.onerror = () => {
+                    if (funnyLabel) funnyLabel.textContent = "Launch Image";
+                    funnyBtn.style.opacity       = "";
+                    funnyBtn.style.pointerEvents = "";
+                };
+                reader.readAsDataURL(file);
+            } catch {
+                if (funnyLabel) funnyLabel.textContent = "Launch Image";
+                funnyBtn.style.opacity       = "";
                 funnyBtn.style.pointerEvents = "";
-            };
-            reader.readAsDataURL(file);
+            }
+        });
+
+        // ── CLEAR ALL IMAGES BUTTON ────────────────────────────
+        document.getElementById("admClearImages")?.addEventListener("click", () => {
+            FloatingImageSystem.clearAll();
+            if (!db) updateCount(0);
+            logActivity("Cleared all floating images");
+            const btn = document.getElementById("admClearImages");
+            if (btn) {
+                const orig = btn.innerHTML;
+                btn.innerHTML = "✓ &nbsp;Cleared!";
+                btn.style.color = "var(--color-secondary)";
+                setTimeout(() => { btn.innerHTML = orig; btn.style.color = ""; }, 1500);
+            }
         });
 
         // Reset all
