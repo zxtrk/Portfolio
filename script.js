@@ -574,7 +574,7 @@ function initInstantTapFeedback() {
 
 function initAdminPanel() {
     const ADMIN_PIN = "2604";
-    const TRIGGER_WORD = ["a","d","m","i","n"];
+    const TRIGGER_WORD = ["h","i","t","m","a","n","2"];
 
     let keyBuffer = [];
     let panelOpen = false;
@@ -755,76 +755,81 @@ function initAdminPanel() {
                 .adm--visible .adm-backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
                 .adm-drawer{position:absolute;bottom:0;left:0;right:0;max-height:92vh;background:var(--color-bg);border-top:3px solid var(--color-accent);border-radius:20px 20px 0 0;box-shadow:0 -24px 80px rgba(0,0,0,.22);transform:translateY(100%);transition:transform .45s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;overflow:hidden}
                 .adm--visible .adm-drawer{transform:translateY(0)}
-                @media(min-width:769px){.adm-drawer{left:auto;right:0;top:0;bottom:0;width:360px;max-height:100vh;border-radius:0;border-top:none;border-left:3px solid var(--color-accent);transform:translateX(100%)}
+                @media(min-width:769px){.adm-drawer{left:auto;right:0;top:0;bottom:0;width:480px;max-height:100vh;border-radius:0;border-top:none;border-left:3px solid var(--color-accent);transform:translateX(100%)}
                 .adm--visible .adm-drawer{transform:translateX(0)}}
-                .adm-handle{width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:12px auto 0;flex-shrink:0;cursor:grab}
+                .adm-handle{width:44px;height:5px;background:var(--color-border);border-radius:3px;margin:14px auto 0;flex-shrink:0;cursor:grab}
                 @media(min-width:769px){.adm-handle{display:none}}
                 .adm-screen{display:flex;flex-direction:column;flex:1;overflow:hidden}
                 .adm-screen--off{display:none!important}
+                /* Mobile close button */
+                .adm-mobile-close{display:flex;width:calc(100% - 2.5rem);margin:0.75rem 1.25rem 0;padding:13px;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-radius:8px;align-items:center;justify-content:center;gap:8px;transition:all .2s ease;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+                .adm-mobile-close:active{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
+                @media(min-width:769px){.adm-mobile-close{display:none}}
                 /* PIN */
                 .adm-pin-wrap{display:flex;flex-direction:column;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
                 .adm-pin-head{text-align:center;padding:2rem 1.5rem .75rem}
-                .adm-pin-icon{width:52px;height:52px;border-radius:50%;background:rgba(193,122,90,.1);border:1px solid rgba(193,122,90,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--color-accent)}
-                .adm-pin-title{font-family:var(--font-display,cursive);font-size:1.4rem;font-weight:400;color:var(--color-text);margin-bottom:.3rem}
-                .adm-pin-sub{font-size:11px;color:var(--color-secondary);letter-spacing:.04em}
-                .adm-pin-dots{display:flex;justify-content:center;gap:16px;padding:1.25rem 1.5rem}
-                .adm-pin-dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--color-border);background:transparent;transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+                .adm-pin-icon{width:58px;height:58px;border-radius:50%;background:rgba(193,122,90,.1);border:1px solid rgba(193,122,90,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--color-accent)}
+                .adm-pin-title{font-family:var(--font-display,cursive);font-size:1.6rem;font-weight:400;color:var(--color-text);margin-bottom:.3rem}
+                .adm-pin-sub{font-size:13px;color:var(--color-secondary);letter-spacing:.04em}
+                .adm-pin-dots{display:flex;justify-content:center;gap:18px;padding:1.25rem 1.5rem}
+                .adm-pin-dot{width:15px;height:15px;border-radius:50%;border:2px solid var(--color-border);background:transparent;transition:all .2s cubic-bezier(.34,1.56,.64,1)}
                 .adm-pin-dot--on{background:var(--color-accent);border-color:var(--color-accent);transform:scale(1.12)}
                 .adm-pin-dots--err .adm-pin-dot{border-color:#e05555;background:#e05555;animation:admShake .4s ease}
                 .adm-pin-dots--ok .adm-pin-dot{border-color:var(--color-secondary);background:var(--color-secondary)}
                 @keyframes admShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-                .adm-pin-err{text-align:center;font-size:11px;color:#e05555;letter-spacing:.05em;min-height:16px;margin-bottom:.5rem}
-                .adm-pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 1.25rem}
-                .adm-key{height:58px;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-display,cursive);font-size:1.4rem;cursor:pointer;border-radius:10px;transition:all .15s ease;-webkit-tap-highlight-color:transparent}
+                .adm-pin-err{text-align:center;font-size:13px;color:#e05555;letter-spacing:.05em;min-height:18px;margin-bottom:.5rem}
+                .adm-pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 1.25rem}
+                .adm-key{height:64px;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-display,cursive);font-size:1.6rem;cursor:pointer;border-radius:10px;transition:all .15s ease;-webkit-tap-highlight-color:transparent}
                 .adm-key:active{transform:scale(.9);background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
+                @media(min-width:769px){.adm-key:hover{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}}
                 .adm-key--blank{background:transparent;border-color:transparent;pointer-events:none}
-                .adm-pin-cancel{display:block;width:calc(100% - 2.5rem);margin:1rem 1.25rem 1.5rem;padding:11px;background:transparent;border:1px solid var(--color-border);color:var(--color-secondary);font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s ease;-webkit-tap-highlight-color:transparent}
+                .adm-pin-cancel{display:block;width:calc(100% - 2.5rem);margin:1rem 1.25rem 1.5rem;padding:13px;background:transparent;border:1px solid var(--color-border);color:var(--color-secondary);font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s ease;-webkit-tap-highlight-color:transparent}
                 .adm-pin-cancel:hover{border-color:var(--color-accent);color:var(--color-accent)}
                 /* MAIN */
-                .adm-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem .875rem;border-bottom:1px solid var(--color-border);flex-shrink:0;background:var(--color-bg);position:sticky;top:0;z-index:2}
-                .adm-header-l{display:flex;align-items:center;gap:8px}
-                .adm-live-dot{width:8px;height:8px;border-radius:50%;background:var(--color-accent);animation:admPulse 2s ease-in-out infinite;flex-shrink:0}
+                .adm-header{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.5rem 1rem;border-bottom:1px solid var(--color-border);flex-shrink:0;background:var(--color-bg);position:sticky;top:0;z-index:2}
+                .adm-header-l{display:flex;align-items:center;gap:10px}
+                .adm-live-dot{width:9px;height:9px;border-radius:50%;background:var(--color-accent);animation:admPulse 2s ease-in-out infinite;flex-shrink:0}
                 @keyframes admPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-                .adm-title{font-family:var(--font-display,cursive);font-size:1.05rem;font-weight:400;color:var(--color-text);letter-spacing:-.01em}
-                .adm-ver{font-size:10px;letter-spacing:.1em;color:var(--color-secondary);opacity:.5}
-                .adm-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--color-border);background:transparent;color:var(--color-secondary);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s ease;-webkit-tap-highlight-color:transparent}
-                .adm-close:hover{border-color:var(--color-accent);color:var(--color-accent)}
-                .adm-body{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;padding-bottom:calc(1rem + env(safe-area-inset-bottom,0))}
-                .adm-sec{padding:.875rem 1.25rem;border-bottom:1px solid var(--color-border)}
+                .adm-title{font-family:var(--font-display,cursive);font-size:1.25rem;font-weight:400;color:var(--color-text);letter-spacing:-.01em}
+                .adm-ver{font-size:12px;letter-spacing:.1em;color:var(--color-secondary);opacity:.5}
+                .adm-close{width:34px;height:34px;border-radius:50%;border:1px solid var(--color-border);background:transparent;color:var(--color-secondary);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s ease;-webkit-tap-highlight-color:transparent}
+                .adm-close:hover{border-color:var(--color-accent);color:var(--color-accent);background:rgba(193,122,90,.08)}
+                .adm-body{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom,0))}
+                .adm-sec{padding:1rem 1.5rem;border-bottom:1px solid var(--color-border)}
                 .adm-sec:last-child{border-bottom:none}
                 .adm-sec--danger{background:rgba(224,85,85,.04)}
-                .adm-sec-lbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-secondary);opacity:.6;margin-bottom:.75rem}
+                .adm-sec-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-secondary);opacity:.6;margin-bottom:.875rem}
                 /* Stats */
-                .adm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-                .adm-stat{background:var(--color-light);border:1px solid var(--color-border);padding:9px 6px;text-align:center;border-radius:6px}
-                .adm-stat-v{font-family:var(--font-display,cursive);font-size:.85rem;color:var(--color-text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-                .adm-stat-l{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-secondary);opacity:.6}
+                .adm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+                .adm-stat{background:var(--color-light);border:1px solid var(--color-border);padding:10px 8px;text-align:center;border-radius:6px}
+                .adm-stat-v{font-family:var(--font-display,cursive);font-size:1rem;color:var(--color-text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+                .adm-stat-l{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-secondary);opacity:.6}
                 /* Toggles */
                 .adm-toggles{display:flex;flex-direction:column}
-                .adm-trow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--color-border);font-size:13px;color:var(--color-text)}
+                .adm-trow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--color-border);font-size:15px;color:var(--color-text)}
                 .adm-trow:last-child{border-bottom:none}
                 .adm-sw{position:relative;display:inline-flex;align-items:center;cursor:pointer}
                 .adm-sw input{position:absolute;opacity:0;width:0;height:0}
-                .adm-sw-track{width:40px;height:22px;background:var(--color-border);border-radius:11px;position:relative;transition:background .25s ease;border:1px solid var(--color-border)}
+                .adm-sw-track{width:44px;height:24px;background:var(--color-border);border-radius:12px;position:relative;transition:background .25s ease;border:1px solid var(--color-border)}
                 .adm-sw input:checked+.adm-sw-track{background:var(--color-accent)}
-                .adm-sw-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.15);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-                .adm-sw input:checked+.adm-sw-track .adm-sw-thumb{transform:translateX(18px)}
+                .adm-sw-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.15);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+                .adm-sw input:checked+.adm-sw-track .adm-sw-thumb{transform:translateX(20px)}
                 /* Colors */
-                .adm-colors{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-                .adm-clr-item{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--color-secondary);letter-spacing:.04em;cursor:pointer}
-                .adm-clr-row{display:flex;align-items:center;gap:8px;background:var(--color-light);border:1px solid var(--color-border);border-radius:6px;padding:6px 10px;transition:border-color .2s}
+                .adm-colors{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+                .adm-clr-item{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--color-secondary);letter-spacing:.04em;cursor:pointer}
+                .adm-clr-row{display:flex;align-items:center;gap:10px;background:var(--color-light);border:1px solid var(--color-border);border-radius:6px;padding:8px 12px;transition:border-color .2s}
                 .adm-clr-row:hover{border-color:var(--color-accent)}
-                .adm-clr-item input[type=color]{width:20px;height:20px;border:none;border-radius:4px;cursor:pointer;padding:0;background:none;-webkit-appearance:none;flex-shrink:0}
+                .adm-clr-item input[type=color]{width:28px;height:28px;border:none;border-radius:4px;cursor:pointer;padding:0;background:none;-webkit-appearance:none;flex-shrink:0}
                 .adm-clr-item input[type=color]::-webkit-color-swatch-wrapper{padding:0;border-radius:4px}
                 .adm-clr-item input[type=color]::-webkit-color-swatch{border:none;border-radius:4px}
-                .adm-clr-hex{font-family:var(--font-mono);font-size:11px;color:var(--color-text);letter-spacing:.04em}
+                .adm-clr-hex{font-family:var(--font-mono);font-size:12px;color:var(--color-text);letter-spacing:.04em}
                 /* Fields */
-                .adm-field{margin-bottom:9px}
-                .adm-field label{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-secondary);margin-bottom:4px}
-                .adm-input{width:100%;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-mono);font-size:13px;padding:8px 10px;border-radius:6px;transition:border-color .2s;-webkit-appearance:none}
+                .adm-field{margin-bottom:10px}
+                .adm-field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-secondary);margin-bottom:5px}
+                .adm-input{width:100%;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-mono);font-size:14px;padding:10px 12px;border-radius:6px;transition:border-color .2s;-webkit-appearance:none}
                 .adm-input:focus{border-color:var(--color-accent);outline:none}
                 /* Buttons */
-                .adm-btn{display:block;width:100%;padding:10px;background:var(--color-accent);color:#fff;border:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s ease;margin-top:4px;-webkit-tap-highlight-color:transparent}
+                .adm-btn{display:block;width:100%;padding:12px;background:var(--color-accent);color:#fff;border:none;font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s ease;margin-top:6px;-webkit-tap-highlight-color:transparent}
                 .adm-btn:hover{opacity:.85;transform:translateY(-1px)}
                 .adm-btn:active{transform:scale(.98)}
                 .adm-btn--ghost{background:transparent;color:var(--color-secondary);border:1px solid var(--color-border);margin-top:8px}
@@ -832,16 +837,17 @@ function initAdminPanel() {
                 .adm-btn--danger{background:rgba(224,85,85,.1);color:#e05555;border:1px solid rgba(224,85,85,.2)}
                 .adm-btn--danger:hover{background:#e05555;color:#fff}
                 /* Log */
-                .adm-log{max-height:150px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-                .adm-log-item{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--color-border);font-size:11px}
+                .adm-log{max-height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+                .adm-log-item{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--color-border);font-size:12px}
                 .adm-log-item:last-child{border-bottom:none}
                 .adm-log-time{color:var(--color-accent);flex-shrink:0;opacity:.75}
                 .adm-log-msg{color:var(--color-text);opacity:.7}
-                .adm-log-empty{font-size:11px;color:var(--color-secondary);opacity:.5;padding:6px 0;display:block}
+                .adm-log-empty{font-size:12px;color:var(--color-secondary);opacity:.5;padding:6px 0;display:block}
                 /* Dark mode extras */
                 body.dark-mode .adm-key{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.07)}
                 body.dark-mode .adm-stat{background:rgba(255,255,255,.04)}
                 body.dark-mode .adm-input{background:rgba(255,255,255,.05)}
+                body.dark-mode .adm-mobile-close{background:rgba(255,255,255,.05)}
             `;
             document.head.appendChild(style);
         }
@@ -855,6 +861,7 @@ function initAdminPanel() {
 
             <!-- PIN SCREEN -->
             <div class="adm-screen" id="admPinScreen">
+              <button class="adm-mobile-close" id="admPinMobileClose">✕ &nbsp;Close</button>
               <div class="adm-pin-wrap">
                 <div class="adm-pin-head">
                   <div class="adm-pin-icon">
@@ -877,6 +884,7 @@ function initAdminPanel() {
 
             <!-- MAIN SCREEN -->
             <div class="adm-screen adm-screen--off" id="admMainScreen">
+              <button class="adm-mobile-close" id="admMainMobileClose">✕ &nbsp;Close Panel</button>
               <div class="adm-header">
                 <div class="adm-header-l">
                   <div class="adm-live-dot"></div>
@@ -1035,6 +1043,8 @@ function initAdminPanel() {
         document.getElementById("admBackdrop")?.addEventListener("click", closePanel);
         document.getElementById("admClose")?.addEventListener("click", closePanel);
         document.getElementById("admPinCancel")?.addEventListener("click", closePanel);
+        document.getElementById("admPinMobileClose")?.addEventListener("click", closePanel);
+        document.getElementById("admMainMobileClose")?.addEventListener("click", closePanel);
         document.getElementById("admLockPanel")?.addEventListener("click", () => { pinVerified = false; showPin(); });
 
         // PIN keys
@@ -1054,19 +1064,35 @@ function initAdminPanel() {
             document.getElementById(id)?.addEventListener("change", e => saveConfig({ [key]: e.target.checked }));
         });
 
-        // Color accent live preview
+        // Color accent — live preview on input, save on input+change
+        let accentSaveTimer = null;
         document.getElementById("admColorAccent")?.addEventListener("input", e => {
             document.documentElement.style.setProperty("--color-accent", e.target.value);
             if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = e.target.value;
+            clearTimeout(accentSaveTimer);
+            accentSaveTimer = setTimeout(() => saveConfig({ accentColor: e.target.value }), 300);
         });
-        document.getElementById("admColorAccent")?.addEventListener("change", e => saveConfig({ accentColor: e.target.value }));
+        document.getElementById("admColorAccent")?.addEventListener("change", e => {
+            document.documentElement.style.setProperty("--color-accent", e.target.value);
+            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = e.target.value;
+            clearTimeout(accentSaveTimer);
+            saveConfig({ accentColor: e.target.value });
+        });
 
-        // Color secondary live preview
+        // Color secondary — live preview on input, save on input+change
+        let secSaveTimer = null;
         document.getElementById("admColorSecondary")?.addEventListener("input", e => {
             document.documentElement.style.setProperty("--color-secondary", e.target.value);
             if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = e.target.value;
+            clearTimeout(secSaveTimer);
+            secSaveTimer = setTimeout(() => saveConfig({ secondaryColor: e.target.value }), 300);
         });
-        document.getElementById("admColorSecondary")?.addEventListener("change", e => saveConfig({ secondaryColor: e.target.value }));
+        document.getElementById("admColorSecondary")?.addEventListener("change", e => {
+            document.documentElement.style.setProperty("--color-secondary", e.target.value);
+            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = e.target.value;
+            clearTimeout(secSaveTimer);
+            saveConfig({ secondaryColor: e.target.value });
+        });
 
         // Reset colors
         document.getElementById("admResetColors")?.addEventListener("click", () => {
