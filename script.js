@@ -87,14 +87,19 @@ const SoundEngine = (() => {
     let _unlockListenersAdded = false;
 
     // ── Mute state — persisted in localStorage ────────────────
-    let _muted = localStorage.getItem("soundMuted") === "true";
+    let _muted       = localStorage.getItem("soundMuted") === "true";
+    let _globalMuted = false; // set by admin panel, overrides everything
 
-    function isMuted()       { return _muted; }
+    function isMuted()     { return _muted || _globalMuted; }
     function setMuted(val) {
         _muted = !!val;
         localStorage.setItem("soundMuted", String(_muted));
-        // Notify any toggle UI that might be listening
-        document.dispatchEvent(new CustomEvent("soundMuteChanged", { detail: { muted: _muted } }));
+        document.dispatchEvent(new CustomEvent("soundMuteChanged", { detail: { muted: isMuted() } }));
+    }
+    // Called by applyToSite whenever Firebase config updates — affects all devices
+    function setGlobalMuted(val) {
+        _globalMuted = !!val;
+        document.dispatchEvent(new CustomEvent("soundMuteChanged", { detail: { muted: isMuted() } }));
     }
 
     // ── AudioContext bootstrap ────────────────────────────────
@@ -280,7 +285,7 @@ const SoundEngine = (() => {
     _ensureCtx();
     _addUnlockListeners();
 
-    return { playLoadComplete, playBurgerOpen, playAdminOpen, resetAdminSoundGuard, isMuted, setMuted };
+    return { playLoadComplete, playBurgerOpen, playAdminOpen, resetAdminSoundGuard, isMuted, setMuted, setGlobalMuted };
 })();
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1240,6 +1245,7 @@ function initAdminPanel() {
         heroSubtext:     "Currently, working on project",
         maintenanceMode: false,
         footerNote:      "Designed & developed with care.",
+        soundsDisabled:  false,
     };
 
     // ── Firebase ──────────────────────────────────────────────
@@ -1330,6 +1336,9 @@ function initAdminPanel() {
 
         const footerNote = document.querySelector(".footer-note");
         if (footerNote) footerNote.textContent = c.footerNote || DEFAULTS.footerNote;
+
+        // Global sound kill-switch — overrides every device's local preference
+        SoundEngine.setGlobalMuted(!!c.soundsDisabled);
 
         document.querySelectorAll(".nav-menu-statusdot").forEach(d => {
             d.style.background = "var(--color-accent)";
@@ -1612,6 +1621,13 @@ function initAdminPanel() {
                     <div class="adm-trow"><span>Projects</span><label class="adm-sw"><input type="checkbox" id="admLockProjects"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
                     <div class="adm-trow"><span>Contact</span><label class="adm-sw"><input type="checkbox" id="admLockContact"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
                     <div class="adm-trow"><span>Maintenance Banner</span><label class="adm-sw"><input type="checkbox" id="admMaintenance"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
+                    <div class="adm-trow" style="border-top:1px solid var(--color-border);margin-top:6px;padding-top:10px">
+                      <span style="display:flex;align-items:center;gap:7px">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        Disable All Sounds
+                      </span>
+                      <label class="adm-sw"><input type="checkbox" id="admDisableSounds"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label>
+                    </div>
                   </div>
                 </div>
 
@@ -1716,6 +1732,7 @@ function initAdminPanel() {
             setCheck("admLockProjects", c.projectsLocked);
             setCheck("admLockContact",  c.contactLocked);
             setCheck("admMaintenance",  c.maintenanceMode);
+            setCheck("admDisableSounds", c.soundsDisabled);
             setVal("admColorAccent",    c.accentColor);
             setVal("admColorSecondary", c.secondaryColor);
             if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = c.accentColor;
@@ -1766,10 +1783,11 @@ function initAdminPanel() {
 
         // Section lock toggles
         const toggleMap = {
-            admLockAbout:    "aboutLocked",
-            admLockProjects: "projectsLocked",
-            admLockContact:  "contactLocked",
-            admMaintenance:  "maintenanceMode",
+            admLockAbout:     "aboutLocked",
+            admLockProjects:  "projectsLocked",
+            admLockContact:   "contactLocked",
+            admMaintenance:   "maintenanceMode",
+            admDisableSounds: "soundsDisabled",
         };
         Object.entries(toggleMap).forEach(([id, key]) => {
             document.getElementById(id)?.addEventListener("change", e => saveConfig({ [key]: e.target.checked }));
