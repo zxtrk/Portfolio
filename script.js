@@ -1,7 +1,15 @@
+/* ═══════════════════════════════════════════════════════════════
+   PORTFOLIO — script.js
+   Includes: site logic + hidden admin panel (type "admin" / triple-tap footer)
+   ═══════════════════════════════════════════════════════════════ */
+
+"use strict";
+
+// ─── PROJECT DATA ─────────────────────────────────────────────────────
 const projects = [
     {
         title: "Temporary Removed",
-        description: "Project has been temporarily removed due to issues with the code - last updated 14/02/26",
+        description: "Project has been temporarily removed due to issues with the code — last updated 14/02/26",
         tags: ["HTML", "CSS", "JavaScript"],
         pageUrl: "404.html",
         imageUrl: "",
@@ -12,7 +20,7 @@ const projects = [
         title: "Coming Soon",
         description: "A new project is currently in development. Something interesting is on the way — check back soon.",
         tags: ["In Progress"],
-        pageUrl: "404.html",
+        pageUrl: null,
         imageUrl: "",
         year: "202?",
         index: "02",
@@ -21,13 +29,14 @@ const projects = [
         title: "Coming Soon",
         description: "A new project is currently in development. Something interesting is on the way — check back soon.",
         tags: ["Not Started"],
-        pageUrl: "404.html",
+        pageUrl: null,
         imageUrl: "",
         year: "202?",
         index: "03",
     },
 ];
 
+// ─── QUOTE DATA ────────────────────────────────────────────────────────
 const dailyQuotes = [
     { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
     { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
@@ -40,7 +49,7 @@ const dailyQuotes = [
     { text: "Technology is best when it brings people together.", author: "Matt Mullenweg" },
     { text: "The function of good software is to make the complex appear to be simple.", author: "Grady Booch" },
     { text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.", author: "Antoine de Saint-Exupéry" },
-    { text: "I have no special talents. I am only passionately curious", author: "Albert Einstein" },
+    { text: "I have no special talents. I am only passionately curious.", author: "Albert Einstein" },
     { text: "Continuous improvement is better than delayed perfection.", author: "Mark Twain" },
     { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" },
     { text: "The most disastrous thing that you can ever learn is your first programming language.", author: "Alan Kay" },
@@ -61,7 +70,10 @@ const dailyQuotes = [
     { text: "The computer was born to solve problems that did not exist before.", author: "Bill Gates" },
 ];
 
+// ─── INIT ──────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
+    initDarkMode();          // first — avoids flash
+    applyAllLocks();         // apply any saved locks before render
     initLoadingScreen();
     initProjects();
     initScrollAnimations();
@@ -70,202 +82,41 @@ document.addEventListener("DOMContentLoaded", () => {
     initEmailForm();
     initNavScroll();
     initBurgerMenu();
-    initDarkMode();
     initScrollIndicator();
     initQuoteOfTheDay();
-    applyAllLocks();
-
     initMobileSectionObserver();
+    initAdminPanel();        // hidden admin panel
 
-    setTimeout(() => {
-        initInstantTapFeedback();
-    }, 600);
+    setTimeout(initInstantTapFeedback, 600);
 });
 
-// ─── BURGER MENU DECORATION INJECTION ────────────────────────────────
-let _burgerDecorated = false;
+// ─── DARK MODE ────────────────────────────────────────────────────────
+function initDarkMode() {
+    const body = document.body;
+    const saved = localStorage.getItem("darkMode");
 
-function injectBurgerMenuDecoration() {
-    if (window.innerWidth > 768) return;
-    if (_burgerDecorated) return;
-    _burgerDecorated = true;
-
-    const navLinks = document.getElementById("navLinks");
-    if (!navLinks) return;
-
-    const links = navLinks.querySelectorAll("a[data-nav]");
-    const indices = ["01", "02", "03"];
-    links.forEach((link, i) => {
-        const text = link.textContent.trim();
-        link.innerHTML = `
-            <span class="menu-index">${indices[i] || "0" + (i + 1)}</span>
-            <span class="menu-text">${text}</span>
-            <span class="menu-arrow">→</span>
-        `;
-    });
-
-    const topbar = document.createElement("div");
-    topbar.className = "nav-menu-topbar";
-    topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
-    navLinks.appendChild(topbar);
-
-    const bottombar = document.createElement("div");
-    bottombar.className = "nav-menu-bottombar";
-    bottombar.innerHTML = `
-        <span style="display:flex;align-items:center;gap:6px">
-            <span class="nav-menu-statusdot"></span>Available for work
-        </span>
-        <span>Based in Latvia</span>
-    `;
-    navLinks.appendChild(bottombar);
-
-    ["tl", "tr", "bl", "br"].forEach((pos) => {
-        const corner = document.createElement("div");
-        corner.className = `nav-menu-corner nav-menu-corner--${pos}`;
-        navLinks.appendChild(corner);
-    });
-
-    const line = document.createElement("div");
-    line.className = "nav-menu-line";
-    navLinks.appendChild(line);
-
-    const dotsWrap = document.createElement("div");
-    dotsWrap.className = "nav-menu-dots";
-    dotsWrap.innerHTML = `
-        <div class="nav-menu-dot"></div>
-        <div class="nav-menu-dot"></div>
-        <div class="nav-menu-dot"></div>
-        <div class="nav-menu-dot"></div>
-    `;
-    navLinks.appendChild(dotsWrap);
-}
-
-// ─── MOBILE SECTION SCROLL OBSERVER ──────────────────────────────────
-function initMobileSectionObserver() {
-    if (window.innerWidth > 768) return;
-
-    const sections = document.querySelectorAll(
-        ".about-section, .projects-section, .quote-section, .contact-section"
-    );
-
-    const observer = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                const el = entry.target;
-                if (entry.isIntersecting) {
-                    el.classList.add("section-visible");
-                    el.classList.remove("section-above");
-                } else {
-                    const rect = el.getBoundingClientRect();
-                    if (rect.top < 0) {
-                        el.classList.add("section-above");
-                        el.classList.remove("section-visible");
-                    } else {
-                        el.classList.remove("section-visible");
-                        el.classList.remove("section-above");
-                    }
-                }
-            });
-        },
-        { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
-    );
-
-    sections.forEach((s) => observer.observe(s));
-}
-
-// ─── INSTANT TAP FEEDBACK (mobile) ───────────────────────────────────
-function initInstantTapFeedback() {
-    if (window.innerWidth > 768) return;
-
-    const FLASH_DURATION = 150;
-
-    const logo = document.querySelector(".logo");
-    if (logo) {
-        logo.addEventListener("touchstart", () => {
-            logo.style.transition = "color 0.1s ease, transform 0.1s ease";
-            logo.style.color = "var(--color-accent)";
-            logo.style.transform = "scale(1.08) rotate(-4deg)";
-        }, { passive: true });
-        const logoReset = () => {
-            setTimeout(() => {
-                logo.style.color = "";
-                logo.style.transform = "";
-                setTimeout(() => { logo.style.transition = ""; }, 300);
-            }, FLASH_DURATION);
-        };
-        logo.addEventListener("touchend", logoReset, { passive: true });
-        logo.addEventListener("touchcancel", logoReset, { passive: true });
+    // Respect saved preference; otherwise check system preference
+    if (saved === "true") {
+        body.classList.add("dark-mode");
+    } else if (saved === null) {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            body.classList.add("dark-mode");
+            localStorage.setItem("darkMode", "true");
+        } else {
+            localStorage.setItem("darkMode", "false");
+        }
     }
 
-    document.querySelectorAll(".contact-link").forEach((el) => {
-        el.addEventListener("touchstart", () => {
-            el.style.transition = "border-color 0.1s ease, transform 0.1s ease";
-            el.style.borderColor = "var(--color-accent)";
-            el.style.transform = "translateX(5px)";
-        }, { passive: true });
-        const reset = () => {
-            setTimeout(() => {
-                el.style.borderColor = "";
-                el.style.transform = "";
-                setTimeout(() => { el.style.transition = ""; }, 300);
-            }, FLASH_DURATION);
-        };
-        el.addEventListener("touchend", reset, { passive: true });
-        el.addEventListener("touchcancel", reset, { passive: true });
-    });
+    const toggle = () => {
+        body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", body.classList.contains("dark-mode").toString());
+    };
 
-    const submitBtn = document.querySelector(".submit-button");
-    if (submitBtn) {
-        submitBtn.addEventListener("touchstart", () => {
-            submitBtn.style.transition = "opacity 0.1s ease, transform 0.1s ease";
-            submitBtn.style.opacity = "0.78";
-            submitBtn.style.transform = "scale(0.98)";
-        }, { passive: true });
-        const reset = () => {
-            setTimeout(() => {
-                submitBtn.style.opacity = "";
-                submitBtn.style.transform = "";
-                setTimeout(() => { submitBtn.style.transition = ""; }, 300);
-            }, FLASH_DURATION);
-        };
-        submitBtn.addEventListener("touchend", reset, { passive: true });
-        submitBtn.addEventListener("touchcancel", reset, { passive: true });
-    }
-
-    document.querySelectorAll(".feature-item").forEach((el) => {
-        el.addEventListener("touchstart", () => {
-            el.style.transition = "transform 0.1s ease, border-left-width 0.1s ease";
-            el.style.borderLeftWidth = "6px";
-            el.style.transform = "translateX(5px)";
-        }, { passive: true });
-        const reset = () => {
-            setTimeout(() => {
-                el.style.borderLeftWidth = "";
-                el.style.transform = "";
-                setTimeout(() => { el.style.transition = ""; }, 300);
-            }, FLASH_DURATION + 50);
-        };
-        el.addEventListener("touchend", reset, { passive: true });
-        el.addEventListener("touchcancel", reset, { passive: true });
-    });
-
-    document.querySelectorAll(".project-grid-card").forEach((el) => {
-        el.addEventListener("touchstart", () => {
-            el.style.transition = "border-color 0.1s ease";
-            el.style.borderColor = "var(--color-accent)";
-        }, { passive: true });
-        const reset = () => {
-            setTimeout(() => {
-                el.style.borderColor = "";
-                setTimeout(() => { el.style.transition = ""; }, 300);
-            }, FLASH_DURATION);
-        };
-        el.addEventListener("touchend", reset, { passive: true });
-        el.addEventListener("touchcancel", reset, { passive: true });
-    });
+    document.getElementById("darkModeToggleDesktop")?.addEventListener("click", toggle);
+    document.getElementById("darkModeToggle")?.addEventListener("click", toggle);
 }
 
-// ─── LOADING SCREEN ───────────────────────────────────────────────────
+// ─── LOADING SCREEN ────────────────────────────────────────────────────
 function initLoadingScreen() {
     const loader = document.getElementById("loadingScreen");
     if (!loader) return;
@@ -279,7 +130,7 @@ function initLoadingScreen() {
     }, 2300);
 }
 
-// ─── LOCK SYSTEM ──────────────────────────────────────────────────────
+// ─── LOCK SYSTEM ───────────────────────────────────────────────────────
 const LOCK_CONFIG = {
     projectsLocked: {
         sectionId: "projects",
@@ -299,9 +150,11 @@ const LOCK_CONFIG = {
 };
 
 function applyAllLocks() {
-    if (typeof SiteConfig === "undefined") return;
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem("siteConfig") || "{}"); } catch (e) {}
+    const merged = { ...(window.SiteConfig || {}), ...saved };
     Object.entries(LOCK_CONFIG).forEach(([key, opts]) =>
-        applySectionLock(SiteConfig[key] === true, opts)
+        applySectionLock(merged[key] === true, opts)
     );
 }
 
@@ -309,47 +162,39 @@ function applySectionLock(isLocked, opts) {
     const section = document.getElementById(opts.sectionId);
     const overlay = document.getElementById(opts.overlayId);
     if (!section || !overlay) return;
+
     const els = opts.interactiveSelectors
-        ? opts.interactiveSelectors.flatMap((s) => [...document.querySelectorAll(s)])
+        ? opts.interactiveSelectors.flatMap(s => [...document.querySelectorAll(s)])
         : [];
+
     if (isLocked) {
         section.classList.add("is-locked");
-        els.forEach((el) => {
-            el.setAttribute("tabindex", "-1");
-            el.setAttribute("aria-hidden", "true");
-        });
-        section._lockHandler = (e) => {
-            if (!e.target.closest(".section-lock-overlay")) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        };
-        section.addEventListener("click", section._lockHandler, true);
-        section.addEventListener("touchstart", section._lockHandler, { capture: true, passive: false });
-        section.addEventListener("touchend", section._lockHandler, { capture: true, passive: false });
+        els.forEach(el => { el.setAttribute("tabindex", "-1"); el.setAttribute("aria-hidden", "true"); });
+        if (!section._lockHandler) {
+            section._lockHandler = e => {
+                if (!e.target.closest(".section-lock-overlay")) { e.preventDefault(); e.stopPropagation(); }
+            };
+            section.addEventListener("click", section._lockHandler, true);
+            section.addEventListener("touchstart", section._lockHandler, { capture: true, passive: false });
+            section.addEventListener("touchend", section._lockHandler, { capture: true, passive: false });
+        }
     } else {
         section.classList.remove("is-locked");
-        els.forEach((el) => {
-            el.removeAttribute("tabindex");
-            el.removeAttribute("aria-hidden");
-        });
+        els.forEach(el => { el.removeAttribute("tabindex"); el.removeAttribute("aria-hidden"); });
         if (section._lockHandler) {
             section.removeEventListener("click", section._lockHandler, true);
             section.removeEventListener("touchstart", section._lockHandler, true);
             section.removeEventListener("touchend", section._lockHandler, true);
+            section._lockHandler = null;
         }
     }
 }
 
-// ─── PROJECT GRID ─────────────────────────────────────────────────────
+// ─── PROJECT GRID ──────────────────────────────────────────────────────
 function initProjects() {
     const grid = document.getElementById("projectGrid");
     if (!grid) return;
-
-    projects.forEach((p, i) => {
-        const card = createProjectCard(p, i);
-        grid.appendChild(card);
-    });
+    projects.forEach((p, i) => grid.appendChild(createProjectCard(p, i)));
 }
 
 function createProjectCard(project, index) {
@@ -359,7 +204,6 @@ function createProjectCard(project, index) {
     card.style.animationDelay = `${index * 0.15}s`;
 
     const hasImage = project.imageUrl && project.imageUrl.trim() !== "";
-
     const imageHtml = hasImage
         ? `<div class="pgc-image"><img src="${project.imageUrl}" alt="${project.title}" /></div>`
         : `<div class="pgc-image pgc-image--empty">
@@ -367,8 +211,7 @@ function createProjectCard(project, index) {
                <span class="pgc-empty-label">${project.emptyLabel || "In Development"}</span>
            </div>`;
 
-    const tagsHtml = project.tags.map((t) => `<span class="pgc-tag">${t}</span>`).join("");
-
+    const tagsHtml = project.tags.map(t => `<span class="pgc-tag">${t}</span>`).join("");
     const linkHtml = project.pageUrl && project.pageUrl !== "#"
         ? `<a href="${project.pageUrl}" class="pgc-link">View Project <span class="pgc-link-arrow">→</span></a>`
         : `<span class="pgc-link pgc-link--disabled">Coming Soon <span class="pgc-link-arrow">·</span></span>`;
@@ -387,17 +230,12 @@ function createProjectCard(project, index) {
             </div>
             <p class="pgc-desc">${project.description}</p>
             <div class="pgc-tags">${tagsHtml}</div>
-            <div class="pgc-footer">
-                ${linkHtml}
-                <span class="pgc-index-ghost">${project.index}</span>
-            </div>
-        </div>
-    `;
-
+            <div class="pgc-footer">${linkHtml}<span class="pgc-index-ghost">${project.index}</span></div>
+        </div>`;
     return card;
 }
 
-// ─── QUOTE ────────────────────────────────────────────────────────────
+// ─── QUOTE OF THE DAY ──────────────────────────────────────────────────
 function initQuoteOfTheDay() {
     const quoteText = document.getElementById("quoteText");
     const quoteAuthor = document.getElementById("quoteAuthor");
@@ -409,126 +247,64 @@ function initQuoteOfTheDay() {
     quoteAuthor.textContent = `— ${q.author}`;
 }
 
-// ─── SCROLL ANIMATIONS ────────────────────────────────────────────────
+// ─── SCROLL ANIMATIONS ─────────────────────────────────────────────────
 function initScrollAnimations() {
     const observer = new IntersectionObserver(
-        (entries) =>
-            entries.forEach((e) => {
-                if (e.isIntersecting) {
-                    e.target.classList.add("revealed");
-                    observer.unobserve(e.target);
-                }
-            }),
+        entries => entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add("revealed"); observer.unobserve(e.target); }
+        }),
         { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
     );
-    document.querySelectorAll("[data-reveal]").forEach((el) => observer.observe(el));
+    document.querySelectorAll("[data-reveal]").forEach(el => observer.observe(el));
 }
 
-// ─── SMOOTH SCROLL ────────────────────────────────────────────────────
-// iOS Safari has a known bug where JS-driven requestAnimationFrame scroll
-// combined with css scroll-behavior:smooth causes stuttering/glitching.
-// On mobile we disable css smooth-scroll on <html> and use a clean
-// JS easing scroll that doesn't fight the browser compositor.
+// ─── SMOOTH SCROLL ─────────────────────────────────────────────────────
+function isMobile() { return window.innerWidth <= 768; }
 
-function isMobile() {
-    return window.innerWidth <= 768;
-}
-
-/**
- * iOS-safe smooth scroll.
- * Uses a clean easeInOutQuad and temporarily removes scroll-behavior:smooth
- * on the html element to prevent iOS Safari double-interpolation glitches.
- * Duration is slightly longer on mobile for a relaxed feel.
- */
-function smoothScrollToMobile(targetY, duration) {
-    // Disable native smooth scroll during our animation to avoid iOS glitch
+function smoothScrollTo(targetY, duration) {
+    // Disable native smooth scroll to prevent iOS double-interpolation
     document.documentElement.style.scrollBehavior = "auto";
     document.body.style.scrollBehavior = "auto";
 
     const startY = window.pageYOffset;
-    const distance = targetY - startY;
+    const dist = targetY - startY;
     let startTime = null;
 
-    // easeInOutQuad — smooth start and end, no bounce
-    function ease(t) {
-        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    }
+    const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
-    function step(currentTime) {
-        if (!startTime) startTime = currentTime;
-        const elapsed = currentTime - startTime;
+    const step = now => {
+        if (!startTime) startTime = now;
+        const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = ease(progress);
-
-        window.scrollTo(0, startY + distance * easedProgress);
-
+        window.scrollTo(0, startY + dist * ease(progress));
         if (progress < 1) {
             requestAnimationFrame(step);
         } else {
-            // Restore smooth scroll behaviour after animation completes
             document.documentElement.style.scrollBehavior = "";
             document.body.style.scrollBehavior = "";
         }
-    }
-
+    };
     requestAnimationFrame(step);
 }
 
-/**
- * Desktop smooth scroll — original cubic easing, unchanged.
- */
-function smoothScrollToDesktop(to, dur) {
-    const start = window.pageYOffset;
-    const dist = to - start;
-    let t0 = null;
-    const ease = (t, b, c, d) => {
-        t /= d / 2;
-        if (t < 1) return (c / 2) * t * t * t + b;
-        t -= 2;
-        return (c / 2) * (t * t * t + 2) + b;
-    };
-    const tick = (now) => {
-        if (!t0) t0 = now;
-        const e = now - t0;
-        window.scrollTo(0, ease(e, start, dist, dur));
-        if (e < dur) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-}
-
 function initSmoothScroll() {
-    document.querySelectorAll("[data-nav]").forEach((link) => {
-        link.addEventListener("click", (e) => {
+    document.querySelectorAll("[data-nav]").forEach(link => {
+        link.addEventListener("click", e => {
             e.preventDefault();
             const target = document.querySelector(link.getAttribute("href"));
             if (!target) return;
-
             const targetY = target.offsetTop - 80;
-
             if (isMobile()) {
-                // Mobile: close the burger menu first, then scroll after a short
-                // delay so the menu close animation doesn't fight the scroll.
-                // Duration: 900ms — noticeable but smooth, matches the AJ logo feel.
                 closeBurgerMenu();
-                setTimeout(() => {
-                    smoothScrollToMobile(targetY, 900);
-                }, 80);
+                setTimeout(() => smoothScrollTo(targetY, 900), 80);
             } else {
-                // Desktop: original behaviour, unchanged
-                smoothScrollToDesktop(targetY, 1200);
+                smoothScrollTo(targetY, 1200);
             }
         });
     });
 }
 
-// ─── BURGER MENU ─────────────────────────────────────────────────────
-// Extracted close logic into its own function so smoothScroll can call it.
-let _burgerCloseCallback = null;
-
-function closeBurgerMenu() {
-    if (_burgerCloseCallback) _burgerCloseCallback();
-}
-
+// ─── HERO ANIMATION ────────────────────────────────────────────────────
 function initHeroAnimation() {
     setTimeout(() => {
         document.querySelector(".title-line")?.classList.add("revealed");
@@ -536,20 +312,16 @@ function initHeroAnimation() {
     }, 300);
 }
 
+// ─── SCROLL INDICATOR ──────────────────────────────────────────────────
 function initScrollIndicator() {
     const el = document.getElementById("scrollIndicator");
-    if (!el) return;
-
-    if (window.innerWidth <= 768) return;
+    if (!el || window.innerWidth <= 768) return;
 
     let visible = true;
     let fadeTimeout = null;
 
     const enableFade = () => {
-        el.style.animation = "none";
-        el.style.transition = "opacity 0.9s ease, transform 0.9s ease";
-        el.style.opacity = "1";
-        el.style.transform = "translateX(-50%) translateY(0)";
+        el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
         window.removeEventListener("scroll", enableFade);
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
@@ -562,9 +334,7 @@ function initScrollIndicator() {
             el.style.opacity = "0";
             el.style.transform = "translateX(-50%) translateY(14px)";
             clearTimeout(fadeTimeout);
-            fadeTimeout = setTimeout(() => {
-                el.style.visibility = "hidden";
-            }, 900);
+            fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 900);
         } else if (!shouldHide && !visible) {
             visible = true;
             clearTimeout(fadeTimeout);
@@ -577,6 +347,7 @@ function initScrollIndicator() {
     setTimeout(enableFade, 2800);
 }
 
+// ─── PARALLAX ─────────────────────────────────────────────────────────
 let ticking = false;
 window.addEventListener("scroll", () => {
     if (!ticking) {
@@ -593,18 +364,20 @@ window.addEventListener("scroll", () => {
         });
         ticking = true;
     }
-});
+}, { passive: true });
 
+// ─── EMAIL FORM ────────────────────────────────────────────────────────
 function initEmailForm() {
     const emailButton = document.getElementById("emailButton");
     const emailFormContainer = document.getElementById("emailFormContainer");
     const emailForm = document.getElementById("emailForm");
     const formConfirmation = document.getElementById("formConfirmation");
     const formError = document.getElementById("formError");
-    const submitButton = emailForm.querySelector(".submit-button");
+    const submitButton = emailForm?.querySelector(".submit-button");
+    if (!emailButton || !emailForm) return;
     let formIsOpen = false;
 
-    emailButton.addEventListener("click", (e) => {
+    emailButton.addEventListener("click", e => {
         e.preventDefault();
         formIsOpen = !formIsOpen;
         if (formIsOpen) {
@@ -612,43 +385,39 @@ function initEmailForm() {
             setTimeout(() => emailFormContainer.scrollIntoView({ behavior: "smooth", block: "nearest" }), 100);
         } else {
             emailFormContainer.classList.remove("active");
-            formConfirmation.classList.remove("show");
-            formError.classList.remove("show");
+            formConfirmation?.classList.remove("show");
+            formError?.classList.remove("show");
         }
     });
 
-    emailForm.addEventListener("submit", async (e) => {
+    emailForm.addEventListener("submit", async e => {
         e.preventDefault();
         submitButton.disabled = true;
         submitButton.textContent = "Sending...";
-        formConfirmation.classList.remove("show");
-        formError.classList.remove("show");
+        formConfirmation?.classList.remove("show");
+        formError?.classList.remove("show");
         try {
-            const res = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                body: new FormData(emailForm),
-            });
+            const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(emailForm) });
             const data = await res.json();
             if (data.success) {
-                formConfirmation.classList.add("show");
+                formConfirmation?.classList.add("show");
                 emailForm.reset();
                 submitButton.disabled = false;
                 submitButton.textContent = "Send Message";
                 setTimeout(() => {
-                    formConfirmation.classList.remove("show");
+                    formConfirmation?.classList.remove("show");
                     setTimeout(() => {
                         emailFormContainer.classList.remove("active");
                         formIsOpen = false;
-                        document.getElementById("contact").scrollIntoView({ behavior: "smooth", block: "start" });
+                        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
                     }, 500);
                 }, 3000);
             } else throw new Error(data.message || "Something went wrong.");
         } catch (err) {
-            formError.textContent = `✗ ${err.message || "Network error."}`;
-            formError.classList.add("show");
+            if (formError) { formError.textContent = `✗ ${err.message || "Network error."}`; formError.classList.add("show"); }
             submitButton.disabled = false;
             submitButton.textContent = "Send Message";
-            setTimeout(() => formError.classList.remove("show"), 5000);
+            setTimeout(() => formError?.classList.remove("show"), 5000);
         }
     });
 
@@ -657,16 +426,62 @@ function initEmailForm() {
         const r = emailFormContainer.getBoundingClientRect();
         if (r.bottom < 0 || r.top > window.innerHeight + 200) {
             emailFormContainer.classList.remove("active");
-            formConfirmation.classList.remove("show");
-            formError.classList.remove("show");
+            formConfirmation?.classList.remove("show");
+            formError?.classList.remove("show");
             formIsOpen = false;
         }
     };
 }
 
+// ─── NAV SCROLL ────────────────────────────────────────────────────────
 function initNavScroll() {
     const nav = document.querySelector(".main-nav");
-    window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 50));
+    if (!nav) return;
+    window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 50), { passive: true });
+}
+
+// ─── BURGER MENU ───────────────────────────────────────────────────────
+let _burgerCloseCallback = null;
+
+function closeBurgerMenu() { if (_burgerCloseCallback) _burgerCloseCallback(); }
+
+let _burgerDecorated = false;
+function injectBurgerMenuDecoration() {
+    if (window.innerWidth > 768 || _burgerDecorated) return;
+    _burgerDecorated = true;
+
+    const navLinks = document.getElementById("navLinks");
+    if (!navLinks) return;
+
+    navLinks.querySelectorAll("a[data-nav]").forEach((link, i) => {
+        const text = link.textContent.trim();
+        link.innerHTML = `<span class="menu-index">${["01","02","03"][i] || "0"+(i+1)}</span><span class="menu-text">${text}</span><span class="menu-arrow">→</span>`;
+    });
+
+    const topbar = document.createElement("div");
+    topbar.className = "nav-menu-topbar";
+    topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
+    navLinks.appendChild(topbar);
+
+    const bottombar = document.createElement("div");
+    bottombar.className = "nav-menu-bottombar";
+    bottombar.innerHTML = `<span style="display:flex;align-items:center;gap:6px"><span class="nav-menu-statusdot"></span>Available for work</span><span>Based in Latvia</span>`;
+    navLinks.appendChild(bottombar);
+
+    ["tl","tr","bl","br"].forEach(pos => {
+        const corner = document.createElement("div");
+        corner.className = `nav-menu-corner nav-menu-corner--${pos}`;
+        navLinks.appendChild(corner);
+    });
+
+    const line = document.createElement("div");
+    line.className = "nav-menu-line";
+    navLinks.appendChild(line);
+
+    const dotsWrap = document.createElement("div");
+    dotsWrap.className = "nav-menu-dots";
+    dotsWrap.innerHTML = `<div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div>`;
+    navLinks.appendChild(dotsWrap);
 }
 
 function initBurgerMenu() {
@@ -690,63 +505,614 @@ function initBurgerMenu() {
         document.body.style.overflow = "";
     };
 
-    // Expose close to smoothScroll
     _burgerCloseCallback = close;
 
-    burger.addEventListener("click", (e) => {
-        e.stopPropagation();
-        burger.classList.contains("active") ? close() : open();
-    });
+    burger.addEventListener("click", e => { e.stopPropagation(); burger.classList.contains("active") ? close() : open(); });
     overlay.addEventListener("click", close);
-
-    // Nav links: close is now handled inside initSmoothScroll for [data-nav] links.
-    // For any other links (non data-nav) inside the menu, close normally.
-    links.querySelectorAll("a:not([data-nav])").forEach((a) => a.addEventListener("click", close));
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && links.classList.contains("active")) close();
-    });
+    links.querySelectorAll("a:not([data-nav])").forEach(a => a.addEventListener("click", close));
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && links.classList.contains("active")) close(); });
 
     let resizeTimer;
     window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            if (window.innerWidth > 768) {
-                burger.classList.remove("active");
-                links.classList.remove("active");
-                overlay.classList.remove("active");
-                document.body.style.overflow = "";
-                links.style.display = "";
-                links.style.position = "";
-                links.style.top = "";
-                links.style.left = "";
-                links.style.width = "";
-                links.style.height = "";
-                links.style.flexDirection = "";
-                links.style.justifyContent = "";
-                links.style.alignItems = "";
-                links.style.zIndex = "";
-                links.style.padding = "";
-                links.style.gap = "";
-                links.style.background = "";
-                links.style.backgroundImage = "";
-                links.style.overflow = "";
-            }
+            if (window.innerWidth > 768) { close(); }
         }, 50);
     });
 }
 
-function initDarkMode() {
-    const d = document.getElementById("darkModeToggleDesktop");
-    const m = document.getElementById("darkModeToggle");
-    const b = document.body;
-    const s = localStorage.getItem("darkMode");
-    if (s === "true") b.classList.add("dark-mode");
-    else if (!s) localStorage.setItem("darkMode", "false");
-    const t = () => {
-        b.classList.toggle("dark-mode");
-        localStorage.setItem("darkMode", b.classList.contains("dark-mode"));
+// ─── MOBILE SECTION OBSERVER ───────────────────────────────────────────
+function initMobileSectionObserver() {
+    if (window.innerWidth > 768) return;
+    const sections = document.querySelectorAll(".about-section,.projects-section,.quote-section,.contact-section");
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const el = entry.target;
+            if (entry.isIntersecting) {
+                el.classList.add("section-visible");
+                el.classList.remove("section-above");
+            } else {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < 0) { el.classList.add("section-above"); el.classList.remove("section-visible"); }
+                else { el.classList.remove("section-visible","section-above"); }
+            }
+        });
+    }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
+    sections.forEach(s => observer.observe(s));
+}
+
+// ─── INSTANT TAP FEEDBACK ─────────────────────────────────────────────
+function initInstantTapFeedback() {
+    if (window.innerWidth > 768) return;
+    const FLASH = 150;
+
+    const flash = (el, inStyles, dur = FLASH) => {
+        el.addEventListener("touchstart", () => Object.assign(el.style, { transition: "all 0.1s ease", ...inStyles }), { passive: true });
+        const reset = () => setTimeout(() => { Object.keys(inStyles).forEach(k => el.style[k] = ""); setTimeout(() => el.style.transition = "", 300); }, dur);
+        el.addEventListener("touchend", reset, { passive: true });
+        el.addEventListener("touchcancel", reset, { passive: true });
     };
-    d?.addEventListener("click", t);
-    m?.addEventListener("click", t);
+
+    const logo = document.querySelector(".logo");
+    if (logo) flash(logo, { color: "var(--color-accent)", transform: "scale(1.08) rotate(-4deg)" });
+
+    document.querySelectorAll(".contact-link").forEach(el => flash(el, { borderColor: "var(--color-accent)", transform: "translateX(5px)" }));
+    document.querySelectorAll(".feature-item").forEach(el => flash(el, { borderLeftWidth: "6px", transform: "translateX(5px)" }, FLASH + 50));
+    document.querySelectorAll(".project-grid-card").forEach(el => flash(el, { borderColor: "var(--color-accent)" }));
+
+    const submitBtn = document.querySelector(".submit-button");
+    if (submitBtn) flash(submitBtn, { opacity: "0.78", transform: "scale(0.98)" });
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN PANEL
+   - Desktop: type "admin" anywhere (not in an input)
+   - Mobile:  triple-tap the footer
+   - PIN:     2604 (change ADMIN_PIN below)
+   ═══════════════════════════════════════════════════════════════ */
+
+function initAdminPanel() {
+    const ADMIN_PIN = "2604";
+    const TRIGGER_WORD = ["a","d","m","i","n"];
+
+    let keyBuffer = [];
+    let panelOpen = false;
+    let pinVerified = false;
+    let db = null;
+    let activityLog = [];
+    let pinInput = "";
+
+    const DEFAULTS = {
+        projectsLocked: false,
+        aboutLocked: false,
+        contactLocked: false,
+        accentColor: "#c17a5a",
+        secondaryColor: "#7a8e7e",
+        heroStatus: "Online",
+        heroSubtext: "Currently, working on project",
+        availableForWork: true,
+        maintenanceMode: false,
+        footerNote: "Designed & developed with care.",
+    };
+
+    // ── Firebase ──────────────────────────────────────────────
+    function initFirebase() {
+        if (!window.FIREBASE_ENABLED || typeof firebase === "undefined") return;
+        try {
+            if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+            db = firebase.database();
+            // Live-listen: apply changes to site for all visitors
+            db.ref("siteConfig").on("value", snap => {
+                const data = snap.val();
+                if (!data) return;
+                applyToSite(data);
+                if (panelOpen && pinVerified) populatePanel(data);
+            });
+        } catch (e) { console.warn("[Admin] Firebase:", e.message); }
+    }
+
+    function pushFirebase(config) {
+        if (!db) return;
+        db.ref("siteConfig").set({ ...config, _lastUpdated: Date.now() });
+    }
+
+    function fetchLog() {
+        if (!db) return;
+        db.ref("adminLog").orderByChild("ts").limitToLast(20).once("value", snap => {
+            const data = snap.val();
+            if (!data) return;
+            activityLog = Object.values(data).sort((a,b) => b.ts - a.ts);
+            renderLog();
+        });
+    }
+
+    // ── Config ────────────────────────────────────────────────
+    function getConfig() {
+        try { return JSON.parse(localStorage.getItem("siteConfig") || "{}"); } catch { return {}; }
+    }
+
+    function saveConfig(updates) {
+        const next = { ...DEFAULTS, ...getConfig(), ...updates, _lastUpdated: Date.now() };
+        localStorage.setItem("siteConfig", JSON.stringify(next));
+        applyToSite(next);
+        pushFirebase(next);
+        logActivity("Updated: " + Object.keys(updates).join(", "));
+        return next;
+    }
+
+    // ── Apply config to the live site ────────────────────────
+    function applyToSite(config) {
+        const c = { ...DEFAULTS, ...config };
+
+        // Section locks
+        applySectionLock(c.aboutLocked, LOCK_CONFIG.aboutLocked);
+        applySectionLock(c.projectsLocked, LOCK_CONFIG.projectsLocked);
+        applySectionLock(c.contactLocked, LOCK_CONFIG.contactLocked);
+
+        // Colors
+        document.documentElement.style.setProperty("--color-accent", c.accentColor);
+        document.documentElement.style.setProperty("--color-secondary", c.secondaryColor);
+
+        // Hero status
+        const statusEl = document.querySelector(".hero-status");
+        if (statusEl) {
+            const dot = statusEl.querySelector(".hero-status-dot");
+            statusEl.innerHTML = "";
+            if (dot) statusEl.appendChild(dot);
+            statusEl.appendChild(document.createTextNode(" " + (c.heroStatus || "Online")));
+        }
+        const metaEl = document.querySelector(".hero-meta-item");
+        if (metaEl) metaEl.textContent = c.heroSubtext || DEFAULTS.heroSubtext;
+
+        // Footer
+        const footerNote = document.querySelector(".footer-note");
+        if (footerNote) footerNote.textContent = c.footerNote || DEFAULTS.footerNote;
+
+        // Available for work dot
+        document.querySelectorAll(".nav-menu-statusdot").forEach(d => {
+            d.style.background = c.availableForWork ? "var(--color-accent)" : "#666";
+        });
+
+        // Maintenance banner
+        let banner = document.getElementById("adminMaintenanceBanner");
+        if (c.maintenanceMode) {
+            if (!banner) {
+                banner = document.createElement("div");
+                banner.id = "adminMaintenanceBanner";
+                banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99998;background:var(--color-accent);color:#fff;text-align:center;padding:8px 16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;";
+                banner.textContent = "⚠ Site under maintenance — some features may be unavailable";
+                document.body.prepend(banner);
+            }
+        } else { banner?.remove(); }
+    }
+
+    // ── Activity log ──────────────────────────────────────────
+    function logActivity(msg) {
+        const entry = { msg, ts: Date.now() };
+        activityLog.unshift(entry);
+        if (activityLog.length > 20) activityLog.pop();
+        db?.ref("adminLog").push(entry);
+        renderLog();
+    }
+
+    function renderLog() {
+        const el = document.getElementById("adminActivityLog");
+        if (!el) return;
+        el.innerHTML = activityLog.slice(0,8).map(e => {
+            const t = new Date(e.ts).toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" });
+            return `<div class="adm-log-item"><span class="adm-log-time">${t}</span><span class="adm-log-msg">${e.msg}</span></div>`;
+        }).join("") || '<span class="adm-log-empty">No activity yet</span>';
+    }
+
+    // ── Keyboard trigger ─────────────────────────────────────
+    document.addEventListener("keydown", e => {
+        if (["INPUT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
+        keyBuffer.push(e.key.toLowerCase());
+        if (keyBuffer.length > TRIGGER_WORD.length) keyBuffer.shift();
+        if (keyBuffer.join("") === TRIGGER_WORD.join("")) { keyBuffer = []; openPanel(); }
+    });
+
+    // ── Triple-tap footer (mobile) ────────────────────────────
+    let tapCount = 0, tapTimer = null;
+    document.addEventListener("touchend", e => {
+        if (!e.target.closest(".main-footer")) return;
+        tapCount++;
+        clearTimeout(tapTimer);
+        tapTimer = setTimeout(() => tapCount = 0, 800);
+        if (tapCount >= 3) { tapCount = 0; openPanel(); }
+    });
+
+    // ── Open / Close ──────────────────────────────────────────
+    function openPanel() {
+        if (panelOpen) return;
+        panelOpen = true;
+        injectPanel();
+        requestAnimationFrame(() => {
+            document.getElementById("adminPanel")?.classList.add("adm--visible");
+            if (!pinVerified) showPin(); else showMain();
+        });
+    }
+
+    function closePanel() {
+        panelOpen = false;
+        const p = document.getElementById("adminPanel");
+        if (p) { p.classList.remove("adm--visible"); setTimeout(() => p.remove(), 500); }
+    }
+
+    // ── Inject HTML ───────────────────────────────────────────
+    function injectPanel() {
+        if (document.getElementById("adminPanel")) return;
+
+        // Inject styles once
+        if (!document.getElementById("adminPanelStyles")) {
+            const style = document.createElement("style");
+            style.id = "adminPanelStyles";
+            style.textContent = `
+                #adminPanel{position:fixed;inset:0;z-index:999999;pointer-events:none;font-family:var(--font-mono,'IBM Plex Mono',monospace)}
+                #adminPanel.adm--visible{pointer-events:all}
+                .adm-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0);backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0);transition:all .4s ease}
+                .adm--visible .adm-backdrop{background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+                .adm-drawer{position:absolute;bottom:0;left:0;right:0;max-height:92vh;background:var(--color-bg);border-top:3px solid var(--color-accent);border-radius:20px 20px 0 0;box-shadow:0 -24px 80px rgba(0,0,0,.22);transform:translateY(100%);transition:transform .45s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;overflow:hidden}
+                .adm--visible .adm-drawer{transform:translateY(0)}
+                @media(min-width:769px){.adm-drawer{left:auto;right:0;top:0;bottom:0;width:360px;max-height:100vh;border-radius:0;border-top:none;border-left:3px solid var(--color-accent);transform:translateX(100%)}
+                .adm--visible .adm-drawer{transform:translateX(0)}}
+                .adm-handle{width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:12px auto 0;flex-shrink:0;cursor:grab}
+                @media(min-width:769px){.adm-handle{display:none}}
+                .adm-screen{display:flex;flex-direction:column;flex:1;overflow:hidden}
+                .adm-screen--off{display:none!important}
+                /* PIN */
+                .adm-pin-wrap{display:flex;flex-direction:column;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+                .adm-pin-head{text-align:center;padding:2rem 1.5rem .75rem}
+                .adm-pin-icon{width:52px;height:52px;border-radius:50%;background:rgba(193,122,90,.1);border:1px solid rgba(193,122,90,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--color-accent)}
+                .adm-pin-title{font-family:var(--font-display,cursive);font-size:1.4rem;font-weight:400;color:var(--color-text);margin-bottom:.3rem}
+                .adm-pin-sub{font-size:11px;color:var(--color-secondary);letter-spacing:.04em}
+                .adm-pin-dots{display:flex;justify-content:center;gap:16px;padding:1.25rem 1.5rem}
+                .adm-pin-dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--color-border);background:transparent;transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+                .adm-pin-dot--on{background:var(--color-accent);border-color:var(--color-accent);transform:scale(1.12)}
+                .adm-pin-dots--err .adm-pin-dot{border-color:#e05555;background:#e05555;animation:admShake .4s ease}
+                .adm-pin-dots--ok .adm-pin-dot{border-color:var(--color-secondary);background:var(--color-secondary)}
+                @keyframes admShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+                .adm-pin-err{text-align:center;font-size:11px;color:#e05555;letter-spacing:.05em;min-height:16px;margin-bottom:.5rem}
+                .adm-pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 1.25rem}
+                .adm-key{height:58px;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-display,cursive);font-size:1.4rem;cursor:pointer;border-radius:10px;transition:all .15s ease;-webkit-tap-highlight-color:transparent}
+                .adm-key:active{transform:scale(.9);background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
+                .adm-key--blank{background:transparent;border-color:transparent;pointer-events:none}
+                .adm-pin-cancel{display:block;width:calc(100% - 2.5rem);margin:1rem 1.25rem 1.5rem;padding:11px;background:transparent;border:1px solid var(--color-border);color:var(--color-secondary);font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s ease;-webkit-tap-highlight-color:transparent}
+                .adm-pin-cancel:hover{border-color:var(--color-accent);color:var(--color-accent)}
+                /* MAIN */
+                .adm-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem .875rem;border-bottom:1px solid var(--color-border);flex-shrink:0;background:var(--color-bg);position:sticky;top:0;z-index:2}
+                .adm-header-l{display:flex;align-items:center;gap:8px}
+                .adm-live-dot{width:8px;height:8px;border-radius:50%;background:var(--color-accent);animation:admPulse 2s ease-in-out infinite;flex-shrink:0}
+                @keyframes admPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+                .adm-title{font-family:var(--font-display,cursive);font-size:1.05rem;font-weight:400;color:var(--color-text);letter-spacing:-.01em}
+                .adm-ver{font-size:10px;letter-spacing:.1em;color:var(--color-secondary);opacity:.5}
+                .adm-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--color-border);background:transparent;color:var(--color-secondary);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s ease;-webkit-tap-highlight-color:transparent}
+                .adm-close:hover{border-color:var(--color-accent);color:var(--color-accent)}
+                .adm-body{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;padding-bottom:calc(1rem + env(safe-area-inset-bottom,0))}
+                .adm-sec{padding:.875rem 1.25rem;border-bottom:1px solid var(--color-border)}
+                .adm-sec:last-child{border-bottom:none}
+                .adm-sec--danger{background:rgba(224,85,85,.04)}
+                .adm-sec-lbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-secondary);opacity:.6;margin-bottom:.75rem}
+                /* Stats */
+                .adm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+                .adm-stat{background:var(--color-light);border:1px solid var(--color-border);padding:9px 6px;text-align:center;border-radius:6px}
+                .adm-stat-v{font-family:var(--font-display,cursive);font-size:.85rem;color:var(--color-text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+                .adm-stat-l{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-secondary);opacity:.6}
+                /* Toggles */
+                .adm-toggles{display:flex;flex-direction:column}
+                .adm-trow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--color-border);font-size:13px;color:var(--color-text)}
+                .adm-trow:last-child{border-bottom:none}
+                .adm-sw{position:relative;display:inline-flex;align-items:center;cursor:pointer}
+                .adm-sw input{position:absolute;opacity:0;width:0;height:0}
+                .adm-sw-track{width:40px;height:22px;background:var(--color-border);border-radius:11px;position:relative;transition:background .25s ease;border:1px solid var(--color-border)}
+                .adm-sw input:checked+.adm-sw-track{background:var(--color-accent)}
+                .adm-sw-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.15);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+                .adm-sw input:checked+.adm-sw-track .adm-sw-thumb{transform:translateX(18px)}
+                /* Colors */
+                .adm-colors{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+                .adm-clr-item{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--color-secondary);letter-spacing:.04em;cursor:pointer}
+                .adm-clr-row{display:flex;align-items:center;gap:8px;background:var(--color-light);border:1px solid var(--color-border);border-radius:6px;padding:6px 10px;transition:border-color .2s}
+                .adm-clr-row:hover{border-color:var(--color-accent)}
+                .adm-clr-item input[type=color]{width:20px;height:20px;border:none;border-radius:4px;cursor:pointer;padding:0;background:none;-webkit-appearance:none;flex-shrink:0}
+                .adm-clr-item input[type=color]::-webkit-color-swatch-wrapper{padding:0;border-radius:4px}
+                .adm-clr-item input[type=color]::-webkit-color-swatch{border:none;border-radius:4px}
+                .adm-clr-hex{font-family:var(--font-mono);font-size:11px;color:var(--color-text);letter-spacing:.04em}
+                /* Fields */
+                .adm-field{margin-bottom:9px}
+                .adm-field label{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-secondary);margin-bottom:4px}
+                .adm-input{width:100%;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-mono);font-size:13px;padding:8px 10px;border-radius:6px;transition:border-color .2s;-webkit-appearance:none}
+                .adm-input:focus{border-color:var(--color-accent);outline:none}
+                /* Buttons */
+                .adm-btn{display:block;width:100%;padding:10px;background:var(--color-accent);color:#fff;border:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s ease;margin-top:4px;-webkit-tap-highlight-color:transparent}
+                .adm-btn:hover{opacity:.85;transform:translateY(-1px)}
+                .adm-btn:active{transform:scale(.98)}
+                .adm-btn--ghost{background:transparent;color:var(--color-secondary);border:1px solid var(--color-border);margin-top:8px}
+                .adm-btn--ghost:hover{border-color:var(--color-accent);color:var(--color-accent)}
+                .adm-btn--danger{background:rgba(224,85,85,.1);color:#e05555;border:1px solid rgba(224,85,85,.2)}
+                .adm-btn--danger:hover{background:#e05555;color:#fff}
+                /* Log */
+                .adm-log{max-height:150px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+                .adm-log-item{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--color-border);font-size:11px}
+                .adm-log-item:last-child{border-bottom:none}
+                .adm-log-time{color:var(--color-accent);flex-shrink:0;opacity:.75}
+                .adm-log-msg{color:var(--color-text);opacity:.7}
+                .adm-log-empty{font-size:11px;color:var(--color-secondary);opacity:.5;padding:6px 0;display:block}
+                /* Dark mode extras */
+                body.dark-mode .adm-key{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.07)}
+                body.dark-mode .adm-stat{background:rgba(255,255,255,.04)}
+                body.dark-mode .adm-input{background:rgba(255,255,255,.05)}
+            `;
+            document.head.appendChild(style);
+        }
+
+        const el = document.createElement("div");
+        el.id = "adminPanel";
+        el.innerHTML = `
+          <div class="adm-backdrop" id="admBackdrop"></div>
+          <div class="adm-drawer" id="admDrawer">
+            <div class="adm-handle" id="admHandle"></div>
+
+            <!-- PIN SCREEN -->
+            <div class="adm-screen" id="admPinScreen">
+              <div class="adm-pin-wrap">
+                <div class="adm-pin-head">
+                  <div class="adm-pin-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <h2 class="adm-pin-title">Admin Access</h2>
+                  <p class="adm-pin-sub">Enter PIN to continue</p>
+                </div>
+                <div class="adm-pin-dots" id="admPinDots">
+                  <div class="adm-pin-dot"></div><div class="adm-pin-dot"></div>
+                  <div class="adm-pin-dot"></div><div class="adm-pin-dot"></div>
+                </div>
+                <div class="adm-pin-err" id="admPinErr"></div>
+                <div class="adm-pin-pad">
+                  ${[1,2,3,4,5,6,7,8,9,"",0,"⌫"].map(k=>`<button class="adm-key ${k===''?'adm-key--blank':''}" data-k="${k}">${k}</button>`).join("")}
+                </div>
+                <button class="adm-pin-cancel" id="admPinCancel">Cancel</button>
+              </div>
+            </div>
+
+            <!-- MAIN SCREEN -->
+            <div class="adm-screen adm-screen--off" id="admMainScreen">
+              <div class="adm-header">
+                <div class="adm-header-l">
+                  <div class="adm-live-dot"></div>
+                  <span class="adm-title">Control Panel</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="adm-ver">AJ / 2026</span>
+                  <button class="adm-close" id="admClose">✕</button>
+                </div>
+              </div>
+              <div class="adm-body">
+
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Site Status</div>
+                  <div class="adm-stats">
+                    <div class="adm-stat"><div class="adm-stat-v" id="admStatSync">—</div><div class="adm-stat-l">Firebase</div></div>
+                    <div class="adm-stat"><div class="adm-stat-v" id="admStatTime">—</div><div class="adm-stat-l">Last Edit</div></div>
+                    <div class="adm-stat"><div class="adm-stat-v" id="admStatDate">—</div><div class="adm-stat-l">Date</div></div>
+                  </div>
+                </div>
+
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Section Locks</div>
+                  <div class="adm-toggles">
+                    <div class="adm-trow"><span>About</span><label class="adm-sw"><input type="checkbox" id="admLockAbout"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
+                    <div class="adm-trow"><span>Projects</span><label class="adm-sw"><input type="checkbox" id="admLockProjects"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
+                    <div class="adm-trow"><span>Contact</span><label class="adm-sw"><input type="checkbox" id="admLockContact"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
+                    <div class="adm-trow"><span>Maintenance Banner</span><label class="adm-sw"><input type="checkbox" id="admMaintenance"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
+                    <div class="adm-trow"><span>Available for Work</span><label class="adm-sw"><input type="checkbox" id="admAvailable"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
+                  </div>
+                </div>
+
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Theme Colors</div>
+                  <div class="adm-colors">
+                    <label class="adm-clr-item"><span>Accent</span><div class="adm-clr-row"><input type="color" id="admColorAccent" value="#c17a5a"><span class="adm-clr-hex" id="admAccentHex">#c17a5a</span></div></label>
+                    <label class="adm-clr-item"><span>Secondary</span><div class="adm-clr-row"><input type="color" id="admColorSecondary" value="#7a8e7e"><span class="adm-clr-hex" id="admSecHex">#7a8e7e</span></div></label>
+                  </div>
+                  <button class="adm-btn adm-btn--ghost" id="admResetColors">Reset Colors</button>
+                </div>
+
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Hero &amp; Footer Text</div>
+                  <div class="adm-field"><label>Status Label</label><input class="adm-input" id="admHeroStatus" type="text" maxlength="30" placeholder="Online"></div>
+                  <div class="adm-field"><label>Subtext</label><input class="adm-input" id="admHeroSub" type="text" maxlength="60" placeholder="Currently, working on project"></div>
+                  <div class="adm-field"><label>Footer Note</label><input class="adm-input" id="admFooterNote" type="text" maxlength="80" placeholder="Designed & developed with care."></div>
+                  <button class="adm-btn" id="admSaveText">Save Text</button>
+                </div>
+
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Recent Activity</div>
+                  <div class="adm-log" id="adminActivityLog"><span class="adm-log-empty">Loading...</span></div>
+                </div>
+
+                <div class="adm-sec adm-sec--danger">
+                  <div class="adm-sec-lbl">Danger Zone</div>
+                  <button class="adm-btn adm-btn--danger" id="admResetAll">Reset All Settings</button>
+                  <button class="adm-btn adm-btn--ghost" id="admLockPanel">Lock Panel</button>
+                </div>
+
+              </div>
+            </div>
+          </div>`;
+        document.body.appendChild(el);
+        bindEvents();
+    }
+
+    // ── PIN logic ─────────────────────────────────────────────
+    function showPin() {
+        document.getElementById("admPinScreen")?.classList.remove("adm-screen--off");
+        document.getElementById("admMainScreen")?.classList.add("adm-screen--off");
+        pinInput = "";
+        updateDots();
+    }
+
+    function showMain() {
+        document.getElementById("admPinScreen")?.classList.add("adm-screen--off");
+        document.getElementById("admMainScreen")?.classList.remove("adm-screen--off");
+        loadMainPanel();
+        fetchLog();
+    }
+
+    function updateDots() {
+        document.querySelectorAll(".adm-pin-dot").forEach((d,i) =>
+            d.classList.toggle("adm-pin-dot--on", i < pinInput.length));
+    }
+
+    function handlePinKey(key) {
+        if (key === "⌫") { pinInput = pinInput.slice(0,-1); updateDots(); return; }
+        if (pinInput.length >= 4) return;
+        pinInput += key;
+        updateDots();
+        if (pinInput.length === 4) {
+            if (pinInput === ADMIN_PIN) {
+                pinVerified = true;
+                document.getElementById("admPinDots")?.classList.add("adm-pin-dots--ok");
+                setTimeout(showMain, 380);
+                logActivity("Panel unlocked");
+            } else {
+                document.getElementById("admPinDots")?.classList.add("adm-pin-dots--err");
+                if (document.getElementById("admPinErr")) document.getElementById("admPinErr").textContent = "Incorrect PIN";
+                setTimeout(() => {
+                    document.getElementById("admPinDots")?.classList.remove("adm-pin-dots--err");
+                    if (document.getElementById("admPinErr")) document.getElementById("admPinErr").textContent = "";
+                    pinInput = ""; updateDots();
+                }, 750);
+            }
+        }
+    }
+
+    // ── Load main panel data ──────────────────────────────────
+    function loadMainPanel() {
+        const load = data => {
+            const c = { ...DEFAULTS, ...data };
+            setCheck("admLockAbout", c.aboutLocked);
+            setCheck("admLockProjects", c.projectsLocked);
+            setCheck("admLockContact", c.contactLocked);
+            setCheck("admMaintenance", c.maintenanceMode);
+            setCheck("admAvailable", c.availableForWork);
+            setVal("admColorAccent", c.accentColor);
+            setVal("admColorSecondary", c.secondaryColor);
+            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = c.accentColor;
+            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = c.secondaryColor;
+            setVal("admHeroStatus", c.heroStatus);
+            setVal("admHeroSub", c.heroSubtext);
+            setVal("admFooterNote", c.footerNote);
+            if (c._lastUpdated) {
+                const d = new Date(c._lastUpdated);
+                if (document.getElementById("admStatTime")) document.getElementById("admStatTime").textContent = d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+                if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = d.toLocaleDateString([],{month:"short",day:"numeric"});
+            } else {
+                if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([],{month:"short",day:"numeric"});
+            }
+        };
+
+        if (db) {
+            if (document.getElementById("admStatSync")) document.getElementById("admStatSync").textContent = "✓ Live";
+            db.ref("siteConfig").once("value").then(snap => load({ ...getConfig(), ...(snap.val()||{}) }));
+        } else {
+            if (document.getElementById("admStatSync")) document.getElementById("admStatSync").textContent = "Local";
+            load(getConfig());
+            if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([],{month:"short",day:"numeric"});
+        }
+    }
+
+    function populatePanel(data) {
+        if (!pinVerified || !panelOpen) return;
+        loadMainPanel();
+    }
+
+    function setCheck(id, val) { const el = document.getElementById(id); if (el) el.checked = !!val; }
+    function setVal(id, val) { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; }
+
+    // ── Bind all events ───────────────────────────────────────
+    function bindEvents() {
+        document.getElementById("admBackdrop")?.addEventListener("click", closePanel);
+        document.getElementById("admClose")?.addEventListener("click", closePanel);
+        document.getElementById("admPinCancel")?.addEventListener("click", closePanel);
+        document.getElementById("admLockPanel")?.addEventListener("click", () => { pinVerified = false; showPin(); });
+
+        // PIN keys
+        document.querySelectorAll(".adm-key:not(.adm-key--blank)").forEach(btn =>
+            btn.addEventListener("click", () => handlePinKey(btn.dataset.k))
+        );
+
+        // Section lock toggles
+        const toggleMap = {
+            admLockAbout: "aboutLocked",
+            admLockProjects: "projectsLocked",
+            admLockContact: "contactLocked",
+            admMaintenance: "maintenanceMode",
+            admAvailable: "availableForWork",
+        };
+        Object.entries(toggleMap).forEach(([id, key]) => {
+            document.getElementById(id)?.addEventListener("change", e => saveConfig({ [key]: e.target.checked }));
+        });
+
+        // Color accent live preview
+        document.getElementById("admColorAccent")?.addEventListener("input", e => {
+            document.documentElement.style.setProperty("--color-accent", e.target.value);
+            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = e.target.value;
+        });
+        document.getElementById("admColorAccent")?.addEventListener("change", e => saveConfig({ accentColor: e.target.value }));
+
+        // Color secondary live preview
+        document.getElementById("admColorSecondary")?.addEventListener("input", e => {
+            document.documentElement.style.setProperty("--color-secondary", e.target.value);
+            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = e.target.value;
+        });
+        document.getElementById("admColorSecondary")?.addEventListener("change", e => saveConfig({ secondaryColor: e.target.value }));
+
+        // Reset colors
+        document.getElementById("admResetColors")?.addEventListener("click", () => {
+            saveConfig({ accentColor: DEFAULTS.accentColor, secondaryColor: DEFAULTS.secondaryColor });
+            setVal("admColorAccent", DEFAULTS.accentColor);
+            setVal("admColorSecondary", DEFAULTS.secondaryColor);
+            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = DEFAULTS.accentColor;
+            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = DEFAULTS.secondaryColor;
+        });
+
+        // Save text
+        document.getElementById("admSaveText")?.addEventListener("click", () => {
+            saveConfig({
+                heroStatus: document.getElementById("admHeroStatus")?.value || DEFAULTS.heroStatus,
+                heroSubtext: document.getElementById("admHeroSub")?.value || DEFAULTS.heroSubtext,
+                footerNote: document.getElementById("admFooterNote")?.value || DEFAULTS.footerNote,
+            });
+            const btn = document.getElementById("admSaveText");
+            if (btn) { const orig = btn.textContent; btn.textContent = "Saved ✓"; btn.style.background = "var(--color-secondary)"; setTimeout(()=>{ btn.textContent=orig; btn.style.background=""; }, 1500); }
+        });
+
+        // Reset all
+        document.getElementById("admResetAll")?.addEventListener("click", () => {
+            if (!confirm("Reset all settings to defaults?")) return;
+            localStorage.removeItem("siteConfig");
+            pushFirebase({ ...DEFAULTS, _lastUpdated: Date.now() });
+            applyToSite(DEFAULTS);
+            loadMainPanel();
+            logActivity("Reset all settings to defaults");
+        });
+
+        // Swipe down to close (mobile)
+        const drawer = document.getElementById("admDrawer");
+        const handle = document.getElementById("admHandle");
+        if (drawer && handle) {
+            let startY = 0, curY = 0, dragging = false;
+            handle.addEventListener("touchstart", e => { startY = e.touches[0].clientY; dragging = true; drawer.style.transition = "none"; }, { passive: true });
+            document.addEventListener("touchmove", e => { if (!dragging) return; curY = e.touches[0].clientY; drawer.style.transform = `translateY(${Math.max(0, curY-startY)}px)`; }, { passive: true });
+            document.addEventListener("touchend", () => { if (!dragging) return; dragging = false; drawer.style.transition = ""; if (curY - startY > 120) closePanel(); else drawer.style.transform = ""; });
+        }
+    }
+
+    // ── Bootstrap ─────────────────────────────────────────────
+    initFirebase();
+
+    // Apply any saved config immediately on page load
+    const saved = getConfig();
+    if (Object.keys(saved).length > 0) applyToSite(saved);
 }
