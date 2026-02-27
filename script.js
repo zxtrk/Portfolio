@@ -72,134 +72,215 @@ const dailyQuotes = [
 
 /* ═══════════════════════════════════════════════════════════════
    SOUND ENGINE
+   Three distinct sounds, each crafted to suit its moment:
+     • playLoadComplete  — warm welcoming piano arrival chord
+     • playBurgerOpen    — crisp soft piano-key UI tap
+     • playAdminOpen     — smooth ambient unlock swoosh (once/session)
+   All sounds respect the global mute toggle stored in localStorage.
+   AudioContext unlock queue handles browsers that block audio until
+   a user gesture has occurred.
    ═══════════════════════════════════════════════════════════════ */
 const SoundEngine = (() => {
-    let ctx  = null;
-    let _adminSoundPlayed = false;
-    // Queue of functions to call once the AudioContext is running.
-    // Browsers block audio until a user gesture — we store pending
-    // sounds here and flush them the moment the context is unlocked.
-    let _pendingQueue = [];
+    let ctx = null;
+    let _adminSoundPlayed    = false;
+    let _pendingQueue        = [];
     let _unlockListenersAdded = false;
 
-    // ── Create context eagerly so it's ready when unlocked ──────
+    // ── Mute state — persisted in localStorage ────────────────
+    let _muted = localStorage.getItem("soundMuted") === "true";
+
+    function isMuted()       { return _muted; }
+    function setMuted(val) {
+        _muted = !!val;
+        localStorage.setItem("soundMuted", String(_muted));
+        // Notify any toggle UI that might be listening
+        document.dispatchEvent(new CustomEvent("soundMuteChanged", { detail: { muted: _muted } }));
+    }
+
+    // ── AudioContext bootstrap ────────────────────────────────
     function _ensureCtx() {
         if (ctx) return ctx;
         try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
         return ctx;
     }
 
-    // ── Unlock on any early user gesture ────────────────────────
     function _addUnlockListeners() {
         if (_unlockListenersAdded) return;
         _unlockListenersAdded = true;
-        const events = ["mousedown", "touchstart", "keydown", "pointerdown"];
         const handler = () => {
             _ensureCtx();
             if (!ctx) return;
             ctx.resume().then(() => {
-                _pendingQueue.forEach(fn => { try { fn(); } catch (e) {} });
-                _pendingQueue = [];
+                const q = _pendingQueue.splice(0);
+                q.forEach(fn => { try { fn(); } catch (e) {} });
             });
         };
-        events.forEach(ev =>
+        ["mousedown","touchstart","keydown","pointerdown"].forEach(ev =>
             document.addEventListener(ev, handler, { once: true, passive: true })
         );
     }
 
-    // ── Schedule fn() as soon as AudioContext is running ────────
-    // If already running, calls fn() synchronously. Otherwise queues
-    // it for when the user first interacts with the page.
     function _whenReady(fn) {
+        if (_muted) return;
         _ensureCtx();
         if (!ctx) return;
         if (ctx.state === "running") {
             try { fn(); } catch (e) {}
         } else {
             _pendingQueue.push(fn);
-            // Also try an immediate resume (works if page is focused)
             ctx.resume().then(() => {
-                if (_pendingQueue.includes(fn)) {
-                    _pendingQueue = _pendingQueue.filter(f => f !== fn);
+                const idx = _pendingQueue.indexOf(fn);
+                if (idx !== -1) {
+                    _pendingQueue.splice(idx, 1);
                     try { fn(); } catch (e) {}
                 }
             }).catch(() => {});
         }
     }
 
-    /* ─────────────────────────────────────────────────────────────
-       WARM SINGING-BOWL CHIME
-       Three pure sine partials tuned to a major chord (C5 · G5 · C6),
-       struck 90 ms apart so they bloom in a gentle sequence.
-       Each note has a 15 ms soft attack and a long exponential ring —
-       like a mallet lightly tapping a crystal or Tibetan singing bowl.
-       A detuned twin pair on the root note adds subtle warmth/chorus
-       without any buzziness or harsh overtones.
-    ───────────────────────────────────────────────────────────── */
-    function _playCalmChime(ac) {
-        const t = ac.currentTime + 0.02;
-
-        // Gentle compressor — evens the blend, prevents clipping
-        const comp = ac.createDynamicsCompressor();
-        comp.threshold.value = -18;
-        comp.knee.value      = 12;
-        comp.ratio.value     = 3;
-        comp.attack.value    = 0.003;
-        comp.release.value   = 0.25;
-        comp.connect(ac.destination);
-
-        // One singing-bowl partial: pure sine, soft attack, long ring
-        function partial(freq, startTime, vol, decay, detuneCents) {
-            const osc  = ac.createOscillator();
-            const gain = ac.createGain();
-            osc.type  = "sine";
-            osc.frequency.value = freq;
-            if (detuneCents) osc.detune.value = detuneCents;
-            osc.connect(gain);
-            gain.connect(comp);
-            gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(vol, startTime + 0.015);
-            gain.gain.exponentialRampToValueAtTime(0.001, startTime + decay);
-            osc.start(startTime);
-            osc.stop(startTime + decay + 0.05);
-        }
-
-        // Strike 1 — C5 root with warm detuned twin pair
-        partial(523.25, t,        0.18, 2.0,  0);
-        partial(523.25, t,        0.09, 2.2, +6);
-        partial(523.25, t,        0.07, 2.2, -5);
-
-        // Strike 2 — G5 perfect fifth
-        partial(783.99, t + 0.09, 0.11, 1.7,  0);
-
-        // Strike 3 — C6 octave (soft sparkle on top)
-        partial(1046.50, t + 0.18, 0.07, 1.4,  0);
+    // ── Shared compressor factory ─────────────────────────────
+    function _makeComp(ac) {
+        const c = ac.createDynamicsCompressor();
+        c.threshold.value = -18; c.knee.value = 10;
+        c.ratio.value = 3; c.attack.value = 0.003; c.release.value = 0.2;
+        c.connect(ac.destination);
+        return c;
     }
 
-    // ── Public: plays every time the loading screen finishes ────
-    function playLoadComplete() {
-        _whenReady(() => {
-            if (ctx) _playCalmChime(ctx);
+    /* ─────────────────────────────────────────────────────────
+       1. LOAD COMPLETE — warm piano arrival
+       An arpeggiated E-major chord (E4 → G#4 → B4) played on a
+       soft synthesised piano: each note has 3 harmonics with
+       naturally-balanced amplitudes and an 8 ms percussive attack
+       followed by a smooth ~2 s decay — exactly like a piano key
+       releasing after being gently pressed.  The notes roll in
+       110 ms apart so it lands as a welcoming resolving arrival.
+    ───────────────────────────────────────────────────────────── */
+    function _playLoadComplete(ac) {
+        const comp = _makeComp(ac);
+        const t    = ac.currentTime + 0.03;
+
+        // Piano-like partial: fundamental + 2nd + 3rd harmonic
+        function pianoNote(fund, start, masterVol, decay) {
+            [[1, 1.0], [2, 0.28], [3, 0.10]].forEach(([mult, relVol]) => {
+                const osc  = ac.createOscillator();
+                const gain = ac.createGain();
+                osc.type = "sine";
+                osc.frequency.value = fund * mult;
+                osc.connect(gain); gain.connect(comp);
+                const vol = masterVol * relVol;
+                gain.gain.setValueAtTime(0, start);
+                gain.gain.linearRampToValueAtTime(vol, start + 0.008);
+                // Slight curved decay for a natural piano release feel
+                gain.gain.setValueAtTime(vol, start + 0.012);
+                gain.gain.exponentialRampToValueAtTime(vol * 0.35, start + 0.18);
+                gain.gain.exponentialRampToValueAtTime(0.001, start + decay);
+                osc.start(start); osc.stop(start + decay + 0.05);
+            });
+        }
+
+        pianoNote(329.63, t,          0.16, 2.1);   // E4
+        pianoNote(415.30, t + 0.11,   0.13, 1.9);   // G#4
+        pianoNote(493.88, t + 0.22,   0.10, 1.7);   // B4
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       2. BURGER OPEN — soft piano UI tap
+       A single C5 piano note, quiet and crisp — satisfying
+       button-click feedback without drawing attention.
+       Very short: sharp 5 ms attack, 320 ms total ring.
+    ───────────────────────────────────────────────────────────── */
+    function _playBurgerOpen(ac) {
+        const comp = _makeComp(ac);
+        const t    = ac.currentTime + 0.01;
+
+        [[523.25, 1.0], [1046.50, 0.22], [1569.75, 0.07]].forEach(([freq, relVol]) => {
+            const osc  = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            osc.connect(gain); gain.connect(comp);
+            gain.gain.setValueAtTime(0, t);
+            gain.gain.linearRampToValueAtTime(0.12 * relVol, t + 0.005);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+            osc.start(t); osc.stop(t + 0.36);
         });
     }
 
-    // ── Public: plays once per session when admin panel opens ───
+    /* ─────────────────────────────────────────────────────────
+       3. ADMIN OPEN — ambient unlock swoosh (once per session)
+       A smooth band-pass filtered noise whoosh that sweeps from
+       warm-low to airy-high over 480 ms, with a quiet sine that
+       rises an octave underneath for a sense of "opening".
+       Modern, clean — feels like unlocking something premium.
+    ───────────────────────────────────────────────────────────── */
+    function _playAdminOpen(ac) {
+        const comp = _makeComp(ac);
+        const t    = ac.currentTime + 0.01;
+        const dur  = 0.48;
+
+        // White noise buffer — 0.6 s of random samples
+        const bufLen = Math.ceil(ac.sampleRate * 0.6);
+        const buf    = ac.createBuffer(1, bufLen, ac.sampleRate);
+        const data   = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = ac.createBufferSource();
+        noise.buffer = buf;
+        noise.loop = false;
+
+        // Bandpass filter sweeps up through the frequency spectrum
+        const bpf = ac.createBiquadFilter();
+        bpf.type = "bandpass";
+        bpf.frequency.setValueAtTime(180, t);
+        bpf.frequency.exponentialRampToValueAtTime(3200, t + dur * 0.85);
+        bpf.Q.setValueAtTime(3.5, t);
+        bpf.Q.exponentialRampToValueAtTime(0.8, t + dur);
+
+        const noiseGain = ac.createGain();
+        noiseGain.gain.setValueAtTime(0, t);
+        noiseGain.gain.linearRampToValueAtTime(0.28, t + 0.022);
+        noiseGain.gain.setValueAtTime(0.28, t + dur * 0.55);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+        noise.connect(bpf); bpf.connect(noiseGain); noiseGain.connect(comp);
+        noise.start(t); noise.stop(t + dur + 0.05);
+
+        // Soft sine rising an octave underneath (E3 → E4) — the "unlock" feel
+        const sineOsc  = ac.createOscillator();
+        const sineGain = ac.createGain();
+        sineOsc.type = "sine";
+        sineOsc.frequency.setValueAtTime(164.81, t);
+        sineOsc.frequency.exponentialRampToValueAtTime(329.63, t + dur * 0.80);
+        sineGain.gain.setValueAtTime(0, t);
+        sineGain.gain.linearRampToValueAtTime(0.09, t + 0.018);
+        sineGain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        sineOsc.connect(sineGain); sineGain.connect(comp);
+        sineOsc.start(t); sineOsc.stop(t + dur + 0.05);
+    }
+
+    // ── Public API ────────────────────────────────────────────
+    function playLoadComplete() {
+        _whenReady(() => { if (ctx) _playLoadComplete(ctx); });
+    }
+
+    function playBurgerOpen() {
+        _whenReady(() => { if (ctx) _playBurgerOpen(ctx); });
+    }
+
     function playAdminOpen() {
         if (_adminSoundPlayed) return;
         _adminSoundPlayed = true;
-        _whenReady(() => {
-            if (ctx) _playCalmChime(ctx);
-        });
+        _whenReady(() => { if (ctx) _playAdminOpen(ctx); });
     }
 
-    // ── Public: resets guard so sound plays again next open ─────
     function resetAdminSoundGuard() { _adminSoundPlayed = false; }
 
-    // Eagerly create context and add unlock listeners on module init
+    // Bootstrap
     _ensureCtx();
     _addUnlockListeners();
 
-    return { playLoadComplete, playAdminOpen, resetAdminSoundGuard };
+    return { playLoadComplete, playBurgerOpen, playAdminOpen, resetAdminSoundGuard, isMuted, setMuted };
 })();
 
 /* ═══════════════════════════════════════════════════════════════
@@ -957,6 +1038,79 @@ function injectBurgerMenuDecoration() {
     topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
     navLinks.appendChild(topbar);
 
+    // ── Sound toggle row ──────────────────────────────────────
+    if (!document.getElementById("navSoundToggleStyles")) {
+        const st = document.createElement("style");
+        st.id = "navSoundToggleStyles";
+        st.textContent = `
+            .nav-sound-row {
+                position: absolute;
+                bottom: 62px; left: 0; right: 0;
+                display: flex; align-items: center; justify-content: space-between;
+                padding: 0.7rem 1.75rem;
+                border-top: 1px solid var(--color-border);
+                font-family: var(--font-mono);
+                font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
+                color: var(--color-secondary);
+                pointer-events: all;
+                z-index: 4;
+            }
+            .nav-sound-label { display: flex; align-items: center; gap: 7px; opacity: 0.65; }
+            .nav-sound-label svg { flex-shrink: 0; }
+            /* Pill toggle */
+            .nav-sound-sw { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+            .nav-sound-sw input { position: absolute; opacity: 0; width: 0; height: 0; }
+            .nav-sound-track {
+                width: 40px; height: 22px;
+                background: var(--color-border);
+                border-radius: 11px;
+                border: 1px solid var(--color-border);
+                position: relative;
+                transition: background 0.25s ease, border-color 0.25s ease;
+            }
+            .nav-sound-sw input:checked + .nav-sound-track { background: var(--color-accent); border-color: var(--color-accent); }
+            .nav-sound-thumb {
+                position: absolute; top: 2px; left: 2px;
+                width: 16px; height: 16px;
+                background: #fff; border-radius: 50%;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+                transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+            }
+            .nav-sound-sw input:checked + .nav-sound-track .nav-sound-thumb { transform: translateX(18px); }
+        `;
+        document.head.appendChild(st);
+    }
+
+    const soundRow = document.createElement("div");
+    soundRow.className = "nav-sound-row";
+    const isSoundOn = !SoundEngine.isMuted();
+    soundRow.innerHTML = `
+        <span class="nav-sound-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+            Sounds
+        </span>
+        <label class="nav-sound-sw">
+            <input type="checkbox" id="navSoundToggle" ${isSoundOn ? "checked" : ""}>
+            <span class="nav-sound-track"><span class="nav-sound-thumb"></span></span>
+        </label>
+    `;
+    navLinks.appendChild(soundRow);
+
+    // Wire up the toggle
+    const chk = soundRow.querySelector("#navSoundToggle");
+    chk.addEventListener("change", () => {
+        SoundEngine.setMuted(!chk.checked);
+    });
+    // Keep in sync if toggled from elsewhere
+    document.addEventListener("soundMuteChanged", ({ detail }) => {
+        chk.checked = !detail.muted;
+    });
+    // ─────────────────────────────────────────────────────────
+
     const bottombar = document.createElement("div");
     bottombar.className = "nav-menu-bottombar";
     bottombar.innerHTML = `<span style="display:flex;align-items:center;gap:6px"><span class="nav-menu-statusdot"></span>Available for work</span><span>Based in Latvia</span>`;
@@ -990,6 +1144,7 @@ function initBurgerMenu() {
         links.classList.add("active");
         overlay.classList.add("active");
         document.body.style.overflow = "hidden";
+        SoundEngine.playBurgerOpen();   // ← crisp piano tap on open
     };
 
     const close = () => {
