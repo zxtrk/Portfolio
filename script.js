@@ -75,80 +75,75 @@ const dailyQuotes = [
    ═══════════════════════════════════════════════════════════════ */
 const SoundEngine = (() => {
     let ctx = null;
+    // Admin-open plays only once per page session
+    let _adminSoundPlayed = false;
 
     function getCtx() {
         if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
         return ctx;
     }
 
-    // ── Bell tone helper ───────────────────────────────────────
-    function bell(ac, freq, startTime, vol = 0.07, decay = 1.2) {
-        // Fundamental
-        const osc = ac.createOscillator();
+    // ── Core bubble-pop builder ────────────────────────────────
+    // A smooth sine burst that starts at startFreq and glides down
+    // to endFreq over `dur` seconds — produces a clean, airy "pop".
+    function _bubblePop(ac, t, startFreq, endFreq, vol, dur) {
+        const osc  = ac.createOscillator();
         const gain = ac.createGain();
-        osc.type = "sine";
-        osc.frequency.value = freq;
-        osc.connect(gain);
-        gain.connect(ac.destination);
-        gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(vol, startTime + 0.012);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + decay);
-        osc.start(startTime);
-        osc.stop(startTime + decay + 0.05);
 
-        // Octave shimmer for warmth
-        const osc2 = ac.createOscillator();
-        const gain2 = ac.createGain();
-        osc2.type = "sine";
-        osc2.frequency.value = freq * 2.756; // harmonic shimmer
-        osc2.connect(gain2);
-        gain2.connect(ac.destination);
-        gain2.gain.setValueAtTime(0, startTime);
-        gain2.gain.linearRampToValueAtTime(vol * 0.22, startTime + 0.008);
-        gain2.gain.exponentialRampToValueAtTime(0.001, startTime + decay * 0.55);
-        osc2.start(startTime);
-        osc2.stop(startTime + decay * 0.6);
+        // Light lowpass so it stays soft, not harsh
+        const lpf = ac.createBiquadFilter();
+        lpf.type = "lowpass";
+        lpf.frequency.value = 900;
+        lpf.Q.value = 0.6;
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(startFreq, t);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, t + dur * 0.7);
+
+        osc.connect(lpf);
+        lpf.connect(gain);
+        gain.connect(ac.destination);
+
+        // Envelope: instant attack, smooth tail
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(vol, t + 0.010);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+        osc.start(t);
+        osc.stop(t + dur + 0.02);
     }
 
-    // ── Professional loading-complete chime ────────────────────
-    // Called when the loading screen finishes — soft, warm, ascending
+    // ── Loading-complete: three gentle ascending bubble pops ───
+    // Plays every time the loading screen finishes.
     function playLoadComplete() {
         try {
             const ac = getCtx();
-            // E5 → G5 → C6  (rising third + fourth — feels "open" and resolved)
-            const notes = [659.25, 783.99, 1046.50];
-            notes.forEach((freq, i) => {
-                bell(ac, freq, ac.currentTime + i * 0.13, 0.07, 1.4);
-            });
+            const now = ac.currentTime;
+            // Three soft pops — each one a little higher, spaced 130 ms apart
+            _bubblePop(ac, now + 0.00, 520,  390, 0.08, 0.30);
+            _bubblePop(ac, now + 0.13, 680,  510, 0.07, 0.28);
+            _bubblePop(ac, now + 0.26, 880,  660, 0.06, 0.26);
         } catch (e) { /* silently ignore if AudioContext blocked */ }
     }
 
-    // ── Professional admin-open chime ─────────────────────────
-    // Two clean bell tones: C6 followed by E6, with a soft bass C4 for weight
+    // ── Admin-open: one calm double-bubble pop — once per session ──
+    // After the first play, subsequent calls are silent until page reload.
     function playAdminOpen() {
+        if (_adminSoundPlayed) return;
+        _adminSoundPlayed = true;
         try {
             const ac = getCtx();
-
-            // Soft bass anchor
-            const bassOsc = ac.createOscillator();
-            const bassGain = ac.createGain();
-            bassOsc.type = "sine";
-            bassOsc.frequency.value = 261.63; // C4
-            bassOsc.connect(bassGain);
-            bassGain.connect(ac.destination);
-            bassGain.gain.setValueAtTime(0, ac.currentTime);
-            bassGain.gain.linearRampToValueAtTime(0.035, ac.currentTime + 0.018);
-            bassGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.38);
-            bassOsc.start(ac.currentTime);
-            bassOsc.stop(ac.currentTime + 0.45);
-
-            // Two bright chime notes
-            bell(ac, 1046.50, ac.currentTime + 0.02,  0.065, 1.1); // C6
-            bell(ac, 1318.51, ac.currentTime + 0.195, 0.055, 1.0); // E6
+            const now = ac.currentTime;
+            // Two pops — a mid one then a slightly higher one, tight together
+            _bubblePop(ac, now + 0.00, 600, 430, 0.075, 0.28);
+            _bubblePop(ac, now + 0.11, 780, 570, 0.060, 0.24);
         } catch (e) { /* silently ignore */ }
     }
 
-    return { playLoadComplete, playAdminOpen };
+    // ── Reset the once-guard (called when page settings are reset) ──
+    function resetAdminSoundGuard() { _adminSoundPlayed = false; }
+
+    return { playLoadComplete, playAdminOpen, resetAdminSoundGuard };
 })();
 
 /* ═══════════════════════════════════════════════════════════════
@@ -165,7 +160,7 @@ const FloatingImageSystem = (() => {
 
     // ── Responsive image size ─────────────────────────────────
     function getSize() {
-        return window.innerWidth <= 768 ? 230 : 340;
+        return window.innerWidth <= 768 ? 180 : 340;
     }
 
     // ── One-time global pointer/touch handlers ────────────────
@@ -306,14 +301,18 @@ const FloatingImageSystem = (() => {
             const style = document.createElement("style");
             style.id = "fis-css";
             style.textContent = `
-                @keyframes fisWave {
-                    0%,100% { transform: skewX(0deg) scaleY(1); }
-                    30%      { transform: skewX(3.5deg) scaleY(1.015); }
-                    70%      { transform: skewX(-2.5deg) scaleY(0.985); }
+                @keyframes fisBloomSpin {
+                    0%   { transform: scale(0.05) rotate(-180deg); opacity: 0; }
+                    18%  { opacity: 1; }
+                    55%  { transform: scale(1.12) rotate(12deg); }
+                    75%  { transform: scale(0.94) rotate(-4deg); }
+                    90%  { transform: scale(1.04) rotate(2deg); }
+                    100% { transform: scale(1.00) rotate(0deg); opacity: 1; }
                 }
-                @keyframes fisBob {
-                    0%,100% { transform: translateY(0px) rotate(0deg); }
-                    50%      { transform: translateY(-9px) rotate(0.6deg); }
+                @keyframes fisBobIdle {
+                    0%,100% { transform: translateY(0px)   rotate(0deg)   scale(1); }
+                    25%     { transform: translateY(-7px)  rotate(1.2deg) scale(1.01); }
+                    75%     { transform: translateY(5px)   rotate(-0.8deg) scale(0.99); }
                 }
             `;
             document.head.appendChild(style);
@@ -359,79 +358,83 @@ const FloatingImageSystem = (() => {
         f.el.style.zIndex = "9999996";
     }
 
-    // ── Flag-sweep entry animation ─────────────────────────────
-    //  The image enters from off-screen left, makes 2–3 big sweeps
-    //  left and right (like a flag on a string in the wind) with
-    //  decaying amplitude, then gracefully settles at a random spot.
+    // ── Entry animation: bloom-spin at center → arc to rest ───
+    //  Phase 1 (0 → 0.45): image blooms from a tiny dot at screen
+    //  center with a full 360° spin, growing to full size cleanly.
+    //  Phase 2 (0.45 → 1.0): smoothly arcs to its random resting
+    //  position with a gentle overshoot and settle.
     function _runEntryAnimation(f, imgEl, size) {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
 
-        // Random final resting position
-        const finalX = size * 0.4 + Math.random() * (vw - size * 1.6);
-        const finalY = 100   + Math.random() * (vh - size - 220);
+        // Bloom origin — roughly center-screen
+        const bloomX = vw * 0.5  - size * 0.5 + (Math.random() - 0.5) * vw * 0.18;
+        const bloomY = vh * 0.42 - size * 0.5 + (Math.random() - 0.5) * vh * 0.12;
 
-        // Center Y for the sweep arc
-        const sweepY = vh * 0.3 + Math.random() * vh * 0.25;
+        // Final resting position
+        const pad = size * 0.15;
+        const finalX = pad + Math.random() * (vw - size - pad * 2);
+        const finalY = 90  + Math.random() * (vh - size - 200);
 
-        // Keyframes: [progress 0-1, x, y, rotation, scale, opacity]
-        //  The horizontal keyframes create the "flag in wind" pendulum feel
-        const KF = [
-            [0.00, -size - 80, sweepY,      -10, 0.80, 0.0],
-            [0.03, -size * 0.1, sweepY,      -7, 0.92, 1.0], // fade in instantly
-            [0.20, vw * 0.80,  sweepY - 110,  7, 1.10, 1.0], // first big sweep right
-            [0.37, vw * 0.04,  sweepY + 85,  -5, 1.05, 1.0], // swing back left
-            [0.52, vw * 0.72,  sweepY - 55,   5, 1.07, 1.0], // second right (smaller)
-            [0.65, vw * 0.10,  sweepY + 38,  -3, 1.03, 1.0], // back left (smaller)
-            [0.76, vw * 0.60,  sweepY - 22,   3, 1.02, 1.0], // smaller right
-            [0.86, finalX,     finalY,         1, 1.01, 1.0], // heading to rest
-            [1.00, finalX,     finalY,         0, 1.00, 1.0], // settled
-        ];
+        const DURATION = 2000; // ms — snappy but satisfying
+        const start    = performance.now();
 
-        const DURATION = 3600; // ms — long enough to be dramatic
-        const start = performance.now();
-
-        const easeInOut = t => t < 0.5 ? 2*t*t : -1 + (4-2*t)*t;
-        const lerp = (a, b, t) => a + (b-a)*t;
-
-        // Interpolate over keyframes
-        const sample = (prog) => {
-            let i = 0;
-            while (i < KF.length - 2 && KF[i+1][0] <= prog) i++;
-            const k0 = KF[i], k1 = KF[i+1];
-            const span = k1[0] - k0[0];
-            const local = span === 0 ? 1 : easeInOut((prog - k0[0]) / span);
-            return {
-                x:   lerp(k0[1], k1[1], local),
-                y:   lerp(k0[2], k1[2], local),
-                rot: lerp(k0[3], k1[3], local),
-                sc:  lerp(k0[4], k1[4], local),
-                op:  lerp(k0[5], k1[5], local),
-            };
+        // Easing curves
+        const easeOut  = t => 1 - Math.pow(1 - t, 3);
+        const easeSpring = t => {
+            // Slight overshoot spring: ease-out with a small bounce at the end
+            const c4 = (2 * Math.PI) / 3;
+            if (t === 0) return 0;
+            if (t === 1) return 1;
+            return Math.pow(2, -9 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
         };
+        const lerp = (a, b, t) => a + (b - a) * t;
 
-        // Add flag-wave to the img during entry
-        imgEl.style.animation = "fisWave 0.55s ease-in-out infinite";
+        const PHASE_SPLIT = 0.42; // 0-PHASE_SPLIT = bloom, rest = travel
+
+        // CSS bloom animation on the img element for phase 1
+        imgEl.style.animation = `fisBloomSpin ${DURATION * PHASE_SPLIT}ms cubic-bezier(0.34,1.56,0.64,1) both`;
+
+        // Place wrapper at bloom origin immediately
+        f.el.style.opacity   = "1";
+        f.el.style.transform = `translate(${bloomX}px,${bloomY}px) scale(0.05)`;
 
         const tick = (now) => {
             if (!f.alive) return;
             const prog = Math.min((now - start) / DURATION, 1);
-            const s = sample(prog);
 
-            f.el.style.opacity   = String(s.op);
-            f.el.style.transform = `translate(${s.x}px,${s.y}px) rotate(${s.rot}deg) scale(${s.sc})`;
+            if (prog < PHASE_SPLIT) {
+                // Phase 1: bloom in place — CSS animation handles the img,
+                // wrapper just sits at bloomX/Y, scaling from tiny to full
+                const t  = prog / PHASE_SPLIT;
+                const sc = easeOut(t);
+                f.el.style.transform = `translate(${bloomX}px,${bloomY}px) scale(${sc})`;
+            } else {
+                // Phase 2: travel from bloomX/Y to finalX/Y with spring
+                const t  = (prog - PHASE_SPLIT) / (1 - PHASE_SPLIT);
+                const sp = easeSpring(t);
+                const x  = lerp(bloomX, finalX, sp);
+                const y  = lerp(bloomY, finalY, sp);
+                // Gentle tilt based on horizontal travel direction
+                const tilt = lerp(0, (finalX - bloomX > 0 ? 6 : -6), Math.sin(t * Math.PI));
+                f.el.style.transform = `translate(${x}px,${y}px) rotate(${tilt}deg)`;
+
+                // Stop the bloom CSS animation once travel begins
+                if (imgEl.style.animation) imgEl.style.animation = "";
+            }
 
             if (prog < 1) {
                 requestAnimationFrame(tick);
             } else {
-                // Entry done — switch to floating physics
-                imgEl.style.animation = "";
+                // Settle into floating
                 f.x = finalX;
                 f.y = finalY;
                 f.vx = 0;
                 f.vy = 0;
                 f.phase = "floating";
                 f.el.style.pointerEvents = "all";
+                imgEl.style.animation = "";
+                f.el.style.transform = `translate(${finalX}px,${finalY}px) rotate(0deg)`;
                 _startPhysics(f, size);
             }
         };
@@ -439,13 +442,15 @@ const FloatingImageSystem = (() => {
         requestAnimationFrame(tick);
     }
 
-    // ── Low-gravity physics loop ──────────────────────────────
+    // ── Zero-gravity physics loop ─────────────────────────────
+    // No downward pull. Images float in place, drifting gently when
+    // idle and bouncing off edges. When thrown they decelerate smoothly.
     function _startPhysics(f, size) {
-        const GRAVITY = 0.038;  // very gentle pull
-        const DAMPING = 0.972;  // slow energy loss — floaty feel
-        const BOUNCE  = 0.42;   // partial bounce off walls
-        const BOB_AMP = 9;      // px — gentle idle bob amplitude
-        const BOB_SPD = 0.00165;// radians per ms
+        const DAMPING  = 0.968;  // gentle energy loss on throw
+        const BOUNCE   = 0.38;   // soft wall bounce
+        const BOB_AMP  = 8;      // px — idle drift amplitude
+        const BOB_SPD  = 0.00130;// rad/ms — slow, calming drift cycle
+        const DRIFT_AMP= 3.5;    // px — secondary horizontal drift
 
         let lastT = performance.now();
 
@@ -458,8 +463,7 @@ const FloatingImageSystem = (() => {
             lastT = now;
             f.floatT += dt;
 
-            // Physics step
-            f.vy += GRAVITY;
+            // No gravity — velocity decays to zero naturally
             f.x  += f.vx;
             f.y  += f.vy;
             f.vx *= DAMPING;
@@ -470,18 +474,18 @@ const FloatingImageSystem = (() => {
             if (f.x < 0)        { f.x = 0;         f.vx =  Math.abs(f.vx) * BOUNCE; }
             if (f.x > vw - size){ f.x = vw - size;  f.vx = -Math.abs(f.vx) * BOUNCE; }
             if (f.y < 0)        { f.y = 0;          f.vy =  Math.abs(f.vy) * BOUNCE; }
-            if (f.y > vh - 85)  { f.y = vh - 85;    f.vy = -Math.abs(f.vy) * BOUNCE; }
+            if (f.y > vh - 80)  { f.y = vh - 80;    f.vy = -Math.abs(f.vy) * BOUNCE; }
 
-            const speed = Math.sqrt(f.vx*f.vx + f.vy*f.vy);
+            const speed = Math.sqrt(f.vx * f.vx + f.vy * f.vy);
 
+            // Idle bob — two overlapping sine waves for organic feel
             let bobX = 0, bobY = 0;
-            if (speed < 0.6) {
-                // Gentle idle bob when nearly at rest
-                bobY = Math.sin(f.floatT * BOB_SPD) * BOB_AMP;
-                bobX = Math.sin(f.floatT * BOB_SPD * 0.71 + 1.3) * BOB_AMP * 0.38;
+            if (speed < 0.5) {
+                bobY = Math.sin(f.floatT * BOB_SPD)              * BOB_AMP;
+                bobX = Math.sin(f.floatT * BOB_SPD * 0.618 + 2.1) * DRIFT_AMP;
             }
 
-            const tilt = speed < 0.6 ? 0 : Math.max(-14, Math.min(14, f.vx * 1.6));
+            const tilt = speed < 0.5 ? 0 : Math.max(-12, Math.min(12, f.vx * 1.4));
 
             f.el.style.transform =
                 `translate(${f.x + bobX}px,${f.y + bobY}px) rotate(${tilt}deg)`;
@@ -1713,6 +1717,7 @@ function initAdminPanel() {
             pushFirebase({ ...DEFAULTS, _lastUpdated: Date.now() });
             applyToSite(DEFAULTS);
             loadMainPanel();
+            SoundEngine.resetAdminSoundGuard(); // allow admin sound to play again
             logActivity("Reset all settings to defaults");
         });
 
