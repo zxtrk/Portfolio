@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    PORTFOLIO — script.js
-   Includes: site logic + hidden admin panel (type "admin" / triple-tap footer)
+   Includes: site logic + hidden admin panel (type "hitman2" / triple-tap footer)
    ═══════════════════════════════════════════════════════════════ */
 
 "use strict";
@@ -70,6 +70,85 @@ const dailyQuotes = [
     { text: "The computer was born to solve problems that did not exist before.", author: "Bill Gates" },
 ];
 
+// ─── SOUND ENGINE ─────────────────────────────────────────────────────
+const SoundEngine = (() => {
+    let ctx = null;
+
+    function getCtx() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        return ctx;
+    }
+
+    // Soft chime / page-load sound
+    function playPageLoad() {
+        try {
+            const ac = getCtx();
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+            notes.forEach((freq, i) => {
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(freq, ac.currentTime);
+                const start = ac.currentTime + i * 0.13;
+                gain.gain.setValueAtTime(0, start);
+                gain.gain.linearRampToValueAtTime(0.12, start + 0.06);
+                gain.gain.exponentialRampToValueAtTime(0.001, start + 0.7);
+                osc.start(start);
+                osc.stop(start + 0.8);
+            });
+        } catch (e) { /* silently ignore if AudioContext blocked */ }
+    }
+
+    // Glitchy unlock / admin open sound
+    function playAdminOpen() {
+        try {
+            const ac = getCtx();
+            // Low thud
+            const buf = ac.createBuffer(1, ac.sampleRate * 0.08, ac.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2) * 0.4;
+            const src = ac.createBufferSource();
+            src.buffer = buf;
+            const bpf = ac.createBiquadFilter();
+            bpf.type = "bandpass";
+            bpf.frequency.value = 120;
+            bpf.Q.value = 0.8;
+            src.connect(bpf);
+            bpf.connect(ac.destination);
+            src.start(ac.currentTime);
+
+            // Glitch sweep
+            const osc = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.connect(gain);
+            gain.connect(ac.destination);
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(80, ac.currentTime + 0.05);
+            osc.frequency.exponentialRampToValueAtTime(400, ac.currentTime + 0.18);
+            gain.gain.setValueAtTime(0.08, ac.currentTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
+            osc.start(ac.currentTime + 0.05);
+            osc.stop(ac.currentTime + 0.3);
+
+            // High tick
+            const osc2 = ac.createOscillator();
+            const gain2 = ac.createGain();
+            osc2.connect(gain2);
+            gain2.connect(ac.destination);
+            osc2.type = "square";
+            osc2.frequency.value = 1200;
+            gain2.gain.setValueAtTime(0.05, ac.currentTime + 0.15);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.22);
+            osc2.start(ac.currentTime + 0.15);
+            osc2.stop(ac.currentTime + 0.25);
+        } catch (e) { /* silently ignore */ }
+    }
+
+    return { playPageLoad, playAdminOpen };
+})();
+
 // ─── INIT ──────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
     initDarkMode();          // first — avoids flash
@@ -95,7 +174,6 @@ function initDarkMode() {
     const body = document.body;
     const saved = localStorage.getItem("darkMode");
 
-    // Respect saved preference; otherwise check system preference
     if (saved === "true") {
         body.classList.add("dark-mode");
     } else if (saved === null) {
@@ -123,6 +201,8 @@ function initLoadingScreen() {
     document.body.style.overflow = "hidden";
     setTimeout(() => {
         loader.classList.add("loader-exit");
+        // Play page load sound when loader exits
+        SoundEngine.playPageLoad();
         setTimeout(() => {
             loader.style.display = "none";
             document.body.style.overflow = "";
@@ -262,7 +342,6 @@ function initScrollAnimations() {
 function isMobile() { return window.innerWidth <= 768; }
 
 function smoothScrollTo(targetY, duration) {
-    // Disable native smooth scroll to prevent iOS double-interpolation
     document.documentElement.style.scrollBehavior = "auto";
     document.body.style.scrollBehavior = "auto";
 
@@ -566,8 +645,88 @@ function initInstantTapFeedback() {
 
 
 /* ═══════════════════════════════════════════════════════════════
+   FUNNY IMAGE ANIMATOR
+   ═══════════════════════════════════════════════════════════════ */
+function runFunnyImageAnimation(imageSrc) {
+    // Remove any existing animation
+    const existing = document.getElementById("funnyImageAnimator");
+    if (existing) existing.remove();
+
+    const wrapper = document.createElement("div");
+    wrapper.id = "funnyImageAnimator";
+
+    // Inject styles
+    if (!document.getElementById("funnyAnimatorStyles")) {
+        const style = document.createElement("style");
+        style.id = "funnyAnimatorStyles";
+        style.textContent = `
+            #funnyImageAnimator {
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                pointer-events: none;
+                z-index: 9999998;
+                overflow: hidden;
+            }
+            .funny-img-el {
+                position: absolute;
+                width: 160px;
+                height: 160px;
+                object-fit: contain;
+                filter: drop-shadow(0 8px 24px rgba(0,0,0,0.35));
+                will-change: transform;
+                border-radius: 12px;
+            }
+            @keyframes funnySlide {
+                0%   { transform: translateX(-200px) translateY(0) rotate(-8deg) scale(0.8); opacity: 0; }
+                8%   { opacity: 1; transform: translateX(0) translateY(-20px) rotate(5deg) scale(1.1); }
+                20%  { transform: translateX(var(--tx1)) translateY(var(--ty1)) rotate(-4deg) scale(1.05); }
+                40%  { transform: translateX(var(--tx2)) translateY(var(--ty2)) rotate(8deg) scale(1.08); }
+                60%  { transform: translateX(var(--tx3)) translateY(var(--ty3)) rotate(-6deg) scale(1.0); }
+                80%  { transform: translateX(var(--tx4)) translateY(var(--ty4)) rotate(4deg) scale(1.06); }
+                90%  { opacity: 1; }
+                100% { transform: translateX(calc(100vw + 220px)) translateY(var(--ty4)) rotate(12deg) scale(0.9); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    const img = document.createElement("img");
+    img.className = "funny-img-el";
+    img.src = imageSrc;
+    img.alt = "funny";
+
+    // Randomise the waypoints so it's different every time
+    const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    img.style.setProperty("--tx1", `${rnd(Math.floor(vw * 0.15), Math.floor(vw * 0.3))}px`);
+    img.style.setProperty("--ty1", `${rnd(-80, 80)}px`);
+    img.style.setProperty("--tx2", `${rnd(Math.floor(vw * 0.35), Math.floor(vw * 0.5))}px`);
+    img.style.setProperty("--ty2", `${rnd(-120, 120)}px`);
+    img.style.setProperty("--tx3", `${rnd(Math.floor(vw * 0.55), Math.floor(vw * 0.7))}px`);
+    img.style.setProperty("--ty3", `${rnd(-60, 100)}px`);
+    img.style.setProperty("--tx4", `${rnd(Math.floor(vw * 0.72), Math.floor(vw * 0.85))}px`);
+    img.style.setProperty("--ty4", `${rnd(-80, 80)}px`);
+
+    // Vertical start position (mid-screen ish)
+    img.style.top = `${rnd(Math.floor(vh * 0.25), Math.floor(vh * 0.6))}px`;
+    img.style.left = "0";
+    img.style.animation = "funnySlide 3.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards";
+
+    wrapper.appendChild(img);
+    document.body.appendChild(wrapper);
+
+    // Clean up after animation
+    img.addEventListener("animationend", () => {
+        setTimeout(() => wrapper.remove(), 100);
+    });
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
    ADMIN PANEL
-   - Desktop: type "admin" anywhere (not in an input)
+   - Desktop: type "hitman2" anywhere (not in an input)
    - Mobile:  triple-tap the footer
    - PIN:     2604 (change ADMIN_PIN below)
    ═══════════════════════════════════════════════════════════════ */
@@ -591,7 +750,6 @@ function initAdminPanel() {
         secondaryColor: "#7a8e7e",
         heroStatus: "Online",
         heroSubtext: "Currently, working on project",
-        availableForWork: true,
         maintenanceMode: false,
         footerNote: "Designed & developed with care.",
     };
@@ -602,7 +760,6 @@ function initAdminPanel() {
         try {
             if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
             db = firebase.database();
-            // Live-listen: apply changes to site for all visitors
             db.ref("siteConfig").on("value", snap => {
                 const data = snap.val();
                 if (!data) return;
@@ -642,6 +799,8 @@ function initAdminPanel() {
     }
 
     // ── Apply config to the live site ────────────────────────
+    // FIX: Apply colors to BOTH :root and document.documentElement
+    // and also set inline style overrides so they take effect immediately
     function applyToSite(config) {
         const c = { ...DEFAULTS, ...config };
 
@@ -650,9 +809,27 @@ function initAdminPanel() {
         applySectionLock(c.projectsLocked, LOCK_CONFIG.projectsLocked);
         applySectionLock(c.contactLocked, LOCK_CONFIG.contactLocked);
 
-        // Colors
+        // ── COLORS (robust fix) ──────────────────────────────────
+        // Set on documentElement so :root picks them up
         document.documentElement.style.setProperty("--color-accent", c.accentColor);
         document.documentElement.style.setProperty("--color-secondary", c.secondaryColor);
+        // Also inject a <style> override for maximum specificity
+        let colorOverride = document.getElementById("adminColorOverride");
+        if (!colorOverride) {
+            colorOverride = document.createElement("style");
+            colorOverride.id = "adminColorOverride";
+            document.head.appendChild(colorOverride);
+        }
+        colorOverride.textContent = `
+            :root {
+                --color-accent: ${c.accentColor} !important;
+                --color-secondary: ${c.secondaryColor} !important;
+            }
+            body.dark-mode {
+                --color-accent: ${c.accentColor} !important;
+                --color-secondary: ${c.secondaryColor} !important;
+            }
+        `;
 
         // Hero status
         const statusEl = document.querySelector(".hero-status");
@@ -669,9 +846,9 @@ function initAdminPanel() {
         const footerNote = document.querySelector(".footer-note");
         if (footerNote) footerNote.textContent = c.footerNote || DEFAULTS.footerNote;
 
-        // Available for work dot
+        // Nav menu status dot color
         document.querySelectorAll(".nav-menu-statusdot").forEach(d => {
-            d.style.background = c.availableForWork ? "var(--color-accent)" : "#666";
+            d.style.background = "var(--color-accent)";
         });
 
         // Maintenance banner
@@ -727,6 +904,7 @@ function initAdminPanel() {
     function openPanel() {
         if (panelOpen) return;
         panelOpen = true;
+        SoundEngine.playAdminOpen(); // 🔊 play sound when admin opens
         injectPanel();
         requestAnimationFrame(() => {
             document.getElementById("adminPanel")?.classList.add("adm--visible");
@@ -744,7 +922,6 @@ function initAdminPanel() {
     function injectPanel() {
         if (document.getElementById("adminPanel")) return;
 
-        // Inject styles once
         if (!document.getElementById("adminPanelStyles")) {
             const style = document.createElement("style");
             style.id = "adminPanelStyles";
@@ -761,7 +938,6 @@ function initAdminPanel() {
                 @media(min-width:769px){.adm-handle{display:none}}
                 .adm-screen{display:flex;flex-direction:column;flex:1;overflow:hidden}
                 .adm-screen--off{display:none!important}
-                /* Mobile close button */
                 .adm-mobile-close{display:flex;width:calc(100% - 2.5rem);margin:0.75rem 1.25rem 0;padding:13px;background:var(--color-light);border:1px solid var(--color-border);color:var(--color-text);font-family:var(--font-mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-radius:8px;align-items:center;justify-content:center;gap:8px;transition:all .2s ease;-webkit-tap-highlight-color:transparent;flex-shrink:0}
                 .adm-mobile-close:active{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
                 @media(min-width:769px){.adm-mobile-close{display:none}}
@@ -836,6 +1012,23 @@ function initAdminPanel() {
                 .adm-btn--ghost:hover{border-color:var(--color-accent);color:var(--color-accent)}
                 .adm-btn--danger{background:rgba(224,85,85,.1);color:#e05555;border:1px solid rgba(224,85,85,.2)}
                 .adm-btn--danger:hover{background:#e05555;color:#fff}
+                /* Funny image button */
+                .adm-funny-btn{
+                    display:flex;align-items:center;justify-content:center;gap:10px;
+                    width:100%;padding:13px;
+                    background:linear-gradient(135deg,rgba(193,122,90,.12),rgba(122,142,126,.08));
+                    border:1px dashed var(--color-accent);
+                    color:var(--color-text);
+                    font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+                    cursor:pointer;border-radius:8px;
+                    transition:all .2s ease;margin-top:4px;
+                    -webkit-tap-highlight-color:transparent;
+                    position:relative;overflow:hidden;
+                }
+                .adm-funny-btn:hover{background:linear-gradient(135deg,rgba(193,122,90,.22),rgba(122,142,126,.14));transform:translateY(-1px);box-shadow:0 4px 16px rgba(193,122,90,.2)}
+                .adm-funny-btn:active{transform:scale(.97)}
+                .adm-funny-btn .funny-icon{font-size:18px;line-height:1;flex-shrink:0}
+                .adm-funny-label{transition:opacity .2s}
                 /* Log */
                 .adm-log{max-height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch}
                 .adm-log-item{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--color-border);font-size:12px}
@@ -848,6 +1041,8 @@ function initAdminPanel() {
                 body.dark-mode .adm-stat{background:rgba(255,255,255,.04)}
                 body.dark-mode .adm-input{background:rgba(255,255,255,.05)}
                 body.dark-mode .adm-mobile-close{background:rgba(255,255,255,.05)}
+                /* Hidden file input */
+                #admFunnyFileInput{position:absolute;opacity:0;pointer-events:none;width:0;height:0}
             `;
             document.head.appendChild(style);
         }
@@ -913,7 +1108,6 @@ function initAdminPanel() {
                     <div class="adm-trow"><span>Projects</span><label class="adm-sw"><input type="checkbox" id="admLockProjects"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
                     <div class="adm-trow"><span>Contact</span><label class="adm-sw"><input type="checkbox" id="admLockContact"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
                     <div class="adm-trow"><span>Maintenance Banner</span><label class="adm-sw"><input type="checkbox" id="admMaintenance"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
-                    <div class="adm-trow"><span>Available for Work</span><label class="adm-sw"><input type="checkbox" id="admAvailable"><span class="adm-sw-track"><span class="adm-sw-thumb"></span></span></label></div>
                   </div>
                 </div>
 
@@ -932,6 +1126,17 @@ function initAdminPanel() {
                   <div class="adm-field"><label>Subtext</label><input class="adm-input" id="admHeroSub" type="text" maxlength="60" placeholder="Currently, working on project"></div>
                   <div class="adm-field"><label>Footer Note</label><input class="adm-input" id="admFooterNote" type="text" maxlength="80" placeholder="Designed & developed with care."></div>
                   <button class="adm-btn" id="admSaveText">Save Text</button>
+                </div>
+
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Fun Stuff</div>
+                  <!-- Hidden file input -->
+                  <input type="file" id="admFunnyFileInput" accept="image/*" />
+                  <button class="adm-funny-btn" id="admFunnyBtn">
+                    <span class="funny-icon">🎉</span>
+                    <span class="adm-funny-label" id="admFunnyLabel">Launch Funny Image</span>
+                  </button>
+                  <p style="font-size:11px;color:var(--color-secondary);opacity:.5;margin-top:8px;text-align:center;letter-spacing:.04em;">Pick any image — it'll slide across the screen</p>
                 </div>
 
                 <div class="adm-sec">
@@ -1003,7 +1208,6 @@ function initAdminPanel() {
             setCheck("admLockProjects", c.projectsLocked);
             setCheck("admLockContact", c.contactLocked);
             setCheck("admMaintenance", c.maintenanceMode);
-            setCheck("admAvailable", c.availableForWork);
             setVal("admColorAccent", c.accentColor);
             setVal("admColorSecondary", c.secondaryColor);
             if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = c.accentColor;
@@ -1058,15 +1262,23 @@ function initAdminPanel() {
             admLockProjects: "projectsLocked",
             admLockContact: "contactLocked",
             admMaintenance: "maintenanceMode",
-            admAvailable: "availableForWork",
         };
         Object.entries(toggleMap).forEach(([id, key]) => {
             document.getElementById(id)?.addEventListener("change", e => saveConfig({ [key]: e.target.checked }));
         });
 
-        // Color accent — live preview on input, save on input+change
+        // Color accent — live preview on input, save on change
         let accentSaveTimer = null;
         document.getElementById("admColorAccent")?.addEventListener("input", e => {
+            // Immediately apply via the override style (fix for real-time preview)
+            const colorOverride = document.getElementById("adminColorOverride");
+            if (colorOverride) {
+                const secVal = document.getElementById("admColorSecondary")?.value || DEFAULTS.secondaryColor;
+                colorOverride.textContent = `
+                    :root { --color-accent: ${e.target.value} !important; --color-secondary: ${secVal} !important; }
+                    body.dark-mode { --color-accent: ${e.target.value} !important; --color-secondary: ${secVal} !important; }
+                `;
+            }
             document.documentElement.style.setProperty("--color-accent", e.target.value);
             if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = e.target.value;
             clearTimeout(accentSaveTimer);
@@ -1079,9 +1291,17 @@ function initAdminPanel() {
             saveConfig({ accentColor: e.target.value });
         });
 
-        // Color secondary — live preview on input, save on input+change
+        // Color secondary — live preview on input, save on change
         let secSaveTimer = null;
         document.getElementById("admColorSecondary")?.addEventListener("input", e => {
+            const colorOverride = document.getElementById("adminColorOverride");
+            if (colorOverride) {
+                const accVal = document.getElementById("admColorAccent")?.value || DEFAULTS.accentColor;
+                colorOverride.textContent = `
+                    :root { --color-accent: ${accVal} !important; --color-secondary: ${e.target.value} !important; }
+                    body.dark-mode { --color-accent: ${accVal} !important; --color-secondary: ${e.target.value} !important; }
+                `;
+            }
             document.documentElement.style.setProperty("--color-secondary", e.target.value);
             if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = e.target.value;
             clearTimeout(secSaveTimer);
@@ -1112,6 +1332,50 @@ function initAdminPanel() {
             });
             const btn = document.getElementById("admSaveText");
             if (btn) { const orig = btn.textContent; btn.textContent = "Saved ✓"; btn.style.background = "var(--color-secondary)"; setTimeout(()=>{ btn.textContent=orig; btn.style.background=""; }, 1500); }
+        });
+
+        // ── FUNNY IMAGE BUTTON ─────────────────────────────────
+        const funnyBtn = document.getElementById("admFunnyBtn");
+        const funnyFileInput = document.getElementById("admFunnyFileInput");
+        const funnyLabel = document.getElementById("admFunnyLabel");
+
+        funnyBtn?.addEventListener("click", () => {
+            // Reset file input so the same file can be picked again
+            funnyFileInput.value = "";
+            funnyFileInput.click();
+        });
+
+        funnyFileInput?.addEventListener("change", e => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            // Show loading state
+            if (funnyLabel) funnyLabel.textContent = "Loading...";
+            funnyBtn.style.opacity = "0.6";
+            funnyBtn.style.pointerEvents = "none";
+
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const src = ev.target.result;
+                // Small delay for UX feedback
+                setTimeout(() => {
+                    // Launch the animation
+                    runFunnyImageAnimation(src);
+                    logActivity("Funny image launched 🎉");
+
+                    // Reset button state
+                    if (funnyLabel) funnyLabel.textContent = "Launch Funny Image";
+                    funnyBtn.style.opacity = "";
+                    funnyBtn.style.pointerEvents = "";
+                    funnyFileInput.value = ""; // reset so same file can be re-picked
+                }, 150);
+            };
+            reader.onerror = () => {
+                if (funnyLabel) funnyLabel.textContent = "Launch Funny Image";
+                funnyBtn.style.opacity = "";
+                funnyBtn.style.pointerEvents = "";
+            };
+            reader.readAsDataURL(file);
         });
 
         // Reset all
