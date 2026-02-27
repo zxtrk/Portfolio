@@ -74,74 +74,130 @@ const dailyQuotes = [
    SOUND ENGINE
    ═══════════════════════════════════════════════════════════════ */
 const SoundEngine = (() => {
-    let ctx = null;
-    // Admin-open plays only once per page session
+    let ctx  = null;
     let _adminSoundPlayed = false;
+    // Queue of functions to call once the AudioContext is running.
+    // Browsers block audio until a user gesture — we store pending
+    // sounds here and flush them the moment the context is unlocked.
+    let _pendingQueue = [];
+    let _unlockListenersAdded = false;
 
-    function getCtx() {
-        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // ── Create context eagerly so it's ready when unlocked ──────
+    function _ensureCtx() {
+        if (ctx) return ctx;
+        try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
         return ctx;
     }
 
-    // ── Core bubble-pop builder ────────────────────────────────
-    // A smooth sine burst that starts at startFreq and glides down
-    // to endFreq over `dur` seconds — produces a clean, airy "pop".
-    function _bubblePop(ac, t, startFreq, endFreq, vol, dur) {
-        const osc  = ac.createOscillator();
-        const gain = ac.createGain();
-
-        // Light lowpass so it stays soft, not harsh
-        const lpf = ac.createBiquadFilter();
-        lpf.type = "lowpass";
-        lpf.frequency.value = 900;
-        lpf.Q.value = 0.6;
-
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(startFreq, t);
-        osc.frequency.exponentialRampToValueAtTime(endFreq, t + dur * 0.7);
-
-        osc.connect(lpf);
-        lpf.connect(gain);
-        gain.connect(ac.destination);
-
-        // Envelope: instant attack, smooth tail
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(vol, t + 0.010);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-
-        osc.start(t);
-        osc.stop(t + dur + 0.02);
+    // ── Unlock on any early user gesture ────────────────────────
+    function _addUnlockListeners() {
+        if (_unlockListenersAdded) return;
+        _unlockListenersAdded = true;
+        const events = ["mousedown", "touchstart", "keydown", "pointerdown"];
+        const handler = () => {
+            _ensureCtx();
+            if (!ctx) return;
+            ctx.resume().then(() => {
+                _pendingQueue.forEach(fn => { try { fn(); } catch (e) {} });
+                _pendingQueue = [];
+            });
+        };
+        events.forEach(ev =>
+            document.addEventListener(ev, handler, { once: true, passive: true })
+        );
     }
 
-    // ── Loading-complete: three gentle ascending bubble pops ───
-    // Plays every time the loading screen finishes.
+    // ── Schedule fn() as soon as AudioContext is running ────────
+    // If already running, calls fn() synchronously. Otherwise queues
+    // it for when the user first interacts with the page.
+    function _whenReady(fn) {
+        _ensureCtx();
+        if (!ctx) return;
+        if (ctx.state === "running") {
+            try { fn(); } catch (e) {}
+        } else {
+            _pendingQueue.push(fn);
+            // Also try an immediate resume (works if page is focused)
+            ctx.resume().then(() => {
+                if (_pendingQueue.includes(fn)) {
+                    _pendingQueue = _pendingQueue.filter(f => f !== fn);
+                    try { fn(); } catch (e) {}
+                }
+            }).catch(() => {});
+        }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       WARM SINGING-BOWL CHIME
+       Three pure sine partials tuned to a major chord (C5 · G5 · C6),
+       struck 90 ms apart so they bloom in a gentle sequence.
+       Each note has a 15 ms soft attack and a long exponential ring —
+       like a mallet lightly tapping a crystal or Tibetan singing bowl.
+       A detuned twin pair on the root note adds subtle warmth/chorus
+       without any buzziness or harsh overtones.
+    ───────────────────────────────────────────────────────────── */
+    function _playCalmChime(ac) {
+        const t = ac.currentTime + 0.02;
+
+        // Gentle compressor — evens the blend, prevents clipping
+        const comp = ac.createDynamicsCompressor();
+        comp.threshold.value = -18;
+        comp.knee.value      = 12;
+        comp.ratio.value     = 3;
+        comp.attack.value    = 0.003;
+        comp.release.value   = 0.25;
+        comp.connect(ac.destination);
+
+        // One singing-bowl partial: pure sine, soft attack, long ring
+        function partial(freq, startTime, vol, decay, detuneCents) {
+            const osc  = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.type  = "sine";
+            osc.frequency.value = freq;
+            if (detuneCents) osc.detune.value = detuneCents;
+            osc.connect(gain);
+            gain.connect(comp);
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(vol, startTime + 0.015);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + decay);
+            osc.start(startTime);
+            osc.stop(startTime + decay + 0.05);
+        }
+
+        // Strike 1 — C5 root with warm detuned twin pair
+        partial(523.25, t,        0.18, 2.0,  0);
+        partial(523.25, t,        0.09, 2.2, +6);
+        partial(523.25, t,        0.07, 2.2, -5);
+
+        // Strike 2 — G5 perfect fifth
+        partial(783.99, t + 0.09, 0.11, 1.7,  0);
+
+        // Strike 3 — C6 octave (soft sparkle on top)
+        partial(1046.50, t + 0.18, 0.07, 1.4,  0);
+    }
+
+    // ── Public: plays every time the loading screen finishes ────
     function playLoadComplete() {
-        try {
-            const ac = getCtx();
-            const now = ac.currentTime;
-            // Three soft pops — each one a little higher, spaced 130 ms apart
-            _bubblePop(ac, now + 0.00, 520,  390, 0.08, 0.30);
-            _bubblePop(ac, now + 0.13, 680,  510, 0.07, 0.28);
-            _bubblePop(ac, now + 0.26, 880,  660, 0.06, 0.26);
-        } catch (e) { /* silently ignore if AudioContext blocked */ }
+        _whenReady(() => {
+            if (ctx) _playCalmChime(ctx);
+        });
     }
 
-    // ── Admin-open: one calm double-bubble pop — once per session ──
-    // After the first play, subsequent calls are silent until page reload.
+    // ── Public: plays once per session when admin panel opens ───
     function playAdminOpen() {
         if (_adminSoundPlayed) return;
         _adminSoundPlayed = true;
-        try {
-            const ac = getCtx();
-            const now = ac.currentTime;
-            // Two pops — a mid one then a slightly higher one, tight together
-            _bubblePop(ac, now + 0.00, 600, 430, 0.075, 0.28);
-            _bubblePop(ac, now + 0.11, 780, 570, 0.060, 0.24);
-        } catch (e) { /* silently ignore */ }
+        _whenReady(() => {
+            if (ctx) _playCalmChime(ctx);
+        });
     }
 
-    // ── Reset the once-guard (called when page settings are reset) ──
+    // ── Public: resets guard so sound plays again next open ─────
     function resetAdminSoundGuard() { _adminSoundPlayed = false; }
+
+    // Eagerly create context and add unlock listeners on module init
+    _ensureCtx();
+    _addUnlockListeners();
 
     return { playLoadComplete, playAdminOpen, resetAdminSoundGuard };
 })();
