@@ -24,6 +24,16 @@
         <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
 
         <style>
+            /* ── ICON COLOR FIX ─────────────────────────────────────────────
+               Makes feature icons and contact icons inherit the accent color
+               so they update automatically when the admin panel changes colors.
+            ── */
+            .feature-icon svg,
+            .contact-icon svg {
+                color: var(--color-accent);
+                transition: color 0.3s ease;
+            }
+
             /* ── HERO (inline to avoid FOUC) ── */
             .hero {
                 min-height: 100vh;
@@ -278,15 +288,16 @@
                     </div>
                     <div class="about-features" data-reveal>
                         <div class="feature-item">
-                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9-9v4m0 14v-3m-9-6h4m14 0h-3m-6 0v.01"/></svg></div>
+                            <!-- Icon uses currentColor — inherits from .feature-icon svg { color: var(--color-accent) } -->
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9-9v4m0 14v-3m-9-6h4m14 0h-3m-6 0v.01"/></svg></div>
                             <div class="feature-content"><h3>Goal-Oriented</h3><p>Focused on delivering results that meet the expectations and quality.</p></div>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><g fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 4a1 1 0 1 0 2 0a1 1 0 1 0-2 0M7 21l3-4m6 4l-2-4l-3-3l1-6"/><path d="m6 12l2-3l4-1l3 3l3 1"/></g></svg></div>
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 4a1 1 0 1 0 2 0a1 1 0 1 0-2 0M7 21l3-4m6 4l-2-4l-3-3l1-6"/><path d="m6 12l2-3l4-1l3 3l3 1"/></g></svg></div>
                             <div class="feature-content"><h3>Fast Learner</h3><p>Quickly adapting to new technologies that are developed.</p></div>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15V8a3 3 0 0 1 6 0v7m-6-4h6M5 19h14"/></svg></div>
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 15V8a3 3 0 0 1 6 0v7m-6-4h6M5 19h14"/></svg></div>
                             <div class="feature-content"><h3>Quality First</h3><p>Committed to crafting polished work with attention to detail.</p></div>
                         </div>
                     </div>
@@ -337,7 +348,8 @@
                 <h2 class="section-title" data-reveal>Get In Touch</h2>
                 <div class="contact-info" data-reveal>
                     <button class="contact-link" id="emailButton" type="button">
-                        <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#c07b5b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg></span>
+                        <!-- Email icon uses currentColor — inherits from .contact-icon svg { color: var(--color-accent) } -->
+                        <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg></span>
                         <span class="contact-details"><span class="contact-label">Email</span><span class="contact-value">Email.Hidden</span></span>
                     </button>
                     <div class="email-form-container" id="emailFormContainer">

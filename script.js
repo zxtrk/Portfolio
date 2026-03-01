@@ -72,9 +72,6 @@ const dailyQuotes = [
 
 /* ═══════════════════════════════════════════════════════════════
    SOUND ENGINE
-   One sound only: the admin panel open chime.
-   A refined two-note ascending perfect fifth (G4 -> D5) with
-   soft harmonics and a reverb tail — clean, modern, premium.
    ═══════════════════════════════════════════════════════════════ */
 const SoundEngine = (() => {
     let ctx = null;
@@ -121,22 +118,10 @@ const SoundEngine = (() => {
         }
     }
 
-    /*
-     * ADMIN OPEN — premium access chime
-     *
-     * Two-note ascending interval: G4 (392 Hz) -> D5 (587 Hz), a
-     * perfect fifth. Each note is built from a fundamental + gentle
-     * harmonics to give it body without harshness. A lightweight
-     * reverb simulation (delayed copies at low volume) adds air and
-     * space. Master gain is kept very low — noticeable but discreet.
-     */
     function _playAdminOpen(ac) {
         const t = ac.currentTime + 0.04;
-
-        // Master output gain — quiet overall
         const master = ac.createGain();
         master.gain.setValueAtTime(0.11, t);
-
         const comp = ac.createDynamicsCompressor();
         comp.threshold.value = -18;
         comp.knee.value = 10;
@@ -146,9 +131,7 @@ const SoundEngine = (() => {
         comp.connect(ac.destination);
         master.connect(comp);
 
-        // Build one chime note with harmonics + reverb tail
         function chimeNote(freq, start, vol, decay) {
-            // Harmonics: fundamental, 2nd (quiet), 3rd (very quiet)
             [[1, 1.0], [2, 0.15], [3, 0.04]].forEach(([mult, rel]) => {
                 const osc  = ac.createOscillator();
                 const gain = ac.createGain();
@@ -163,8 +146,6 @@ const SoundEngine = (() => {
                 osc.start(start);
                 osc.stop(start + decay + 0.05);
             });
-
-            // Reverb tail — two delayed echo copies
             [0.05, 0.095].forEach((delayT, i) => {
                 const osc  = ac.createOscillator();
                 const dly  = ac.createDelay(0.5);
@@ -184,17 +165,13 @@ const SoundEngine = (() => {
             });
         }
 
-        // Note 1: G4 — the "open" arrival
         chimeNote(392.00, t,        1.0, 1.5);
-
-        // Note 2: D5 — the resolving rise (slight delay, slightly louder)
         chimeNote(587.33, t + 0.19, 1.1, 1.9);
 
-        // High shimmer on note 2 for a clean, airy presence
         const shimOsc  = ac.createOscillator();
         const shimGain = ac.createGain();
         shimOsc.type = "sine";
-        shimOsc.frequency.setValueAtTime(1174.66, t + 0.19); // D6
+        shimOsc.frequency.setValueAtTime(1174.66, t + 0.19);
         shimOsc.frequency.exponentialRampToValueAtTime(1210, t + 0.55);
         shimGain.gain.setValueAtTime(0, t + 0.19);
         shimGain.gain.linearRampToValueAtTime(0.018, t + 0.23);
@@ -228,9 +205,16 @@ const FloatingImageSystem = (() => {
     let _dragging = null;
     let _globalHandlersReady = false;
 
+    // Custom size override — set by admin panel before launch
+    let _customSize = null;
+
     function getSize() {
+        if (_customSize !== null) return _customSize;
         return window.innerWidth <= 768 ? 180 : 340;
     }
+
+    function setCustomSize(px) { _customSize = px; }
+    function clearCustomSize() { _customSize = null; }
 
     function setupGlobalHandlers() {
         if (_globalHandlersReady) return;
@@ -239,7 +223,7 @@ const FloatingImageSystem = (() => {
         const move = (cx, cy) => {
             if (!_dragging) return;
             const f = _dragging;
-            const size = getSize();
+            const size = f._spawnSize || getSize();
             const now = performance.now();
             const dt = now - f._lastT;
             if (dt > 0) {
@@ -280,20 +264,25 @@ const FloatingImageSystem = (() => {
         _db = db;
         if (!_db) return;
         _db.ref("funnyImages").on("child_added", snap => {
-            if (!floaters.has(snap.key)) spawnFloater(snap.key, snap.val().src);
+            if (!floaters.has(snap.key)) {
+                const val = snap.val();
+                spawnFloater(snap.key, val.src, val.size || null);
+            }
         });
         _db.ref("funnyImages").on("child_removed", snap => {
             dismiss(snap.key);
         });
     }
 
-    async function add(rawSrc) {
-        const src = await _compressImage(rawSrc, 420, 0.74);
+    async function add(rawSrc, sizePx) {
+        const targetSize = sizePx || (_customSize !== null ? _customSize : 340);
+        const src = await _compressImage(rawSrc, targetSize, 0.74);
         if (_db) {
-            _db.ref("funnyImages").push({ src, ts: Date.now() });
+            _db.ref("funnyImages").push({ src, size: targetSize, ts: Date.now() });
         } else {
-            spawnFloater("local_" + Date.now(), src);
+            spawnFloater("local_" + Date.now(), src, targetSize);
         }
+        clearCustomSize();
     }
 
     function clearAll() {
@@ -322,9 +311,9 @@ const FloatingImageSystem = (() => {
         });
     }
 
-    function spawnFloater(key, src) {
+    function spawnFloater(key, src, sizePx) {
         setupGlobalHandlers();
-        const size = getSize();
+        const size = sizePx || getSize();
         const el = document.createElement("div");
         el.style.cssText = `
             position:fixed; left:0; top:0; width:${size}px; z-index:9999990;
@@ -359,6 +348,7 @@ const FloatingImageSystem = (() => {
         const f = {
             key, el, x: 0, y: 0, vx: 0, vy: 0,
             dragging: false, alive: true, phase: "entry", floatT: 0,
+            _spawnSize: size,
             _dragOffX: 0, _dragOffY: 0, _velX: 0, _velY: 0, _lastX: 0, _lastY: 0, _lastT: 0,
         };
         floaters.set(key, f);
@@ -470,7 +460,7 @@ const FloatingImageSystem = (() => {
         setTimeout(() => { f.el.remove(); floaters.delete(key); }, 500);
     }
 
-    return { init, add, clearAll };
+    return { init, add, clearAll, setCustomSize, clearCustomSize };
 })();
 
 // ─── INIT ──────────────────────────────────────────────────────────────
@@ -912,6 +902,10 @@ function initAdminPanel() {
     let activityLog = [];
     let pinInput    = "";
 
+    // ── Staged image state ────────────────────────────────────
+    let _stagedRawSrc  = null;   // raw data URL from FileReader
+    let _stagedSize    = 340;    // current slider value
+
     const DEFAULTS = {
         projectsLocked:  false,
         aboutLocked:     false,
@@ -1061,8 +1055,39 @@ function initAdminPanel() {
 
     function closePanel() {
         panelOpen = false;
+        _resetStaging();
         const p = document.getElementById("adminPanel");
         if (p) { p.classList.remove("adm--visible"); setTimeout(() => p.remove(), 500); }
+    }
+
+    // ── Staging helpers ───────────────────────────────────────
+    function _resetStaging() {
+        _stagedRawSrc = null;
+        _stagedSize = 340;
+        FloatingImageSystem.clearCustomSize();
+        const staging = document.getElementById("admImgStaging");
+        const btn = document.getElementById("admFunnyBtn");
+        const fi = document.getElementById("admFunnyFileInput");
+        if (staging) staging.style.display = "none";
+        if (btn) btn.style.display = "";
+        if (fi) fi.value = "";
+    }
+
+    function _showStaging(rawSrc) {
+        _stagedRawSrc = rawSrc;
+        _stagedSize = parseInt(document.getElementById("admImgSizeSlider")?.value || "340", 10);
+
+        const staging = document.getElementById("admImgStaging");
+        const preview = document.getElementById("admImgPreview");
+        const btn = document.getElementById("admFunnyBtn");
+        const slider = document.getElementById("admImgSizeSlider");
+        const sizeLabel = document.getElementById("admSizeLabel");
+
+        if (preview) preview.src = rawSrc;
+        if (staging) staging.style.display = "block";
+        if (btn) btn.style.display = "none";
+        if (slider) { slider.value = _stagedSize; }
+        if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
     }
 
     // ── Inject HTML ───────────────────────────────────────────
@@ -1160,6 +1185,15 @@ function initAdminPanel() {
                 .adm-clear-images-btn:hover{background:rgba(224,85,85,.08);border-color:#e05555}
                 .adm-clear-images-btn:active{transform:scale(.97)}
                 .adm-img-count{display:inline-block;font-size:10px;letter-spacing:.1em;background:rgba(193,122,90,.12);border:1px solid rgba(193,122,90,.2);color:var(--color-accent);padding:2px 8px;border-radius:12px;margin-left:6px}
+                /* ── Staging panel ── */
+                .adm-img-staging{margin-top:0;padding:12px;background:rgba(193,122,90,.06);border:1px solid rgba(193,122,90,.18);border-radius:8px;animation:admStageFadeIn .3s ease both}
+                @keyframes admStageFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+                .adm-img-staging .adm-btn{margin-top:0!important}
+                /* ── Range slider ── */
+                .adm-range-input{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--color-border);border-radius:2px;outline:none;cursor:pointer;margin-top:6px}
+                .adm-range-input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--color-accent);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .15s ease}
+                .adm-range-input::-webkit-slider-thumb:hover{transform:scale(1.2)}
+                .adm-range-input::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--color-accent);cursor:pointer;border:none;box-shadow:0 2px 6px rgba(0,0,0,.2)}
                 .adm-log{max-height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch}
                 .adm-log-item{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--color-border);font-size:12px}
                 .adm-log-item:last-child{border-bottom:none}
@@ -1170,6 +1204,7 @@ function initAdminPanel() {
                 body.dark-mode .adm-stat{background:rgba(255,255,255,.04)}
                 body.dark-mode .adm-input{background:rgba(255,255,255,.05)}
                 body.dark-mode .adm-mobile-close{background:rgba(255,255,255,.05)}
+                body.dark-mode .adm-img-staging{background:rgba(193,122,90,.08);border-color:rgba(193,122,90,.22)}
                 #admFunnyFileInput{position:absolute;opacity:0;pointer-events:none;width:0;height:0}
             `;
             document.head.appendChild(style);
@@ -1245,15 +1280,33 @@ function initAdminPanel() {
                 <div class="adm-sec">
                   <div class="adm-sec-lbl">Floating Images</div>
                   <input type="file" id="admFunnyFileInput" accept="image/*" />
+                  <!-- Select button (shown by default) -->
                   <button class="adm-funny-btn" id="admFunnyBtn">
-                    <span class="funny-icon">&#x1F680;</span>
-                    <span class="adm-funny-label" id="admFunnyLabel">Launch Image</span>
+                    <span class="funny-icon">&#x1F4F8;</span>
+                    <span class="adm-funny-label">Select Image</span>
                   </button>
-                  <button class="adm-clear-images-btn" id="admClearImages">
+                  <!-- Staging panel (hidden until image selected) -->
+                  <div class="adm-img-staging" id="admImgStaging" style="display:none">
+                    <img id="admImgPreview" src="" alt="Preview"
+                         style="width:100%;border-radius:8px;display:block;margin-bottom:12px;max-height:200px;object-fit:contain;background:var(--color-light);border:1px solid var(--color-border);" />
+                    <div class="adm-field" style="margin-bottom:14px">
+                      <label style="display:flex;justify-content:space-between;align-items:center;">
+                        <span>Image Size</span>
+                        <span id="admSizeLabel" style="color:var(--color-accent);font-weight:700;">340px</span>
+                      </label>
+                      <input type="range" id="admImgSizeSlider" min="80" max="700" value="340" step="10" class="adm-range-input" style="margin-top:8px;" />
+                      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-secondary);opacity:.5;margin-top:4px;letter-spacing:.06em;">
+                        <span>80px — tiny</span><span>700px — huge</span>
+                      </div>
+                    </div>
+                    <button class="adm-btn" id="admLaunchBtn">&#x1F680; &nbsp;Launch Image!</button>
+                    <button class="adm-btn adm-btn--ghost" id="admCancelStaging">&#x2715; &nbsp;Cancel</button>
+                  </div>
+                  <button class="adm-clear-images-btn" id="admClearImages" style="margin-top:12px">
                     &#x2715; &nbsp;Clear All Images
                     <span class="adm-img-count" id="admImgCount" style="display:none">0</span>
                   </button>
-                  <p style="font-size:11px;color:var(--color-secondary);opacity:.5;margin-top:10px;text-align:center;letter-spacing:.04em;">Image flies across the screen, then floats &#x2014; grab &amp; toss it around!</p>
+                  <p style="font-size:11px;color:var(--color-secondary);opacity:.5;margin-top:10px;text-align:center;letter-spacing:.04em;">Select an image, adjust size, then launch &#x2014; grab &amp; toss it around!</p>
                 </div>
                 <div class="adm-sec">
                   <div class="adm-sec-lbl">Recent Activity</div>
@@ -1423,11 +1476,17 @@ function initAdminPanel() {
             if (btn) { const orig = btn.textContent; btn.textContent = "Saved \u2713"; btn.style.background = "var(--color-secondary)"; setTimeout(() => { btn.textContent = orig; btn.style.background = ""; }, 1500); }
         });
 
-        // Floating images
-        const funnyBtn = document.getElementById("admFunnyBtn");
+        // ── Floating images — staging flow ───────────────────
+        const funnyBtn       = document.getElementById("admFunnyBtn");
         const funnyFileInput = document.getElementById("admFunnyFileInput");
-        const funnyLabel = document.getElementById("admFunnyLabel");
-        const imgCount = document.getElementById("admImgCount");
+        const imgStaging     = document.getElementById("admImgStaging");
+        const imgPreview     = document.getElementById("admImgPreview");
+        const sizeSlider     = document.getElementById("admImgSizeSlider");
+        const sizeLabel      = document.getElementById("admSizeLabel");
+        const launchBtn      = document.getElementById("admLaunchBtn");
+        const cancelBtn      = document.getElementById("admCancelStaging");
+        const imgCount       = document.getElementById("admImgCount");
+
         let _activeCount = 0;
         const updateCount = (n) => {
             _activeCount = Math.max(0, n);
@@ -1435,26 +1494,57 @@ function initAdminPanel() {
             if (_activeCount > 0) { imgCount.textContent = String(_activeCount); imgCount.style.display = "inline-block"; }
             else { imgCount.style.display = "none"; }
         };
+
         if (db) { db.ref("funnyImages").on("value", snap => { updateCount(snap.numChildren ? snap.numChildren() : 0); }); }
+
+        // "Select Image" button → open file picker
         funnyBtn?.addEventListener("click", () => { funnyFileInput.value = ""; funnyFileInput.click(); });
-        funnyFileInput?.addEventListener("change", async e => {
+
+        // File selected → show staging panel with preview
+        funnyFileInput?.addEventListener("change", e => {
             const file = e.target.files?.[0];
             if (!file) return;
-            if (funnyLabel) funnyLabel.textContent = "Launching...";
-            funnyBtn.style.opacity = "0.6"; funnyBtn.style.pointerEvents = "none";
-            try {
-                const reader = new FileReader();
-                reader.onload = async (ev) => {
-                    await FloatingImageSystem.add(ev.target.result);
-                    if (!db) updateCount(_activeCount + 1);
-                    logActivity("Floating image launched \uD83D\uDE80");
-                    if (funnyLabel) funnyLabel.textContent = "Launch Image";
-                    funnyBtn.style.opacity = ""; funnyBtn.style.pointerEvents = ""; funnyFileInput.value = "";
-                };
-                reader.onerror = () => { if (funnyLabel) funnyLabel.textContent = "Launch Image"; funnyBtn.style.opacity = ""; funnyBtn.style.pointerEvents = ""; };
-                reader.readAsDataURL(file);
-            } catch { if (funnyLabel) funnyLabel.textContent = "Launch Image"; funnyBtn.style.opacity = ""; funnyBtn.style.pointerEvents = ""; }
+            const reader = new FileReader();
+            reader.onload = ev => {
+                _stagedRawSrc = ev.target.result;
+                if (imgPreview) imgPreview.src = _stagedRawSrc;
+                if (sizeSlider) { sizeSlider.value = 340; }
+                if (sizeLabel) sizeLabel.textContent = "340px";
+                _stagedSize = 340;
+                if (imgStaging) imgStaging.style.display = "block";
+                if (funnyBtn) funnyBtn.style.display = "none";
+                // Scroll staging into view
+                setTimeout(() => imgStaging?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
+            };
+            reader.onerror = () => { _resetStaging(); };
+            reader.readAsDataURL(file);
         });
+
+        // Slider → update size label in real-time
+        sizeSlider?.addEventListener("input", e => {
+            _stagedSize = parseInt(e.target.value, 10);
+            if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
+        });
+
+        // "Launch Image!" → compress at chosen size and send
+        launchBtn?.addEventListener("click", async () => {
+            if (!_stagedRawSrc) return;
+            launchBtn.disabled = true;
+            launchBtn.textContent = "Launching... 🚀";
+            try {
+                await FloatingImageSystem.add(_stagedRawSrc, _stagedSize);
+                if (!db) updateCount(_activeCount + 1);
+                logActivity(`Floating image launched (${_stagedSize}px) 🚀`);
+            } catch (err) {
+                console.warn("[Admin] Launch failed:", err);
+            }
+            _resetStaging();
+        });
+
+        // "Cancel" → reset staging UI
+        cancelBtn?.addEventListener("click", () => { _resetStaging(); });
+
+        // "Clear All Images"
         document.getElementById("admClearImages")?.addEventListener("click", () => {
             FloatingImageSystem.clearAll();
             if (!db) updateCount(0);
