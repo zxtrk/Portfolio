@@ -96,23 +96,19 @@
                MOBILE HERO — tight layout, scroll indicator in flow
             ══════════════════════════════════════════════════ */
             @media (max-width: 768px) {
-                /*
-                 * Hero is tall enough to fill the viewport so the
-                 * About section starts just off-screen. overflow:visible
-                 * is required so nothing clips the scroll indicator.
-                 */
                 .hero {
                     padding: 0 1.25rem !important;
-                    min-height: 100svh !important;
+                    min-height: auto !important;
                     padding-top: 0 !important;
-                    justify-content: flex-start !important;
+                    padding-bottom: 2rem !important;
+                    justify-content: center !important;
                     align-items: stretch !important;
                     flex-direction: column !important;
                     overflow: visible !important;
                 }
-                /* Push content ~20% from top — balanced gap above name */
+                /* Vertically centre content — no giant gap */
                 .hero-content {
-                    padding-top: 10svh;
+                    padding-top: 5svh;
                     flex: 0 0 auto;
                 }
                 .hero-layout {
