@@ -1387,11 +1387,11 @@ body.dark-mode .main-footer { background-color: #111111; }
     .nav-menu-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-accent); }
     .nav-menu-dot:nth-child(1) { opacity: 0.4; } .nav-menu-dot:nth-child(2) { opacity: 0.25; } .nav-menu-dot:nth-child(3) { opacity: 0.15; } .nav-menu-dot:nth-child(4) { opacity: 0.08; }
 
-    /* HERO — name pushed into lower third of screen */
+    /* HERO — name pushed deep into lower screen */
     .hero {
         padding-top: 0 !important;
-        padding-bottom: 2.5rem !important;
-        min-height: 90svh !important;
+        padding-bottom: 6rem !important;
+        min-height: 100svh !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: flex-end !important;
@@ -1519,7 +1519,7 @@ body.dark-mode .main-footer { background-color: #111111; }
 
 @media (max-width: 480px) {
     :root { --spacing-md: 1rem; }
-    .hero { padding-top: 64px !important; }
+    /* hero padding-top intentionally removed — flex-end handles positioning */
     .hero-title { font-size: clamp(2.1rem, 11vw, 2.8rem) !important; }
     .section-title { font-size: clamp(1.8rem, 8.5vw, 2.3rem) !important; }
     .logo { font-size: 20px; }
