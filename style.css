@@ -1414,7 +1414,7 @@ body.dark-mode .main-footer { background-color: #111111; }
     /* SECTIONS */
     section { padding: 1.5rem 1.25rem !important; }
     .section-title { font-size: clamp(2rem, 8vw, 2.8rem) !important; margin-bottom: 0.875rem !important; }
-    .about-main { gap: 1rem !important; margin-bottom: 1rem !important; }
+    .about-main { gap: 1.75rem !important; margin-bottom: 1rem !important; }
 
     /* ABOUT — centred like a poem on mobile */
     .intro-paragraph {
