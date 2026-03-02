@@ -678,38 +678,27 @@ function initHeroAnimation() {
 // ─── SCROLL INDICATOR ──────────────────────────────────────────────────
 function initScrollIndicator() {
     const el = document.getElementById("scrollIndicator");
-    if (!el) return;
-    const mobile = window.innerWidth <= 768;
+    if (!el || window.innerWidth <= 768) return;
     let visible = true, fadeTimeout = null;
-
-    // On mobile the CSS animation shows it after 2.6s via keyframes.
-    // We just need to wire up the hide-on-scroll behaviour.
-    // On desktop we also need to transition from the CSS animation to JS control.
     const enableFade = () => {
-        if (!mobile) {
-            el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
-        } else {
-            // On mobile, switch from CSS animation to JS-controlled opacity
-            el.style.cssText = "display:flex!important;animation:none;transition:opacity 0.7s ease,transform 0.7s ease;opacity:1;transform:translateX(-50%) translateY(0);position:absolute;bottom:2rem;left:50%";
-        }
+        el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
         window.removeEventListener("scroll", enableFade);
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
     };
     const handleScroll = () => {
-        const shouldHide = window.pageYOffset > 80;
+        const shouldHide = window.pageYOffset > 100;
         if (shouldHide && visible) {
             visible = false;
             el.style.opacity = "0"; el.style.transform = "translateX(-50%) translateY(14px)";
             clearTimeout(fadeTimeout);
-            fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 700);
+            fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 900);
         } else if (!shouldHide && !visible) {
             visible = true; clearTimeout(fadeTimeout);
             el.style.visibility = "visible"; el.style.opacity = "1"; el.style.transform = "translateX(-50%) translateY(0)";
         }
     };
-    // On mobile wait slightly longer than the CSS animation (2.6s + 1.5s = 4.1s)
-    setTimeout(enableFade, mobile ? 4200 : 2800);
+    setTimeout(enableFade, 2800);
 }
 
 // ─── PARALLAX ─────────────────────────────────────────────────────────
@@ -813,19 +802,22 @@ function injectBurgerMenuDecoration() {
     // ── Social links row at the bottom of the burger menu ──
     const socialsRow = document.createElement("div");
     socialsRow.className = "nav-menu-socials";
-    // Icon-only circles — text is aria-label only for accessibility
     socialsRow.innerHTML = `
-        <a href="#contact" class="nav-social-btn" data-nav-contact aria-label="Email">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><g><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg>
+        <a href="#contact" class="nav-social-btn" data-nav-contact>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><g><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg>
+            Email
         </a>
-        <a href="https://github.com/zxtrk" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external aria-label="GitHub">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        <a href="https://github.com/zxtrk" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            GitHub
         </a>
-        <a href="https://www.linkedin.com/in/artjom-japins-4b589b35b/" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external aria-label="LinkedIn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        <a href="https://www.linkedin.com/in/artjom-japins-4b589b35b/" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
         </a>
-        <a href="https://www.pinterest.com/artjomjapins/" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external aria-label="Pinterest">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.136-1.867 3.136-4.563 0-2.386-1.716-4.054-4.165-4.054-2.837 0-4.501 2.127-4.501 4.326 0 .856.33 1.775.741 2.276a.3.3 0 0 1 .069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+        <a href="https://www.pinterest.com" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.136-1.867 3.136-4.563 0-2.386-1.716-4.054-4.165-4.054-2.837 0-4.501 2.127-4.501 4.326 0 .856.33 1.775.741 2.276a.3.3 0 0 1 .069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+            Pinterest
         </a>
     `;
     navLinks.appendChild(socialsRow);
