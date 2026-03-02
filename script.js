@@ -205,7 +205,6 @@ const FloatingImageSystem = (() => {
     let _dragging = null;
     let _globalHandlersReady = false;
 
-    // Custom size override — set by admin panel before launch
     let _customSize = null;
 
     function getSize() {
@@ -478,6 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initScrollIndicator();
     initQuoteOfTheDay();
     initMobileSectionObserver();
+    initMobileScrollAnimations();
     initAdminPanel();
     setTimeout(initInstantTapFeedback, 600);
 });
@@ -633,6 +633,96 @@ function initScrollAnimations() {
         { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
     );
     document.querySelectorAll("[data-reveal]").forEach(el => observer.observe(el));
+}
+
+// ─── MOBILE SCROLL ANIMATIONS ──────────────────────────────────────────
+function initMobileScrollAnimations() {
+    if (window.innerWidth > 768) return;
+
+    // Inject keyframes for mobile scroll animations
+    if (!document.getElementById("mobile-scroll-anim-css")) {
+        const style = document.createElement("style");
+        style.id = "mobile-scroll-anim-css";
+        style.textContent = `
+            /* Mobile scroll-reveal base states */
+            @media (max-width: 768px) {
+                .msa-fade-up {
+                    opacity: 0;
+                    transform: translateY(28px);
+                    transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+                }
+                .msa-fade-left {
+                    opacity: 0;
+                    transform: translateX(-22px);
+                    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                                transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+                }
+                .msa-fade-right {
+                    opacity: 0;
+                    transform: translateX(22px);
+                    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                                transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+                }
+                .msa-scale {
+                    opacity: 0;
+                    transform: scale(0.94);
+                    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                                transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+                }
+                .msa-visible {
+                    opacity: 1 !important;
+                    transform: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Assign animation classes to elements
+    // Feature items: slide in alternating left/right
+    document.querySelectorAll(".feature-item").forEach((el, i) => {
+        el.classList.add(i % 2 === 0 ? "msa-fade-left" : "msa-fade-right");
+    });
+
+    // Project cards: fade up with stagger
+    document.querySelectorAll(".project-grid-card").forEach(el => {
+        el.classList.add("msa-fade-up");
+    });
+
+    // Contact links: fade up
+    document.querySelectorAll(".contact-link").forEach(el => {
+        el.classList.add("msa-fade-up");
+    });
+
+    // Quote: scale in
+    const quoteContent = document.querySelector(".quote-content");
+    if (quoteContent) quoteContent.classList.add("msa-scale");
+
+    // Section titles get fade-up
+    document.querySelectorAll(".section-title").forEach(el => {
+        el.classList.add("msa-fade-up");
+    });
+
+    // Observe all animated elements
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach((entry, idx) => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                // Stagger delay based on sibling index
+                const siblings = [...(el.parentElement?.children || [])];
+                const sibIdx = siblings.indexOf(el);
+                const delay = sibIdx >= 0 ? sibIdx * 60 : 0;
+                setTimeout(() => {
+                    el.classList.add("msa-visible");
+                }, delay);
+                observer.unobserve(el);
+            }
+        });
+    }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+
+    document.querySelectorAll(".msa-fade-up, .msa-fade-left, .msa-fade-right, .msa-scale")
+        .forEach(el => observer.observe(el));
 }
 
 // ─── SMOOTH SCROLL ─────────────────────────────────────────────────────
@@ -903,8 +993,8 @@ function initAdminPanel() {
     let pinInput    = "";
 
     // ── Staged image state ────────────────────────────────────
-    let _stagedRawSrc  = null;   // raw data URL from FileReader
-    let _stagedSize    = 340;    // current slider value
+    let _stagedRawSrc  = null;
+    let _stagedSize    = 340;
 
     const DEFAULTS = {
         projectsLocked:  false,
@@ -1061,33 +1151,31 @@ function initAdminPanel() {
     }
 
     // ── Staging helpers ───────────────────────────────────────
+    // FIX: fully reset all staging UI state including re-enabling the launch button
     function _resetStaging() {
         _stagedRawSrc = null;
         _stagedSize = 340;
         FloatingImageSystem.clearCustomSize();
+
         const staging = document.getElementById("admImgStaging");
         const btn = document.getElementById("admFunnyBtn");
         const fi = document.getElementById("admFunnyFileInput");
+        const launchBtn = document.getElementById("admLaunchBtn");
+        const sizeSlider = document.getElementById("admImgSizeSlider");
+        const sizeLabel = document.getElementById("admSizeLabel");
+        const imgPreview = document.getElementById("admImgPreview");
+
         if (staging) staging.style.display = "none";
         if (btn) btn.style.display = "";
         if (fi) fi.value = "";
-    }
-
-    function _showStaging(rawSrc) {
-        _stagedRawSrc = rawSrc;
-        _stagedSize = parseInt(document.getElementById("admImgSizeSlider")?.value || "340", 10);
-
-        const staging = document.getElementById("admImgStaging");
-        const preview = document.getElementById("admImgPreview");
-        const btn = document.getElementById("admFunnyBtn");
-        const slider = document.getElementById("admImgSizeSlider");
-        const sizeLabel = document.getElementById("admSizeLabel");
-
-        if (preview) preview.src = rawSrc;
-        if (staging) staging.style.display = "block";
-        if (btn) btn.style.display = "none";
-        if (slider) { slider.value = _stagedSize; }
-        if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
+        // FIX: always re-enable the launch button and restore its label
+        if (launchBtn) {
+            launchBtn.disabled = false;
+            launchBtn.textContent = "\uD83D\uDE80 \u00A0Launch Image!";
+        }
+        if (sizeSlider) sizeSlider.value = 340;
+        if (sizeLabel) sizeLabel.textContent = "340px";
+        if (imgPreview) imgPreview.src = "";
     }
 
     // ── Inject HTML ───────────────────────────────────────────
@@ -1185,11 +1273,9 @@ function initAdminPanel() {
                 .adm-clear-images-btn:hover{background:rgba(224,85,85,.08);border-color:#e05555}
                 .adm-clear-images-btn:active{transform:scale(.97)}
                 .adm-img-count{display:inline-block;font-size:10px;letter-spacing:.1em;background:rgba(193,122,90,.12);border:1px solid rgba(193,122,90,.2);color:var(--color-accent);padding:2px 8px;border-radius:12px;margin-left:6px}
-                /* ── Staging panel ── */
                 .adm-img-staging{margin-top:0;padding:12px;background:rgba(193,122,90,.06);border:1px solid rgba(193,122,90,.18);border-radius:8px;animation:admStageFadeIn .3s ease both}
                 @keyframes admStageFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
                 .adm-img-staging .adm-btn{margin-top:0!important}
-                /* ── Range slider ── */
                 .adm-range-input{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--color-border);border-radius:2px;outline:none;cursor:pointer;margin-top:6px}
                 .adm-range-input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--color-accent);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .15s ease}
                 .adm-range-input::-webkit-slider-thumb:hover{transform:scale(1.2)}
@@ -1280,12 +1366,10 @@ function initAdminPanel() {
                 <div class="adm-sec">
                   <div class="adm-sec-lbl">Floating Images</div>
                   <input type="file" id="admFunnyFileInput" accept="image/*" />
-                  <!-- Select button (shown by default) -->
                   <button class="adm-funny-btn" id="admFunnyBtn">
                     <span class="funny-icon">&#x1F4F8;</span>
                     <span class="adm-funny-label">Select Image</span>
                   </button>
-                  <!-- Staging panel (hidden until image selected) -->
                   <div class="adm-img-staging" id="admImgStaging" style="display:none">
                     <img id="admImgPreview" src="" alt="Preview"
                          style="width:100%;border-radius:8px;display:block;margin-bottom:12px;max-height:200px;object-fit:contain;background:var(--color-light);border:1px solid var(--color-border);" />
@@ -1511,9 +1595,13 @@ function initAdminPanel() {
                 if (sizeSlider) { sizeSlider.value = 340; }
                 if (sizeLabel) sizeLabel.textContent = "340px";
                 _stagedSize = 340;
+                // FIX: always ensure launch button is ready when new image is staged
+                if (launchBtn) {
+                    launchBtn.disabled = false;
+                    launchBtn.textContent = "\uD83D\uDE80 \u00A0Launch Image!";
+                }
                 if (imgStaging) imgStaging.style.display = "block";
                 if (funnyBtn) funnyBtn.style.display = "none";
-                // Scroll staging into view
                 setTimeout(() => imgStaging?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
             };
             reader.onerror = () => { _resetStaging(); };
@@ -1527,17 +1615,21 @@ function initAdminPanel() {
         });
 
         // "Launch Image!" → compress at chosen size and send
+        // FIX: reset staging fully after launch so next image can be sent
         launchBtn?.addEventListener("click", async () => {
             if (!_stagedRawSrc) return;
+            const srcToLaunch = _stagedRawSrc;
+            const sizeToLaunch = _stagedSize;
             launchBtn.disabled = true;
-            launchBtn.textContent = "Launching... 🚀";
+            launchBtn.textContent = "Launching... \uD83D\uDE80";
             try {
-                await FloatingImageSystem.add(_stagedRawSrc, _stagedSize);
+                await FloatingImageSystem.add(srcToLaunch, sizeToLaunch);
                 if (!db) updateCount(_activeCount + 1);
-                logActivity(`Floating image launched (${_stagedSize}px) 🚀`);
+                logActivity(`Floating image launched (${sizeToLaunch}px) \uD83D\uDE80`);
             } catch (err) {
                 console.warn("[Admin] Launch failed:", err);
             }
+            // FIX: always reset after launch attempt (success or failure)
             _resetStaging();
         });
 
