@@ -205,7 +205,6 @@ const FloatingImageSystem = (() => {
     let _dragging = null;
     let _globalHandlersReady = false;
 
-    // Custom size override — set by admin panel before launch
     let _customSize = null;
 
     function getSize() {
@@ -682,33 +681,34 @@ function initScrollIndicator() {
     const mobile = window.innerWidth <= 768;
     let visible = true, fadeTimeout = null;
 
-    // On mobile the CSS animation shows it after 2.6s via keyframes.
-    // We just need to wire up the hide-on-scroll behaviour.
-    // On desktop we also need to transition from the CSS animation to JS control.
     const enableFade = () => {
         if (!mobile) {
             el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
         } else {
-            // On mobile, switch from CSS animation to JS-controlled opacity
-            el.style.cssText = "display:flex!important;animation:none;transition:opacity 0.7s ease,transform 0.7s ease;opacity:1;transform:translateX(-50%) translateY(0);position:absolute;bottom:2rem;left:50%";
+            el.style.cssText = "display:flex!important;animation:none;transition:opacity 0.7s ease;opacity:1;position:relative;margin-top:2rem;";
         }
         window.removeEventListener("scroll", enableFade);
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
     };
+
     const handleScroll = () => {
         const shouldHide = window.pageYOffset > 80;
         if (shouldHide && visible) {
             visible = false;
-            el.style.opacity = "0"; el.style.transform = "translateX(-50%) translateY(14px)";
+            el.style.opacity = "0";
+            if (!mobile) el.style.transform = "translateX(-50%) translateY(14px)";
             clearTimeout(fadeTimeout);
             fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 700);
         } else if (!shouldHide && !visible) {
-            visible = true; clearTimeout(fadeTimeout);
-            el.style.visibility = "visible"; el.style.opacity = "1"; el.style.transform = "translateX(-50%) translateY(0)";
+            visible = true;
+            clearTimeout(fadeTimeout);
+            el.style.visibility = "visible";
+            el.style.opacity = "1";
+            if (!mobile) el.style.transform = "translateX(-50%) translateY(0)";
         }
     };
-    // On mobile wait slightly longer than the CSS animation (2.6s + 1.5s = 4.1s)
+
     setTimeout(enableFade, mobile ? 4200 : 2800);
 }
 
@@ -801,62 +801,42 @@ function injectBurgerMenuDecoration() {
     _burgerDecorated = true;
     const navLinks = document.getElementById("navLinks");
     if (!navLinks) return;
+
+    // Add index numbers and arrow to each nav link
     navLinks.querySelectorAll("a[data-nav]").forEach((link, i) => {
         const text = link.textContent.trim();
         link.innerHTML = `<span class="menu-index">${["01","02","03"][i] || "0"+(i+1)}</span><span class="menu-text">${text}</span><span class="menu-arrow">&#x2192;</span>`;
     });
+
+    // Top bar with portfolio label
     const topbar = document.createElement("div");
     topbar.className = "nav-menu-topbar";
     topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
     navLinks.appendChild(topbar);
 
-    // ── Social links row at the bottom of the burger menu ──
-    const socialsRow = document.createElement("div");
-    socialsRow.className = "nav-menu-socials";
-    // Icon-only circles — text is aria-label only for accessibility
-    socialsRow.innerHTML = `
-        <a href="#contact" class="nav-social-btn" data-nav-contact aria-label="Email">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><g><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg>
-        </a>
-        <a href="https://github.com/zxtrk" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external aria-label="GitHub">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-        </a>
-        <a href="https://www.linkedin.com/in/artjom-japins-4b589b35b/" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external aria-label="LinkedIn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-        </a>
-        <a href="https://www.pinterest.com/artjomjapins/" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external aria-label="Pinterest">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.136-1.867 3.136-4.563 0-2.386-1.716-4.054-4.165-4.054-2.837 0-4.501 2.127-4.501 4.326 0 .856.33 1.775.741 2.276a.3.3 0 0 1 .069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
-        </a>
-    `;
-    navLinks.appendChild(socialsRow);
-
+    // Bottom bar with status
     const bottombar = document.createElement("div");
     bottombar.className = "nav-menu-bottombar";
     bottombar.innerHTML = `<span style="display:flex;align-items:center;gap:6px"><span class="nav-menu-statusdot"></span>Available for work</span><span>Based in Latvia</span>`;
     navLinks.appendChild(bottombar);
+
+    // Corner decorations
     ["tl","tr","bl","br"].forEach(pos => {
         const corner = document.createElement("div");
         corner.className = `nav-menu-corner nav-menu-corner--${pos}`;
         navLinks.appendChild(corner);
     });
+
+    // Side line decoration
     const line = document.createElement("div");
     line.className = "nav-menu-line";
     navLinks.appendChild(line);
+
+    // Dot decorations
     const dotsWrap = document.createElement("div");
     dotsWrap.className = "nav-menu-dots";
     dotsWrap.innerHTML = `<div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div>`;
     navLinks.appendChild(dotsWrap);
-
-    // ── Wire up social contact links to close menu + scroll ──
-    navLinks.querySelectorAll("[data-nav-contact]").forEach(btn => {
-        btn.addEventListener("click", e => {
-            e.preventDefault();
-            const target = document.querySelector("#contact");
-            if (!target) return;
-            closeBurgerMenu();
-            setTimeout(() => smoothScrollTo(target.offsetTop - 80, 900), 80);
-        });
-    });
 }
 
 function initBurgerMenu() {
@@ -880,7 +860,7 @@ function initBurgerMenu() {
     _burgerCloseCallback = close;
     burger.addEventListener("click", e => { e.stopPropagation(); burger.classList.contains("active") ? close() : open(); });
     overlay.addEventListener("click", close);
-    links.querySelectorAll("a:not([data-nav]):not([data-nav-contact]):not([data-nav-external])").forEach(a => a.addEventListener("click", close));
+    links.querySelectorAll("a:not([data-nav])").forEach(a => a.addEventListener("click", close));
     document.addEventListener("keydown", e => { if (e.key === "Escape" && links.classList.contains("active")) close(); });
     let resizeTimer;
     window.addEventListener("resize", () => {
@@ -945,7 +925,6 @@ function initAdminPanel() {
     let activityLog = [];
     let pinInput    = "";
 
-    // ── Staged image state ────────────────────────────────────
     let _stagedRawSrc  = null;
     let _stagedSize    = 340;
 
@@ -961,7 +940,6 @@ function initAdminPanel() {
         footerNote:      "Designed & developed with care.",
     };
 
-    // ── Firebase ──────────────────────────────────────────────
     function initFirebase() {
         if (!window.FIREBASE_ENABLED || typeof firebase === "undefined") return;
         try {
@@ -992,7 +970,6 @@ function initAdminPanel() {
         });
     }
 
-    // ── Config ────────────────────────────────────────────────
     function getConfig() {
         try { return JSON.parse(localStorage.getItem("siteConfig") || "{}"); } catch { return {}; }
     }
@@ -1006,7 +983,6 @@ function initAdminPanel() {
         return next;
     }
 
-    // ── Apply config to the live site ────────────────────────
     function applyToSite(config) {
         const c = { ...DEFAULTS, ...config };
         applySectionLock(c.aboutLocked,    LOCK_CONFIG.aboutLocked);
@@ -1048,7 +1024,6 @@ function initAdminPanel() {
         } else { banner?.remove(); }
     }
 
-    // ── Activity log ──────────────────────────────────────────
     function logActivity(msg) {
         const entry = { msg, ts: Date.now() };
         activityLog.unshift(entry);
@@ -1066,7 +1041,6 @@ function initAdminPanel() {
         }).join("") || '<span class="adm-log-empty">No activity yet</span>';
     }
 
-    // ── Keyboard trigger ─────────────────────────────────────
     document.addEventListener("keydown", e => {
         if (["INPUT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
         keyBuffer.push(e.key.toLowerCase());
@@ -1074,7 +1048,6 @@ function initAdminPanel() {
         if (keyBuffer.join("") === TRIGGER_WORD.join("")) { keyBuffer = []; openPanel(); }
     });
 
-    // ── Triple-tap footer (mobile) ────────────────────────────
     let tapCount = 0, tapTimer = null;
     document.addEventListener("touchend", e => {
         if (!e.target.closest(".main-footer")) return;
@@ -1084,7 +1057,6 @@ function initAdminPanel() {
         if (tapCount >= 3) { tapCount = 0; openPanel(); }
     });
 
-    // ── Open / Close ──────────────────────────────────────────
     function openPanel() {
         if (panelOpen) return;
         panelOpen = true;
@@ -1103,7 +1075,6 @@ function initAdminPanel() {
         if (p) { p.classList.remove("adm--visible"); setTimeout(() => p.remove(), 500); }
     }
 
-    // ── Staging helpers ───────────────────────────────────────
     function _resetStaging() {
         _stagedRawSrc = null;
         _stagedSize = 340;
@@ -1115,14 +1086,12 @@ function initAdminPanel() {
         if (staging) staging.style.display = "none";
         if (btn) btn.style.display = "";
         if (fi) fi.value = "";
-        // ── FIX: always re-enable the launch button and restore its label ──
         if (launchBtn) {
             launchBtn.disabled = false;
             launchBtn.textContent = "🚀 \u00a0Launch Image!";
         }
     }
 
-    // ── Inject HTML ───────────────────────────────────────────
     function injectPanel() {
         if (document.getElementById("adminPanel")) return;
 
@@ -1504,7 +1473,6 @@ function initAdminPanel() {
             if (btn) { const orig = btn.textContent; btn.textContent = "Saved \u2713"; btn.style.background = "var(--color-secondary)"; setTimeout(() => { btn.textContent = orig; btn.style.background = ""; }, 1500); }
         });
 
-        // ── Floating images — staging flow ───────────────────
         const funnyBtn       = document.getElementById("admFunnyBtn");
         const funnyFileInput = document.getElementById("admFunnyFileInput");
         const imgStaging     = document.getElementById("admImgStaging");
@@ -1525,10 +1493,8 @@ function initAdminPanel() {
 
         if (db) { db.ref("funnyImages").on("value", snap => { updateCount(snap.numChildren ? snap.numChildren() : 0); }); }
 
-        // "Select Image" button → open file picker
         funnyBtn?.addEventListener("click", () => { funnyFileInput.value = ""; funnyFileInput.click(); });
 
-        // File selected → show staging panel with preview
         funnyFileInput?.addEventListener("change", e => {
             const file = e.target.files?.[0];
             if (!file) return;
@@ -1539,7 +1505,6 @@ function initAdminPanel() {
                 if (sizeSlider) { sizeSlider.value = 340; }
                 if (sizeLabel) sizeLabel.textContent = "340px";
                 _stagedSize = 340;
-                // ── FIX: ensure launch button is always enabled when staging a new image ──
                 if (launchBtn) { launchBtn.disabled = false; launchBtn.textContent = "🚀 \u00a0Launch Image!"; }
                 if (imgStaging) imgStaging.style.display = "block";
                 if (funnyBtn) funnyBtn.style.display = "none";
@@ -1549,14 +1514,11 @@ function initAdminPanel() {
             reader.readAsDataURL(file);
         });
 
-        // Slider → update size label in real-time
         sizeSlider?.addEventListener("input", e => {
             _stagedSize = parseInt(e.target.value, 10);
             if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
         });
 
-        // "Launch Image!" → compress at chosen size and send
-        // ── FIX: after launch, reset staging so another image can be launched immediately ──
         launchBtn?.addEventListener("click", async () => {
             if (!_stagedRawSrc) return;
             launchBtn.disabled = true;
@@ -1570,14 +1532,11 @@ function initAdminPanel() {
             } catch (err) {
                 console.warn("[Admin] Launch failed:", err);
             }
-            // Always reset after launch so another image can be picked immediately
             _resetStaging();
         });
 
-        // "Cancel" → reset staging UI
         cancelBtn?.addEventListener("click", () => { _resetStaging(); });
 
-        // "Clear All Images"
         document.getElementById("admClearImages")?.addEventListener("click", () => {
             FloatingImageSystem.clearAll();
             if (!db) updateCount(0);
@@ -1595,7 +1554,6 @@ function initAdminPanel() {
             logActivity("Reset all settings to defaults");
         });
 
-        // Swipe down to close
         const drawer = document.getElementById("admDrawer");
         const handle = document.getElementById("admHandle");
         if (drawer && handle) {
