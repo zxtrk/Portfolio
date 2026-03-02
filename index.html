@@ -24,17 +24,14 @@
         <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
 
         <style>
-            /* ── ICON COLOR FIX ─────────────────────────────────────────────
-               Makes feature icons and contact icons inherit the accent color
-               so they update automatically when the admin panel changes colors.
-            ── */
+            /* ── ICON COLOR FIX ── */
             .feature-icon svg,
             .contact-icon svg {
                 color: var(--color-accent);
                 transition: color 0.3s ease;
             }
 
-            /* ── HERO (inline to avoid FOUC) ── */
+            /* ── HERO ── */
             .hero {
                 min-height: 100vh;
                 display: flex;
@@ -47,8 +44,17 @@
             .hero-content { max-width: 1400px; width: 100%; position: relative; z-index: 2; }
             .hero-layout { display: flex; flex-direction: column; }
             .hero-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 1.5rem; opacity: 0; animation: fadeInUp 0.5s ease 0.3s forwards; }
-            .hero-name-block { position: relative; padding-bottom: 2.5rem; margin-bottom: 2.5rem; }
-            .hero-name-block::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; width: 0; background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%); animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards; }
+            .hero-name-block { position: relative; padding-bottom: 3rem; margin-bottom: 2.5rem; }
+            /* FIXED: line is now below the text block, thicker, more stylish */
+            .hero-name-block::after {
+                content: '';
+                position: absolute;
+                bottom: 0; left: 0;
+                height: 3px; width: 0;
+                background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%);
+                animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards;
+                border-radius: 2px;
+            }
             @keyframes heroLineGrow { to { width: 100%; } }
             .hero-title { font-family: var(--font-display); font-size: clamp(3.5rem, 10.5vw, 9rem); font-weight: 400; line-height: 1.0; letter-spacing: -0.03em; }
             .title-line { display: block; opacity: 0; transform: translateY(40px); }
@@ -63,18 +69,42 @@
             @keyframes statusPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.7); } }
             .hero-meta-item { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.45; }
 
+            /* ── MOBILE HERO: name sits ~40% from top, scroll hint at bottom ── */
             @media (max-width: 768px) {
-                .hero { padding: 1.5rem 1.25rem; padding-top: 70px !important; min-height: auto !important; }
+                .hero {
+                    padding: 0 1.25rem !important;
+                    padding-top: 0 !important;
+                    min-height: 100svh !important;
+                    /* push name block to ~38% from top */
+                    justify-content: flex-start;
+                    padding-top: 38svh !important;
+                }
                 .hero-layout { align-items: center; text-align: center; }
                 .hero-label { text-align: center; margin-bottom: 0.875rem; font-size: 10px; }
-                .hero-name-block { width: 100%; text-align: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; }
+                .hero-name-block { width: 100%; text-align: center; padding-bottom: 1.5rem; margin-bottom: 1.25rem; }
                 .hero-title { font-size: clamp(2.4rem, 11vw, 3.4rem) !important; text-align: center !important; line-height: 1.05 !important; }
                 .hero-info-row { flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
                 .hero-info-left { align-items: center; gap: 0.3rem; }
                 .hero-info-right { align-items: center; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 0.875rem; }
+                /* Subtle scroll hint on mobile */
+                .hero::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 2rem; left: 50%;
+                    transform: translateX(-50%);
+                    width: 1px; height: 48px;
+                    background: linear-gradient(to bottom, var(--color-accent), transparent);
+                    animation: mobileScrollLine 2s ease-in-out infinite;
+                    opacity: 0;
+                    animation-delay: 3s;
+                }
+                @keyframes mobileScrollLine {
+                    0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+                    40%, 60% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+                }
             }
 
-            /* ── LOADING SCREEN (inline for zero flash) ── */
+            /* ── LOADING SCREEN ── */
             .loader-screen { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--color-bg); }
             body.dark-mode .loader-screen { background: #111111; }
             .loader-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(193,122,90,0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 60% at 70% 60%, rgba(122,142,126,0.05) 0%, transparent 70%); }
@@ -119,7 +149,7 @@
                 .loader-monogram { font-size: 1.6rem; }
             }
 
-            /* ── LOCK OVERLAY (inline so it's ready before JS) ── */
+            /* ── LOCK OVERLAY ── */
             .section-lock-overlay { display: none; }
             #about.is-locked, #projects.is-locked, #contact.is-locked { overflow: hidden; }
             #about.is-locked .section-lock-overlay, #projects.is-locked .section-lock-overlay, #contact.is-locked .section-lock-overlay {
@@ -162,10 +192,89 @@
 
             @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
             @keyframes revealText { to { opacity: 1; transform: translateY(0); } }
+
+            /* ── MOBILE ABOUT SECTION: animated reveal on scroll ── */
+            @media (max-width: 768px) {
+                .about-section {
+                    opacity: 0;
+                    transform: translateY(40px);
+                    transition:
+                        opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+                }
+                .about-section.section-visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                .about-section.section-above {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                    transition: opacity 0.35s ease, transform 0.35s ease;
+                }
+                .about-section.section-visible .about-text-block {
+                    animation: fadeInUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+                    opacity: 1; transform: none;
+                }
+                .about-section.section-visible .about-features {
+                    animation: fadeInUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+                    opacity: 1; transform: none;
+                }
+                .about-section.section-visible .feature-item:nth-child(1) {
+                    animation: slideInLeft 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+                }
+                .about-section.section-visible .feature-item:nth-child(2) {
+                    animation: slideInLeft 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.36s both;
+                }
+                .about-section.section-visible .feature-item:nth-child(3) {
+                    animation: slideInLeft 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.44s both;
+                }
+                @keyframes slideInLeft { from { transform: translateX(-24px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            }
+
+            /* ── BURGER MENU SOCIAL LINKS ── */
+            .nav-menu-socials {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 1rem 2rem 0;
+                position: relative;
+                z-index: 3;
+                width: 100%;
+                max-width: 320px;
+            }
+            .nav-social-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 7px 14px;
+                font-family: var(--font-mono) !important;
+                font-size: 11px !important;
+                letter-spacing: 0.09em;
+                text-transform: uppercase;
+                color: var(--color-secondary) !important;
+                text-decoration: none;
+                border: 1px solid var(--color-border);
+                border-radius: 20px;
+                background: transparent;
+                transition: all 0.25s ease;
+                cursor: pointer;
+            }
+            .nav-social-btn svg {
+                stroke: var(--color-accent);
+                flex-shrink: 0;
+            }
+            .nav-social-btn:active,
+            .nav-social-btn:hover {
+                border-color: var(--color-accent) !important;
+                color: var(--color-accent) !important;
+                background: rgba(193,122,90,0.07) !important;
+                transform: none !important;
+            }
+            .nav-social-btn::after { display: none !important; }
         </style>
 
         <script>
-            // Apply dark mode IMMEDIATELY before any render — eliminates flash of grey
             (function() {
                 var saved = localStorage.getItem("darkMode");
                 if (saved === "true" || (saved === null && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
@@ -288,7 +397,6 @@
                     </div>
                     <div class="about-features" data-reveal>
                         <div class="feature-item">
-                            <!-- Icon uses currentColor — inherits from .feature-icon svg { color: var(--color-accent) } -->
                             <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9-9v4m0 14v-3m-9-6h4m14 0h-3m-6 0v.01"/></svg></div>
                             <div class="feature-content"><h3>Goal-Oriented</h3><p>Focused on delivering results that meet the expectations and quality.</p></div>
                         </div>
@@ -348,7 +456,6 @@
                 <h2 class="section-title" data-reveal>Get In Touch</h2>
                 <div class="contact-info" data-reveal>
                     <button class="contact-link" id="emailButton" type="button">
-                        <!-- Email icon uses currentColor — inherits from .contact-icon svg { color: var(--color-accent) } -->
                         <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg></span>
                         <span class="contact-details"><span class="contact-label">Email</span><span class="contact-value">Email.Hidden</span></span>
                     </button>
@@ -374,6 +481,15 @@
                         <span class="contact-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></span>
                         <span class="contact-details"><span class="contact-label">LinkedIn</span><span class="contact-value">ArtjomJapins</span></span>
                     </a>
+                    <!-- PINTEREST -->
+                    <a href="https://www.pinterest.com/artjomjapins/" target="_blank" rel="noopener" class="contact-link">
+                        <span class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.136-1.867 3.136-4.563 0-2.386-1.716-4.054-4.165-4.054-2.837 0-4.501 2.127-4.501 4.326 0 .856.33 1.775.741 2.276a.3.3 0 0 1 .069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
+                            </svg>
+                        </span>
+                        <span class="contact-details"><span class="contact-label">Pinterest</span><span class="contact-value">artjomjapins</span></span>
+                    </a>
                 </div>
             </div>
             <div class="section-lock-overlay" id="contactLockOverlay">
@@ -394,7 +510,6 @@
             </div>
         </footer>
 
-        <!-- Scripts: config first, then main script (includes admin panel) -->
         <script src="config.js"></script>
         <script src="script.js"></script>
     </body>

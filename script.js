@@ -798,6 +798,30 @@ function injectBurgerMenuDecoration() {
     topbar.className = "nav-menu-topbar";
     topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
     navLinks.appendChild(topbar);
+
+    // ── Social links row at the bottom of the burger menu ──
+    const socialsRow = document.createElement("div");
+    socialsRow.className = "nav-menu-socials";
+    socialsRow.innerHTML = `
+        <a href="#contact" class="nav-social-btn" data-nav-contact>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><g><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg>
+            Email
+        </a>
+        <a href="https://github.com/zxtrk" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/artjom-japins-4b589b35b/" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+        </a>
+        <a href="https://www.pinterest.com" target="_blank" rel="noopener" class="nav-social-btn" data-nav-external>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.136-1.867 3.136-4.563 0-2.386-1.716-4.054-4.165-4.054-2.837 0-4.501 2.127-4.501 4.326 0 .856.33 1.775.741 2.276a.3.3 0 0 1 .069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+            Pinterest
+        </a>
+    `;
+    navLinks.appendChild(socialsRow);
+
     const bottombar = document.createElement("div");
     bottombar.className = "nav-menu-bottombar";
     bottombar.innerHTML = `<span style="display:flex;align-items:center;gap:6px"><span class="nav-menu-statusdot"></span>Available for work</span><span>Based in Latvia</span>`;
@@ -814,6 +838,17 @@ function injectBurgerMenuDecoration() {
     dotsWrap.className = "nav-menu-dots";
     dotsWrap.innerHTML = `<div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div>`;
     navLinks.appendChild(dotsWrap);
+
+    // ── Wire up social contact links to close menu + scroll ──
+    navLinks.querySelectorAll("[data-nav-contact]").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            const target = document.querySelector("#contact");
+            if (!target) return;
+            closeBurgerMenu();
+            setTimeout(() => smoothScrollTo(target.offsetTop - 80, 900), 80);
+        });
+    });
 }
 
 function initBurgerMenu() {
@@ -837,7 +872,7 @@ function initBurgerMenu() {
     _burgerCloseCallback = close;
     burger.addEventListener("click", e => { e.stopPropagation(); burger.classList.contains("active") ? close() : open(); });
     overlay.addEventListener("click", close);
-    links.querySelectorAll("a:not([data-nav])").forEach(a => a.addEventListener("click", close));
+    links.querySelectorAll("a:not([data-nav]):not([data-nav-contact]):not([data-nav-external])").forEach(a => a.addEventListener("click", close));
     document.addEventListener("keydown", e => { if (e.key === "Escape" && links.classList.contains("active")) close(); });
     let resizeTimer;
     window.addEventListener("resize", () => {
@@ -903,8 +938,8 @@ function initAdminPanel() {
     let pinInput    = "";
 
     // ── Staged image state ────────────────────────────────────
-    let _stagedRawSrc  = null;   // raw data URL from FileReader
-    let _stagedSize    = 340;    // current slider value
+    let _stagedRawSrc  = null;
+    let _stagedSize    = 340;
 
     const DEFAULTS = {
         projectsLocked:  false,
@@ -1068,26 +1103,15 @@ function initAdminPanel() {
         const staging = document.getElementById("admImgStaging");
         const btn = document.getElementById("admFunnyBtn");
         const fi = document.getElementById("admFunnyFileInput");
+        const launchBtn = document.getElementById("admLaunchBtn");
         if (staging) staging.style.display = "none";
         if (btn) btn.style.display = "";
         if (fi) fi.value = "";
-    }
-
-    function _showStaging(rawSrc) {
-        _stagedRawSrc = rawSrc;
-        _stagedSize = parseInt(document.getElementById("admImgSizeSlider")?.value || "340", 10);
-
-        const staging = document.getElementById("admImgStaging");
-        const preview = document.getElementById("admImgPreview");
-        const btn = document.getElementById("admFunnyBtn");
-        const slider = document.getElementById("admImgSizeSlider");
-        const sizeLabel = document.getElementById("admSizeLabel");
-
-        if (preview) preview.src = rawSrc;
-        if (staging) staging.style.display = "block";
-        if (btn) btn.style.display = "none";
-        if (slider) { slider.value = _stagedSize; }
-        if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
+        // ── FIX: always re-enable the launch button and restore its label ──
+        if (launchBtn) {
+            launchBtn.disabled = false;
+            launchBtn.textContent = "🚀 \u00a0Launch Image!";
+        }
     }
 
     // ── Inject HTML ───────────────────────────────────────────
@@ -1185,11 +1209,9 @@ function initAdminPanel() {
                 .adm-clear-images-btn:hover{background:rgba(224,85,85,.08);border-color:#e05555}
                 .adm-clear-images-btn:active{transform:scale(.97)}
                 .adm-img-count{display:inline-block;font-size:10px;letter-spacing:.1em;background:rgba(193,122,90,.12);border:1px solid rgba(193,122,90,.2);color:var(--color-accent);padding:2px 8px;border-radius:12px;margin-left:6px}
-                /* ── Staging panel ── */
                 .adm-img-staging{margin-top:0;padding:12px;background:rgba(193,122,90,.06);border:1px solid rgba(193,122,90,.18);border-radius:8px;animation:admStageFadeIn .3s ease both}
                 @keyframes admStageFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
                 .adm-img-staging .adm-btn{margin-top:0!important}
-                /* ── Range slider ── */
                 .adm-range-input{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--color-border);border-radius:2px;outline:none;cursor:pointer;margin-top:6px}
                 .adm-range-input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--color-accent);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .15s ease}
                 .adm-range-input::-webkit-slider-thumb:hover{transform:scale(1.2)}
@@ -1280,12 +1302,10 @@ function initAdminPanel() {
                 <div class="adm-sec">
                   <div class="adm-sec-lbl">Floating Images</div>
                   <input type="file" id="admFunnyFileInput" accept="image/*" />
-                  <!-- Select button (shown by default) -->
                   <button class="adm-funny-btn" id="admFunnyBtn">
-                    <span class="funny-icon">&#x1F4F8;</span>
+                    <span class="funny-icon"></span>
                     <span class="adm-funny-label">Select Image</span>
                   </button>
-                  <!-- Staging panel (hidden until image selected) -->
                   <div class="adm-img-staging" id="admImgStaging" style="display:none">
                     <img id="admImgPreview" src="" alt="Preview"
                          style="width:100%;border-radius:8px;display:block;margin-bottom:12px;max-height:200px;object-fit:contain;background:var(--color-light);border:1px solid var(--color-border);" />
@@ -1511,9 +1531,10 @@ function initAdminPanel() {
                 if (sizeSlider) { sizeSlider.value = 340; }
                 if (sizeLabel) sizeLabel.textContent = "340px";
                 _stagedSize = 340;
+                // ── FIX: ensure launch button is always enabled when staging a new image ──
+                if (launchBtn) { launchBtn.disabled = false; launchBtn.textContent = "🚀 \u00a0Launch Image!"; }
                 if (imgStaging) imgStaging.style.display = "block";
                 if (funnyBtn) funnyBtn.style.display = "none";
-                // Scroll staging into view
                 setTimeout(() => imgStaging?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
             };
             reader.onerror = () => { _resetStaging(); };
@@ -1527,17 +1548,21 @@ function initAdminPanel() {
         });
 
         // "Launch Image!" → compress at chosen size and send
+        // ── FIX: after launch, reset staging so another image can be launched immediately ──
         launchBtn?.addEventListener("click", async () => {
             if (!_stagedRawSrc) return;
             launchBtn.disabled = true;
             launchBtn.textContent = "Launching... 🚀";
+            const srcToLaunch = _stagedRawSrc;
+            const sizeToLaunch = _stagedSize;
             try {
-                await FloatingImageSystem.add(_stagedRawSrc, _stagedSize);
+                await FloatingImageSystem.add(srcToLaunch, sizeToLaunch);
                 if (!db) updateCount(_activeCount + 1);
-                logActivity(`Floating image launched (${_stagedSize}px) 🚀`);
+                logActivity(`Floating image launched (${sizeToLaunch}px) 🚀`);
             } catch (err) {
                 console.warn("[Admin] Launch failed:", err);
             }
+            // Always reset after launch so another image can be picked immediately
             _resetStaging();
         });
 
