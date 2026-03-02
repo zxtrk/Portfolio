@@ -477,6 +477,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initScrollIndicator();
     initQuoteOfTheDay();
     initMobileSectionObserver();
+    initMobileLinkedInHide();
+    initMobileScrollAnimations();
     initAdminPanel();
     setTimeout(initInstantTapFeedback, 600);
 });
@@ -709,7 +711,18 @@ function initScrollIndicator() {
         }
     };
 
-    setTimeout(enableFade, mobile ? 4200 : 2800);
+    if (mobile) {
+        // On mobile the element is position:relative in the DOM flow.
+        // Just make it visible after a short delay — no transform needed.
+        setTimeout(() => {
+            el.style.cssText = "display:flex!important;position:relative!important;left:auto!important;bottom:auto!important;transform:none!important;opacity:1;transition:opacity 0.7s ease;";
+            window.addEventListener("scroll", () => {
+                el.style.opacity = window.pageYOffset > 100 ? "0" : "1";
+            }, { passive: true });
+        }, 3200);
+    } else {
+        setTimeout(enableFade, 2800);
+    }
 }
 
 // ─── PARALLAX ─────────────────────────────────────────────────────────
@@ -808,6 +821,38 @@ function injectBurgerMenuDecoration() {
         link.innerHTML = `<span class="menu-index">${["01","02","03"][i] || "0"+(i+1)}</span><span class="menu-text">${text}</span><span class="menu-arrow">&#x2192;</span>`;
     });
 
+    // ── Dark / Light mode pill slider ─────────────────────────────
+    const isDark = () => document.body.classList.contains("dark-mode");
+
+    const themeRow = document.createElement("div");
+    themeRow.className = "nav-theme-row";
+
+    const themeLabel = document.createElement("span");
+    themeLabel.className = "nav-theme-label";
+    themeLabel.textContent = isDark() ? "Dark Mode" : "Light Mode";
+
+    const slider = document.createElement("div");
+    slider.className = "nav-theme-slider" + (isDark() ? " is-dark" : "");
+
+    const thumb = document.createElement("div");
+    thumb.className = "nav-theme-thumb";
+    thumb.textContent = isDark() ? "🌙" : "☀️";
+
+    slider.appendChild(thumb);
+    themeRow.appendChild(themeLabel);
+    themeRow.appendChild(slider);
+
+    slider.addEventListener("click", () => {
+        const dark = !document.body.classList.contains("dark-mode");
+        document.body.classList.toggle("dark-mode", dark);
+        localStorage.setItem("darkMode", dark.toString());
+        slider.classList.toggle("is-dark", dark);
+        thumb.textContent = dark ? "🌙" : "☀️";
+        themeLabel.textContent = dark ? "Dark Mode" : "Light Mode";
+    });
+
+    navLinks.appendChild(themeRow);
+
     // Top bar with portfolio label
     const topbar = document.createElement("div");
     topbar.className = "nav-menu-topbar";
@@ -885,6 +930,77 @@ function initMobileSectionObserver() {
         });
     }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
     sections.forEach(s => observer.observe(s));
+}
+
+// ─── HIDE LINKEDIN ON MOBILE ──────────────────────────────────────────
+// Removes the LinkedIn contact row from the mobile contact section.
+function initMobileLinkedInHide() {
+    if (window.innerWidth > 768) return;
+    document.querySelectorAll(".contact-link").forEach(link => {
+        const text = (link.textContent || "").toLowerCase();
+        const href = (link.getAttribute("href") || "").toLowerCase();
+        if (text.includes("linkedin") || href.includes("linkedin")) {
+            link.style.display = "none";
+        }
+    });
+}
+
+// ─── MOBILE SCROLL ANIMATIONS ─────────────────────────────────────────
+// Adds .mob-anim / .mob-anim-scale / .mob-anim-left to elements,
+// then uses IntersectionObserver to add .mob-revealed when they enter view.
+// No hover behaviour — scroll-only.
+function initMobileScrollAnimations() {
+    if (window.innerWidth > 768) return;
+
+    // Tag elements with animation classes + stagger delays
+    const tag = (el, cls, delay) => {
+        el.classList.add(cls);
+        if (delay) el.classList.add(delay);
+    };
+
+    // Section titles slide up
+    document.querySelectorAll(".section-title").forEach(el => tag(el, "mob-anim"));
+
+    // Section accent lines
+    document.querySelectorAll(".section-accent-line, .section-line").forEach(el => tag(el, "mob-anim", "mob-d1"));
+
+    // About text paragraphs
+    document.querySelectorAll(".intro-paragraph").forEach((el, i) => {
+        tag(el, "mob-anim", ["mob-d1","mob-d2","mob-d3"][i] || "mob-d3");
+    });
+
+    // Feature cards — scale in with stagger
+    document.querySelectorAll(".feature-item").forEach((el, i) => {
+        tag(el, "mob-anim-scale", ["mob-d1","mob-d2","mob-d3","mob-d4","mob-d5"][i] || "mob-d5");
+    });
+
+    // Project cards
+    document.querySelectorAll(".project-grid-card").forEach((el, i) => {
+        tag(el, "mob-anim-scale", ["mob-d1","mob-d2","mob-d3"][i] || "mob-d3");
+    });
+
+    // Contact links slide from left
+    document.querySelectorAll(".contact-link").forEach((el, i) => {
+        tag(el, "mob-anim-left", ["mob-d1","mob-d2","mob-d3","mob-d4"][i] || "mob-d4");
+    });
+
+    // Quote content fades up
+    document.querySelectorAll(".quote-content").forEach(el => tag(el, "mob-anim"));
+
+    // Projects intro text
+    document.querySelectorAll(".projects-intro").forEach(el => tag(el, "mob-anim", "mob-d1"));
+
+    // Observe all tagged elements
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("mob-revealed");
+                observer.unobserve(entry.target); // animate once
+            }
+        });
+    }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+
+    document.querySelectorAll(".mob-anim, .mob-anim-scale, .mob-anim-left").forEach(el => observer.observe(el));
 }
 
 // ─── INSTANT TAP FEEDBACK ─────────────────────────────────────────────
