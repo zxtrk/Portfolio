@@ -205,6 +205,7 @@ const FloatingImageSystem = (() => {
     let _dragging = null;
     let _globalHandlersReady = false;
 
+    // Custom size override — set by admin panel before launch
     let _customSize = null;
 
     function getSize() {
@@ -677,39 +678,27 @@ function initHeroAnimation() {
 // ─── SCROLL INDICATOR ──────────────────────────────────────────────────
 function initScrollIndicator() {
     const el = document.getElementById("scrollIndicator");
-    if (!el) return;
-    const mobile = window.innerWidth <= 768;
+    if (!el || window.innerWidth <= 768) return;
     let visible = true, fadeTimeout = null;
-
     const enableFade = () => {
-        if (!mobile) {
-            el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
-        } else {
-            el.style.cssText = "display:flex!important;animation:none;transition:opacity 0.7s ease;opacity:1;position:relative;margin-top:2rem;";
-        }
+        el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
         window.removeEventListener("scroll", enableFade);
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
     };
-
     const handleScroll = () => {
-        const shouldHide = window.pageYOffset > 80;
+        const shouldHide = window.pageYOffset > 100;
         if (shouldHide && visible) {
             visible = false;
-            el.style.opacity = "0";
-            if (!mobile) el.style.transform = "translateX(-50%) translateY(14px)";
+            el.style.opacity = "0"; el.style.transform = "translateX(-50%) translateY(14px)";
             clearTimeout(fadeTimeout);
-            fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 700);
+            fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 900);
         } else if (!shouldHide && !visible) {
-            visible = true;
-            clearTimeout(fadeTimeout);
-            el.style.visibility = "visible";
-            el.style.opacity = "1";
-            if (!mobile) el.style.transform = "translateX(-50%) translateY(0)";
+            visible = true; clearTimeout(fadeTimeout);
+            el.style.visibility = "visible"; el.style.opacity = "1"; el.style.transform = "translateX(-50%) translateY(0)";
         }
     };
-
-    setTimeout(enableFade, mobile ? 4200 : 2800);
+    setTimeout(enableFade, 2800);
 }
 
 // ─── PARALLAX ─────────────────────────────────────────────────────────
@@ -801,38 +790,26 @@ function injectBurgerMenuDecoration() {
     _burgerDecorated = true;
     const navLinks = document.getElementById("navLinks");
     if (!navLinks) return;
-
-    // Add index numbers and arrow to each nav link
     navLinks.querySelectorAll("a[data-nav]").forEach((link, i) => {
         const text = link.textContent.trim();
         link.innerHTML = `<span class="menu-index">${["01","02","03"][i] || "0"+(i+1)}</span><span class="menu-text">${text}</span><span class="menu-arrow">&#x2192;</span>`;
     });
-
-    // Top bar with portfolio label
     const topbar = document.createElement("div");
     topbar.className = "nav-menu-topbar";
     topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
     navLinks.appendChild(topbar);
-
-    // Bottom bar with status
     const bottombar = document.createElement("div");
     bottombar.className = "nav-menu-bottombar";
     bottombar.innerHTML = `<span style="display:flex;align-items:center;gap:6px"><span class="nav-menu-statusdot"></span>Available for work</span><span>Based in Latvia</span>`;
     navLinks.appendChild(bottombar);
-
-    // Corner decorations
     ["tl","tr","bl","br"].forEach(pos => {
         const corner = document.createElement("div");
         corner.className = `nav-menu-corner nav-menu-corner--${pos}`;
         navLinks.appendChild(corner);
     });
-
-    // Side line decoration
     const line = document.createElement("div");
     line.className = "nav-menu-line";
     navLinks.appendChild(line);
-
-    // Dot decorations
     const dotsWrap = document.createElement("div");
     dotsWrap.className = "nav-menu-dots";
     dotsWrap.innerHTML = `<div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div>`;
@@ -925,8 +902,9 @@ function initAdminPanel() {
     let activityLog = [];
     let pinInput    = "";
 
-    let _stagedRawSrc  = null;
-    let _stagedSize    = 340;
+    // ── Staged image state ────────────────────────────────────
+    let _stagedRawSrc  = null;   // raw data URL from FileReader
+    let _stagedSize    = 340;    // current slider value
 
     const DEFAULTS = {
         projectsLocked:  false,
@@ -940,6 +918,7 @@ function initAdminPanel() {
         footerNote:      "Designed & developed with care.",
     };
 
+    // ── Firebase ──────────────────────────────────────────────
     function initFirebase() {
         if (!window.FIREBASE_ENABLED || typeof firebase === "undefined") return;
         try {
@@ -970,6 +949,7 @@ function initAdminPanel() {
         });
     }
 
+    // ── Config ────────────────────────────────────────────────
     function getConfig() {
         try { return JSON.parse(localStorage.getItem("siteConfig") || "{}"); } catch { return {}; }
     }
@@ -983,6 +963,7 @@ function initAdminPanel() {
         return next;
     }
 
+    // ── Apply config to the live site ────────────────────────
     function applyToSite(config) {
         const c = { ...DEFAULTS, ...config };
         applySectionLock(c.aboutLocked,    LOCK_CONFIG.aboutLocked);
@@ -1024,6 +1005,7 @@ function initAdminPanel() {
         } else { banner?.remove(); }
     }
 
+    // ── Activity log ──────────────────────────────────────────
     function logActivity(msg) {
         const entry = { msg, ts: Date.now() };
         activityLog.unshift(entry);
@@ -1041,6 +1023,7 @@ function initAdminPanel() {
         }).join("") || '<span class="adm-log-empty">No activity yet</span>';
     }
 
+    // ── Keyboard trigger ─────────────────────────────────────
     document.addEventListener("keydown", e => {
         if (["INPUT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
         keyBuffer.push(e.key.toLowerCase());
@@ -1048,6 +1031,7 @@ function initAdminPanel() {
         if (keyBuffer.join("") === TRIGGER_WORD.join("")) { keyBuffer = []; openPanel(); }
     });
 
+    // ── Triple-tap footer (mobile) ────────────────────────────
     let tapCount = 0, tapTimer = null;
     document.addEventListener("touchend", e => {
         if (!e.target.closest(".main-footer")) return;
@@ -1057,6 +1041,7 @@ function initAdminPanel() {
         if (tapCount >= 3) { tapCount = 0; openPanel(); }
     });
 
+    // ── Open / Close ──────────────────────────────────────────
     function openPanel() {
         if (panelOpen) return;
         panelOpen = true;
@@ -1075,6 +1060,7 @@ function initAdminPanel() {
         if (p) { p.classList.remove("adm--visible"); setTimeout(() => p.remove(), 500); }
     }
 
+    // ── Staging helpers ───────────────────────────────────────
     function _resetStaging() {
         _stagedRawSrc = null;
         _stagedSize = 340;
@@ -1082,16 +1068,29 @@ function initAdminPanel() {
         const staging = document.getElementById("admImgStaging");
         const btn = document.getElementById("admFunnyBtn");
         const fi = document.getElementById("admFunnyFileInput");
-        const launchBtn = document.getElementById("admLaunchBtn");
         if (staging) staging.style.display = "none";
         if (btn) btn.style.display = "";
         if (fi) fi.value = "";
-        if (launchBtn) {
-            launchBtn.disabled = false;
-            launchBtn.textContent = "🚀 \u00a0Launch Image!";
-        }
     }
 
+    function _showStaging(rawSrc) {
+        _stagedRawSrc = rawSrc;
+        _stagedSize = parseInt(document.getElementById("admImgSizeSlider")?.value || "340", 10);
+
+        const staging = document.getElementById("admImgStaging");
+        const preview = document.getElementById("admImgPreview");
+        const btn = document.getElementById("admFunnyBtn");
+        const slider = document.getElementById("admImgSizeSlider");
+        const sizeLabel = document.getElementById("admSizeLabel");
+
+        if (preview) preview.src = rawSrc;
+        if (staging) staging.style.display = "block";
+        if (btn) btn.style.display = "none";
+        if (slider) { slider.value = _stagedSize; }
+        if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
+    }
+
+    // ── Inject HTML ───────────────────────────────────────────
     function injectPanel() {
         if (document.getElementById("adminPanel")) return;
 
@@ -1186,9 +1185,11 @@ function initAdminPanel() {
                 .adm-clear-images-btn:hover{background:rgba(224,85,85,.08);border-color:#e05555}
                 .adm-clear-images-btn:active{transform:scale(.97)}
                 .adm-img-count{display:inline-block;font-size:10px;letter-spacing:.1em;background:rgba(193,122,90,.12);border:1px solid rgba(193,122,90,.2);color:var(--color-accent);padding:2px 8px;border-radius:12px;margin-left:6px}
+                /* ── Staging panel ── */
                 .adm-img-staging{margin-top:0;padding:12px;background:rgba(193,122,90,.06);border:1px solid rgba(193,122,90,.18);border-radius:8px;animation:admStageFadeIn .3s ease both}
                 @keyframes admStageFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
                 .adm-img-staging .adm-btn{margin-top:0!important}
+                /* ── Range slider ── */
                 .adm-range-input{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--color-border);border-radius:2px;outline:none;cursor:pointer;margin-top:6px}
                 .adm-range-input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--color-accent);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .15s ease}
                 .adm-range-input::-webkit-slider-thumb:hover{transform:scale(1.2)}
@@ -1279,10 +1280,12 @@ function initAdminPanel() {
                 <div class="adm-sec">
                   <div class="adm-sec-lbl">Floating Images</div>
                   <input type="file" id="admFunnyFileInput" accept="image/*" />
+                  <!-- Select button (shown by default) -->
                   <button class="adm-funny-btn" id="admFunnyBtn">
-                    <span class="funny-icon"></span>
+                    <span class="funny-icon">&#x1F4F8;</span>
                     <span class="adm-funny-label">Select Image</span>
                   </button>
+                  <!-- Staging panel (hidden until image selected) -->
                   <div class="adm-img-staging" id="admImgStaging" style="display:none">
                     <img id="admImgPreview" src="" alt="Preview"
                          style="width:100%;border-radius:8px;display:block;margin-bottom:12px;max-height:200px;object-fit:contain;background:var(--color-light);border:1px solid var(--color-border);" />
@@ -1473,6 +1476,7 @@ function initAdminPanel() {
             if (btn) { const orig = btn.textContent; btn.textContent = "Saved \u2713"; btn.style.background = "var(--color-secondary)"; setTimeout(() => { btn.textContent = orig; btn.style.background = ""; }, 1500); }
         });
 
+        // ── Floating images — staging flow ───────────────────
         const funnyBtn       = document.getElementById("admFunnyBtn");
         const funnyFileInput = document.getElementById("admFunnyFileInput");
         const imgStaging     = document.getElementById("admImgStaging");
@@ -1493,8 +1497,10 @@ function initAdminPanel() {
 
         if (db) { db.ref("funnyImages").on("value", snap => { updateCount(snap.numChildren ? snap.numChildren() : 0); }); }
 
+        // "Select Image" button → open file picker
         funnyBtn?.addEventListener("click", () => { funnyFileInput.value = ""; funnyFileInput.click(); });
 
+        // File selected → show staging panel with preview
         funnyFileInput?.addEventListener("change", e => {
             const file = e.target.files?.[0];
             if (!file) return;
@@ -1505,38 +1511,40 @@ function initAdminPanel() {
                 if (sizeSlider) { sizeSlider.value = 340; }
                 if (sizeLabel) sizeLabel.textContent = "340px";
                 _stagedSize = 340;
-                if (launchBtn) { launchBtn.disabled = false; launchBtn.textContent = "🚀 \u00a0Launch Image!"; }
                 if (imgStaging) imgStaging.style.display = "block";
                 if (funnyBtn) funnyBtn.style.display = "none";
+                // Scroll staging into view
                 setTimeout(() => imgStaging?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
             };
             reader.onerror = () => { _resetStaging(); };
             reader.readAsDataURL(file);
         });
 
+        // Slider → update size label in real-time
         sizeSlider?.addEventListener("input", e => {
             _stagedSize = parseInt(e.target.value, 10);
             if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
         });
 
+        // "Launch Image!" → compress at chosen size and send
         launchBtn?.addEventListener("click", async () => {
             if (!_stagedRawSrc) return;
             launchBtn.disabled = true;
             launchBtn.textContent = "Launching... 🚀";
-            const srcToLaunch = _stagedRawSrc;
-            const sizeToLaunch = _stagedSize;
             try {
-                await FloatingImageSystem.add(srcToLaunch, sizeToLaunch);
+                await FloatingImageSystem.add(_stagedRawSrc, _stagedSize);
                 if (!db) updateCount(_activeCount + 1);
-                logActivity(`Floating image launched (${sizeToLaunch}px) 🚀`);
+                logActivity(`Floating image launched (${_stagedSize}px) 🚀`);
             } catch (err) {
                 console.warn("[Admin] Launch failed:", err);
             }
             _resetStaging();
         });
 
+        // "Cancel" → reset staging UI
         cancelBtn?.addEventListener("click", () => { _resetStaging(); });
 
+        // "Clear All Images"
         document.getElementById("admClearImages")?.addEventListener("click", () => {
             FloatingImageSystem.clearAll();
             if (!db) updateCount(0);
@@ -1554,6 +1562,7 @@ function initAdminPanel() {
             logActivity("Reset all settings to defaults");
         });
 
+        // Swipe down to close
         const drawer = document.getElementById("admDrawer");
         const handle = document.getElementById("admHandle");
         if (drawer && handle) {

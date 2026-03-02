@@ -24,16 +24,17 @@
         <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
 
         <style>
-            /* ── ICON COLOR FIX ── */
+            /* ── ICON COLOR FIX ─────────────────────────────────────────────
+               Makes feature icons and contact icons inherit the accent color
+               so they update automatically when the admin panel changes colors.
+            ── */
             .feature-icon svg,
             .contact-icon svg {
                 color: var(--color-accent);
                 transition: color 0.3s ease;
             }
 
-            /* ══════════════════════════════════════════════════
-               HERO
-            ══════════════════════════════════════════════════ */
+            /* ── HERO (inline to avoid FOUC) ── */
             .hero {
                 min-height: 100vh;
                 display: flex;
@@ -45,128 +46,35 @@
             }
             .hero-content { max-width: 1400px; width: 100%; position: relative; z-index: 2; }
             .hero-layout { display: flex; flex-direction: column; }
-            .hero-label {
-                font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em;
-                text-transform: uppercase; color: var(--color-accent); margin-bottom: 1.5rem;
-                opacity: 0; animation: fadeInUp 0.5s ease 0.3s forwards;
-            }
-            .hero-name-block { position: relative; padding-bottom: 3.5rem; margin-bottom: 2.5rem; }
-            .hero-name-block::after {
-                content: '';
-                position: absolute;
-                bottom: 0; left: 0;
-                height: 3px; width: 0;
-                background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%);
-                animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards;
-                border-radius: 2px;
-            }
+            .hero-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 1.5rem; opacity: 0; animation: fadeInUp 0.5s ease 0.3s forwards; }
+            .hero-name-block { position: relative; padding-bottom: 2.5rem; margin-bottom: 2.5rem; }
+            .hero-name-block::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; width: 0; background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%); animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards; }
             @keyframes heroLineGrow { to { width: 100%; } }
-            .hero-title {
-                font-family: var(--font-display); font-size: clamp(3.5rem, 10.5vw, 9rem);
-                font-weight: 400; line-height: 1.0; letter-spacing: -0.03em;
-            }
+            .hero-title { font-family: var(--font-display); font-size: clamp(3.5rem, 10.5vw, 9rem); font-weight: 400; line-height: 1.0; letter-spacing: -0.03em; }
             .title-line { display: block; opacity: 0; transform: translateY(40px); }
             .title-line.revealed { animation: revealText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards; }
-            .hero-info-row {
-                display: flex; align-items: flex-start; justify-content: space-between;
-                gap: 3rem; opacity: 0; animation: fadeInUp 0.6s ease 1.05s forwards;
-            }
+            .hero-info-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 3rem; opacity: 0; animation: fadeInUp 0.6s ease 1.05s forwards; }
             .hero-info-left { display: flex; flex-direction: column; gap: 0.55rem; }
             .hero-role { font-size: 17px; color: var(--color-text); letter-spacing: 0.005em; }
-            .hero-desc {
-                font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
-                color: var(--color-secondary); max-width: 380px; line-height: 1.7;
-            }
+            .hero-desc { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--color-secondary); max-width: 380px; line-height: 1.7; }
             .hero-info-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem; flex-shrink: 0; }
-            .hero-status {
-                display: flex; align-items: center; gap: 8px; font-family: var(--font-mono);
-                font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text);
-            }
-            .hero-status-dot {
-                width: 7px; height: 7px; border-radius: 50%; background: var(--color-secondary);
-                flex-shrink: 0; animation: statusPulse 2.5s ease-in-out infinite;
-            }
+            .hero-status { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text); }
+            .hero-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-secondary); flex-shrink: 0; animation: statusPulse 2.5s ease-in-out infinite; }
             @keyframes statusPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.7); } }
-            .hero-meta-item {
-                font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
-                text-transform: uppercase; color: var(--color-secondary); opacity: 0.45;
-            }
+            .hero-meta-item { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.45; }
 
-            /* ══════════════════════════════════════════════════
-               MOBILE HERO — tight layout, scroll indicator in flow
-            ══════════════════════════════════════════════════ */
             @media (max-width: 768px) {
-                .hero {
-                    padding: 0 1.25rem !important;
-                    min-height: auto !important;
-                    padding-top: 0 !important;
-                    padding-bottom: 2rem !important;
-                    justify-content: center !important;
-                    align-items: stretch !important;
-                    flex-direction: column !important;
-                    overflow: visible !important;
-                }
-                /* Vertically centre content — no giant gap */
-                .hero-content {
-                    padding-top: 5svh;
-                    flex: 0 0 auto;
-                }
-                .hero-layout {
-                    align-items: center;
-                    text-align: center;
-                }
-                .hero-label { text-align: center; margin-bottom: 0.75rem; font-size: 10px; }
-                .hero-name-block {
-                    width: 100%; text-align: center;
-                    padding-bottom: 1.5rem; margin-bottom: 1rem;
-                }
-                .hero-title {
-                    font-size: clamp(2.4rem, 11vw, 3.4rem) !important;
-                    text-align: center !important; line-height: 1.05 !important;
-                }
-                .hero-info-row {
-                    flex-direction: column; align-items: center;
-                    gap: 0.4rem; text-align: center;
-                }
-                .hero-info-left { align-items: center; gap: 0.25rem; }
-                .hero-info-right {
-                    align-items: center; flex-direction: row;
-                    flex-wrap: nowrap; justify-content: center; gap: 0.75rem;
-                }
-
-                /*
-                 * SCROLL INDICATOR — placed in the DOM INSIDE .hero-layout
-                 * so it sits directly below the hero info on mobile.
-                 * We use position:relative so it flows naturally.
-                 * style.css sets display:none !important for <=768px so
-                 * we override that here (inline <style> beats external sheet).
-                 */
-                .scroll-indicator {
-                    display: flex !important;
-                    position: relative !important;
-                    /* reset the desktop absolute-positioning values */
-                    bottom: auto !important;
-                    left: auto !important;
-                    transform: none !important;
-                    /* layout */
-                    flex-direction: column !important;
-                    align-items: center !important;
-                    gap: 0.35rem !important;
-                    margin-top: 2rem !important;
-                    /* text */
-                    font-size: 10px !important;
-                    letter-spacing: 0.1em !important;
-                    text-transform: uppercase !important;
-                    color: var(--color-secondary) !important;
-                    pointer-events: none !important;
-                    white-space: nowrap !important;
-                    /* fade-in with same bounce as desktop, timed after loader */
-                    opacity: 0 !important;
-                    animation: fadeInBounce 1.5s ease 2.6s forwards !important;
-                }
+                .hero { padding: 1.5rem 1.25rem; padding-top: 70px !important; min-height: auto !important; }
+                .hero-layout { align-items: center; text-align: center; }
+                .hero-label { text-align: center; margin-bottom: 0.875rem; font-size: 10px; }
+                .hero-name-block { width: 100%; text-align: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; }
+                .hero-title { font-size: clamp(2.4rem, 11vw, 3.4rem) !important; text-align: center !important; line-height: 1.05 !important; }
+                .hero-info-row { flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+                .hero-info-left { align-items: center; gap: 0.3rem; }
+                .hero-info-right { align-items: center; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 0.875rem; }
             }
 
-            /* ── LOADING SCREEN ── */
+            /* ── LOADING SCREEN (inline for zero flash) ── */
             .loader-screen { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--color-bg); }
             body.dark-mode .loader-screen { background: #111111; }
             .loader-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(193,122,90,0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 60% at 70% 60%, rgba(122,142,126,0.05) 0%, transparent 70%); }
@@ -211,7 +119,7 @@
                 .loader-monogram { font-size: 1.6rem; }
             }
 
-            /* ── LOCK OVERLAY ── */
+            /* ── LOCK OVERLAY (inline so it's ready before JS) ── */
             .section-lock-overlay { display: none; }
             #about.is-locked, #projects.is-locked, #contact.is-locked { overflow: hidden; }
             #about.is-locked .section-lock-overlay, #projects.is-locked .section-lock-overlay, #contact.is-locked .section-lock-overlay {
@@ -250,145 +158,14 @@
             .quote-author { font-size: 18px; color: var(--color-accent); font-weight: 600; margin-bottom: var(--spacing-sm); letter-spacing: 0.05em; }
             .quote-tag { display: inline-block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); padding: 6px 16px; border: 1px solid var(--color-border); border-radius: 20px; margin-top: var(--spacing-md); background: rgba(255,255,255,0.3); }
             body.dark-mode .quote-tag { background: rgba(255,255,255,0.04); }
-            @media (max-width: 768px) {
-                .quote-section { padding: 1.5rem 1.25rem; }
-                .quote-content { padding: 1.25rem; }
-                .quote-icon { font-size: 80px; margin-bottom: -30px; }
-                .quote-text { font-size: clamp(1.3rem,5vw,1.9rem); padding: 0; }
-                .quote-author { font-size: 16px; }
-            }
+            @media (max-width: 768px) { .quote-section { padding: 1.5rem 1.25rem; } .quote-content { padding: 1.25rem; } .quote-icon { font-size: 80px; margin-bottom: -30px; } .quote-text { font-size: clamp(1.3rem,5vw,1.9rem); padding: 0; } .quote-author { font-size: 16px; } }
 
             @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
             @keyframes revealText { to { opacity: 1; transform: translateY(0); } }
-
-            /* ══════════════════════════════════════════════════
-               MOBILE ABOUT SECTION
-               Hidden below viewport on load, springs in when scrolled.
-               Gap between hero and about controlled by hero min-height.
-            ══════════════════════════════════════════════════ */
-            @media (max-width: 768px) {
-                .about-section {
-                    opacity: 0;
-                    transform: translateY(48px);
-                    transition:
-                        opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-                        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-                }
-                .about-section.section-visible {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-                .about-section.section-above {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                    transition: opacity 0.3s ease, transform 0.3s ease;
-                }
-                .about-section.section-visible .section-title.revealed {
-                    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both !important;
-                }
-                .about-section.section-visible .about-text-block {
-                    animation: fadeInUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both !important;
-                    opacity: 1; transform: none;
-                }
-                .about-section.section-visible .about-features {
-                    animation: fadeInUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both !important;
-                    opacity: 1; transform: none;
-                }
-                .about-section.section-visible .feature-item:nth-child(1) {
-                    animation: mobileSlideIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.24s both !important;
-                }
-                .about-section.section-visible .feature-item:nth-child(2) {
-                    animation: mobileSlideIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both !important;
-                }
-                .about-section.section-visible .feature-item:nth-child(3) {
-                    animation: mobileSlideIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.40s both !important;
-                }
-                @keyframes mobileSlideIn {
-                    from { transform: translateX(-20px); opacity: 0; }
-                    to   { transform: translateX(0);     opacity: 1; }
-                }
-            }
-
-            /* ══════════════════════════════════════════════════
-               BURGER MENU SOCIAL ICON CIRCLES
-               ─────────────────────────────────────────────────
-               style.css .nav-links.active a fires font-size:2.8rem,
-               min-width:220px etc. with !important. We need higher
-               specificity to override. .nav-links.active .nav-social-btn
-               (class + class + class) beats .nav-links.active a
-               (class + class + tag).
-            ══════════════════════════════════════════════════ */
-            .nav-menu-socials {
-                display: flex;
-                gap: 0.7rem;
-                justify-content: center;
-                align-items: center;
-                padding: 0.875rem 2rem 0;
-                position: relative;
-                z-index: 3;
-                width: 100%;
-                flex-wrap: nowrap;
-            }
-
-            /* Full reset of nav-link-a overrides */
-            .nav-links.active .nav-social-btn {
-                width: 48px !important;
-                height: 48px !important;
-                min-width: 48px !important;
-                max-width: 48px !important;
-                border-radius: 50% !important;
-                border: 1px solid var(--color-border) !important;
-                border-bottom: 1px solid var(--color-border) !important;
-                display: flex !important;
-                flex-direction: row !important;
-                align-items: center !important;
-                justify-content: center !important;
-                font-size: 0 !important;
-                font-family: inherit !important;
-                font-weight: 400 !important;
-                letter-spacing: 0 !important;
-                text-transform: none !important;
-                color: transparent !important;
-                padding: 0 !important;
-                /* Use a subtle tint of accent so the circle feels connected
-                   to the theme, but still reads as a button */
-                background: rgba(193, 122, 90, 0.07) !important;
-                transition: border-color 0.2s ease, background 0.2s ease,
-                            transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-                -webkit-tap-highlight-color: transparent !important;
-                flex-shrink: 0 !important;
-            }
-
-            /* Icons use ACCENT colour so they update when admin changes theme */
-            .nav-links.active .nav-social-btn svg {
-                width: 18px !important;
-                height: 18px !important;
-                /* accent colour — updates automatically when CSS var changes */
-                stroke: var(--color-accent) !important;
-                flex-shrink: 0 !important;
-                display: block !important;
-                transition: stroke 0.2s ease, transform 0.2s ease !important;
-            }
-
-            /* Tap state */
-            .nav-links.active .nav-social-btn:active {
-                border-color: var(--color-accent) !important;
-                background: rgba(193, 122, 90, 0.22) !important;
-                transform: scale(0.86) !important;
-            }
-            .nav-links.active .nav-social-btn:active svg {
-                transform: scale(1.1) !important;
-            }
-
-            /* Suppress injected text nodes and underline */
-            .nav-social-btn .menu-index,
-            .nav-social-btn .menu-text,
-            .nav-social-btn .menu-arrow { display: none !important; }
-            .nav-links .nav-social-btn::after,
-            .nav-links.active .nav-social-btn::after { display: none !important; content: none !important; }
         </style>
 
         <script>
+            // Apply dark mode IMMEDIATELY before any render — eliminates flash of grey
             (function() {
                 var saved = localStorage.getItem("darkMode");
                 if (saved === "true" || (saved === null && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
@@ -468,7 +245,7 @@
         </nav>
         <div class="nav-overlay" id="navOverlay"></div>
 
-        <!-- ═══════════ HERO ═══════════ -->
+        <!-- HERO -->
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-layout">
@@ -491,21 +268,12 @@
                             <span class="hero-meta-item">Currently, working on project</span>
                         </div>
                     </div>
-
-                    <!--
-                        SCROLL INDICATOR lives INSIDE .hero-layout so it
-                        flows directly below the name/info on mobile.
-                        On desktop, style.css positions it absolute at the
-                        bottom of the hero via position:absolute / bottom /
-                        left:50% — that still works because .hero is the
-                        nearest positioned ancestor.
-                    -->
-                    <div class="scroll-indicator" id="scrollIndicator">
-                        <div class="mouse-icon"><div class="mouse-wheel"></div></div>
-                        <span>Scroll</span>
-                        <div class="scroll-line"></div>
-                    </div>
                 </div>
+            </div>
+            <div class="scroll-indicator" id="scrollIndicator">
+                <div class="mouse-icon"><div class="mouse-wheel"></div></div>
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
             </div>
         </section>
 
@@ -520,6 +288,7 @@
                     </div>
                     <div class="about-features" data-reveal>
                         <div class="feature-item">
+                            <!-- Icon uses currentColor — inherits from .feature-icon svg { color: var(--color-accent) } -->
                             <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m9-9v4m0 14v-3m-9-6h4m14 0h-3m-6 0v.01"/></svg></div>
                             <div class="feature-content"><h3>Goal-Oriented</h3><p>Focused on delivering results that meet the expectations and quality.</p></div>
                         </div>
@@ -579,6 +348,7 @@
                 <h2 class="section-title" data-reveal>Get In Touch</h2>
                 <div class="contact-info" data-reveal>
                     <button class="contact-link" id="emailButton" type="button">
+                        <!-- Email icon uses currentColor — inherits from .contact-icon svg { color: var(--color-accent) } -->
                         <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg></span>
                         <span class="contact-details"><span class="contact-label">Email</span><span class="contact-value">Email.Hidden</span></span>
                     </button>
@@ -604,14 +374,6 @@
                         <span class="contact-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></span>
                         <span class="contact-details"><span class="contact-label">LinkedIn</span><span class="contact-value">ArtjomJapins</span></span>
                     </a>
-                        <a href="https://www.pinterest.com/artjomjapins/" target="_blank" rel="noopener" class="contact-link" style="margin-bottom: 2rem;">
-                        <span class="contact-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.136-1.867 3.136-4.563 0-2.386-1.716-4.054-4.165-4.054-2.837 0-4.501 2.127-4.501 4.326 0 .856.33 1.775.741 2.276a.3.3 0 0 1 .069.286c-.076.313-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
-                            </svg>
-                        </span>
-                        <span class="contact-details"><span class="contact-label">Pinterest</span><span class="contact-value">artjomjapins</span></span>
-                    </a>
                 </div>
             </div>
             <div class="section-lock-overlay" id="contactLockOverlay">
@@ -632,6 +394,7 @@
             </div>
         </footer>
 
+        <!-- Scripts: config first, then main script (includes admin panel) -->
         <script src="config.js"></script>
         <script src="script.js"></script>
     </body>
