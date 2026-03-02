@@ -205,7 +205,6 @@ const FloatingImageSystem = (() => {
     let _dragging = null;
     let _globalHandlersReady = false;
 
-    // Custom size override — set by admin panel before launch
     let _customSize = null;
 
     function getSize() {
@@ -682,33 +681,40 @@ function initScrollIndicator() {
     const mobile = window.innerWidth <= 768;
     let visible = true, fadeTimeout = null;
 
-    // On mobile the CSS animation shows it after 2.6s via keyframes.
-    // We just need to wire up the hide-on-scroll behaviour.
-    // On desktop we also need to transition from the CSS animation to JS control.
     const enableFade = () => {
         if (!mobile) {
+            // Desktop: absolute-positioned, uses transform for slide
             el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
         } else {
-            // On mobile, switch from CSS animation to JS-controlled opacity
-            el.style.cssText = "display:flex!important;animation:none;transition:opacity 0.7s ease,transform 0.7s ease;opacity:1;transform:translateX(-50%) translateY(0);position:absolute;bottom:2rem;left:50%";
+            // Mobile: in the normal document flow (position:relative).
+            // Only control opacity — do NOT set position:absolute or translateX.
+            el.style.cssText = "display:flex!important;animation:none;transition:opacity 0.7s ease;opacity:1;position:relative;margin-top:2rem;";
         }
         window.removeEventListener("scroll", enableFade);
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
     };
+
     const handleScroll = () => {
         const shouldHide = window.pageYOffset > 80;
         if (shouldHide && visible) {
             visible = false;
-            el.style.opacity = "0"; el.style.transform = "translateX(-50%) translateY(14px)";
+            el.style.opacity = "0";
+            // Only use transform on desktop where absolute positioning applies
+            if (!mobile) el.style.transform = "translateX(-50%) translateY(14px)";
             clearTimeout(fadeTimeout);
             fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 700);
         } else if (!shouldHide && !visible) {
-            visible = true; clearTimeout(fadeTimeout);
-            el.style.visibility = "visible"; el.style.opacity = "1"; el.style.transform = "translateX(-50%) translateY(0)";
+            visible = true;
+            clearTimeout(fadeTimeout);
+            el.style.visibility = "visible";
+            el.style.opacity = "1";
+            if (!mobile) el.style.transform = "translateX(-50%) translateY(0)";
         }
     };
-    // On mobile wait slightly longer than the CSS animation (2.6s + 1.5s = 4.1s)
+
+    // On mobile, wait for the CSS fade-in animation to finish (2.6s delay + 1.5s duration ≈ 4.2s)
+    // before handing off to JS scroll control.
     setTimeout(enableFade, mobile ? 4200 : 2800);
 }
 
@@ -810,10 +816,11 @@ function injectBurgerMenuDecoration() {
     topbar.innerHTML = `<span>Portfolio / 2026</span><span>Navigation</span>`;
     navLinks.appendChild(topbar);
 
-    // ── Social links row at the bottom of the burger menu ──
+    // ── Social links — icon circles at the bottom ──
+    // SVGs use stroke="currentColor" but CSS in index.html overrides
+    // stroke to var(--color-accent) !important, so they always match the theme.
     const socialsRow = document.createElement("div");
     socialsRow.className = "nav-menu-socials";
-    // Icon-only circles — text is aria-label only for accessibility
     socialsRow.innerHTML = `
         <a href="#contact" class="nav-social-btn" data-nav-contact aria-label="Email">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><g><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg>
@@ -847,7 +854,7 @@ function injectBurgerMenuDecoration() {
     dotsWrap.innerHTML = `<div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div>`;
     navLinks.appendChild(dotsWrap);
 
-    // ── Wire up social contact links to close menu + scroll ──
+    // Wire up contact scroll link
     navLinks.querySelectorAll("[data-nav-contact]").forEach(btn => {
         btn.addEventListener("click", e => {
             e.preventDefault();
@@ -945,7 +952,6 @@ function initAdminPanel() {
     let activityLog = [];
     let pinInput    = "";
 
-    // ── Staged image state ────────────────────────────────────
     let _stagedRawSrc  = null;
     let _stagedSize    = 340;
 
@@ -961,7 +967,6 @@ function initAdminPanel() {
         footerNote:      "Designed & developed with care.",
     };
 
-    // ── Firebase ──────────────────────────────────────────────
     function initFirebase() {
         if (!window.FIREBASE_ENABLED || typeof firebase === "undefined") return;
         try {
@@ -992,7 +997,6 @@ function initAdminPanel() {
         });
     }
 
-    // ── Config ────────────────────────────────────────────────
     function getConfig() {
         try { return JSON.parse(localStorage.getItem("siteConfig") || "{}"); } catch { return {}; }
     }
@@ -1006,7 +1010,6 @@ function initAdminPanel() {
         return next;
     }
 
-    // ── Apply config to the live site ────────────────────────
     function applyToSite(config) {
         const c = { ...DEFAULTS, ...config };
         applySectionLock(c.aboutLocked,    LOCK_CONFIG.aboutLocked);
@@ -1048,7 +1051,6 @@ function initAdminPanel() {
         } else { banner?.remove(); }
     }
 
-    // ── Activity log ──────────────────────────────────────────
     function logActivity(msg) {
         const entry = { msg, ts: Date.now() };
         activityLog.unshift(entry);
@@ -1066,7 +1068,6 @@ function initAdminPanel() {
         }).join("") || '<span class="adm-log-empty">No activity yet</span>';
     }
 
-    // ── Keyboard trigger ─────────────────────────────────────
     document.addEventListener("keydown", e => {
         if (["INPUT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
         keyBuffer.push(e.key.toLowerCase());
@@ -1074,7 +1075,6 @@ function initAdminPanel() {
         if (keyBuffer.join("") === TRIGGER_WORD.join("")) { keyBuffer = []; openPanel(); }
     });
 
-    // ── Triple-tap footer (mobile) ────────────────────────────
     let tapCount = 0, tapTimer = null;
     document.addEventListener("touchend", e => {
         if (!e.target.closest(".main-footer")) return;
@@ -1084,7 +1084,6 @@ function initAdminPanel() {
         if (tapCount >= 3) { tapCount = 0; openPanel(); }
     });
 
-    // ── Open / Close ──────────────────────────────────────────
     function openPanel() {
         if (panelOpen) return;
         panelOpen = true;
@@ -1103,7 +1102,6 @@ function initAdminPanel() {
         if (p) { p.classList.remove("adm--visible"); setTimeout(() => p.remove(), 500); }
     }
 
-    // ── Staging helpers ───────────────────────────────────────
     function _resetStaging() {
         _stagedRawSrc = null;
         _stagedSize = 340;
@@ -1115,14 +1113,12 @@ function initAdminPanel() {
         if (staging) staging.style.display = "none";
         if (btn) btn.style.display = "";
         if (fi) fi.value = "";
-        // ── FIX: always re-enable the launch button and restore its label ──
         if (launchBtn) {
             launchBtn.disabled = false;
             launchBtn.textContent = "🚀 \u00a0Launch Image!";
         }
     }
 
-    // ── Inject HTML ───────────────────────────────────────────
     function injectPanel() {
         if (document.getElementById("adminPanel")) return;
 
@@ -1504,7 +1500,6 @@ function initAdminPanel() {
             if (btn) { const orig = btn.textContent; btn.textContent = "Saved \u2713"; btn.style.background = "var(--color-secondary)"; setTimeout(() => { btn.textContent = orig; btn.style.background = ""; }, 1500); }
         });
 
-        // ── Floating images — staging flow ───────────────────
         const funnyBtn       = document.getElementById("admFunnyBtn");
         const funnyFileInput = document.getElementById("admFunnyFileInput");
         const imgStaging     = document.getElementById("admImgStaging");
@@ -1525,10 +1520,8 @@ function initAdminPanel() {
 
         if (db) { db.ref("funnyImages").on("value", snap => { updateCount(snap.numChildren ? snap.numChildren() : 0); }); }
 
-        // "Select Image" button → open file picker
         funnyBtn?.addEventListener("click", () => { funnyFileInput.value = ""; funnyFileInput.click(); });
 
-        // File selected → show staging panel with preview
         funnyFileInput?.addEventListener("change", e => {
             const file = e.target.files?.[0];
             if (!file) return;
@@ -1539,7 +1532,6 @@ function initAdminPanel() {
                 if (sizeSlider) { sizeSlider.value = 340; }
                 if (sizeLabel) sizeLabel.textContent = "340px";
                 _stagedSize = 340;
-                // ── FIX: ensure launch button is always enabled when staging a new image ──
                 if (launchBtn) { launchBtn.disabled = false; launchBtn.textContent = "🚀 \u00a0Launch Image!"; }
                 if (imgStaging) imgStaging.style.display = "block";
                 if (funnyBtn) funnyBtn.style.display = "none";
@@ -1549,14 +1541,11 @@ function initAdminPanel() {
             reader.readAsDataURL(file);
         });
 
-        // Slider → update size label in real-time
         sizeSlider?.addEventListener("input", e => {
             _stagedSize = parseInt(e.target.value, 10);
             if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
         });
 
-        // "Launch Image!" → compress at chosen size and send
-        // ── FIX: after launch, reset staging so another image can be launched immediately ──
         launchBtn?.addEventListener("click", async () => {
             if (!_stagedRawSrc) return;
             launchBtn.disabled = true;
@@ -1570,14 +1559,11 @@ function initAdminPanel() {
             } catch (err) {
                 console.warn("[Admin] Launch failed:", err);
             }
-            // Always reset after launch so another image can be picked immediately
             _resetStaging();
         });
 
-        // "Cancel" → reset staging UI
         cancelBtn?.addEventListener("click", () => { _resetStaging(); });
 
-        // "Clear All Images"
         document.getElementById("admClearImages")?.addEventListener("click", () => {
             FloatingImageSystem.clearAll();
             if (!db) updateCount(0);
@@ -1595,7 +1581,6 @@ function initAdminPanel() {
             logActivity("Reset all settings to defaults");
         });
 
-        // Swipe down to close
         const drawer = document.getElementById("admDrawer");
         const handle = document.getElementById("admHandle");
         if (drawer && handle) {
