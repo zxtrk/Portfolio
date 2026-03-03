@@ -1036,16 +1036,15 @@ function _bindLightSwitch() {
     const ropeEl = document.getElementById("ls-rope");
     const tabEl  = document.getElementById("ls-rope-end");
 
-    // Each state: [controlX, controlY, endY, tabOffsetY]
-    const S_IDLE    = [20,  0,  60,  0];   // straight down
-    const S_PULL    = [20, 40,  88, 28];   // pulled — rope stretches, tab drops
-    const S_SNAP    = [32, 22,  60, -5];   // snaps back, overshoots right
-    const S_WOBBLE  = [12, 28,  60,  3];   // small wobble left
-    const S_SETTLE  = [20,  0,  60,  0];   // back to idle
-
+    // Each state: [ctrlX, ctrlY, endX, endY, tabOffX, tabOffY]
+    const S_IDLE    = [20,  0,  20,  60,   0,   0];   // straight down
+    const S_PULL    = [ 0, 28,  -6,  66, -26,   6];   // pulled left — rope curls, cap follows
+    const S_SNAP    = [36, 16,  24,  60,   4,  -4];   // snaps back, overshoots right
+    const S_WOBBLE  = [12, 22,  18,  60,  -2,   2];   // gentle wobble left
+    const S_SETTLE  = [20,  0,  20,  60,   0,   0];   // back to idle
     function applyState(s) {
-        if (ropeEl) ropeEl.setAttribute("d", `M20 0 Q${s[0]} ${s[1]} 20 ${s[2]}`);
-        if (tabEl)  tabEl.setAttribute("transform", `translate(0,${s[3]})`);
+        if (ropeEl) ropeEl.setAttribute("d", `M20 0 Q${s[0]} ${s[1]} ${s[2]} ${s[3]}`);
+        if (tabEl)  tabEl.setAttribute("transform", `translate(${s[4]},${s[5]})`);
     }
 
     // Initialise to idle
