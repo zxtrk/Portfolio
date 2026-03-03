@@ -889,20 +889,21 @@ function injectBurgerMenuDecoration() {
 
 /* ═══════════════════════════════════════════════════════════════
    LIGHT SWITCH (mobile burger menu dark mode toggle)
-   Pull-cord switch with GSAP rope physics.
-   Falls back gracefully if GSAP/MorphSVG are unavailable.
+   - Small pill toggle with pull-cord hanging from the LEFT side
+   - Colors follow CSS variables (accent / secondary) so admin
+     panel theme changes are reflected automatically
+   - No blinding glow — just a subtle accent tint when "on"
    ═══════════════════════════════════════════════════════════════ */
 function _injectLightSwitch(navLinks) {
-    // ── Styles ────────────────────────────────────────────────
     if (!document.getElementById("lightSwitchStyles")) {
         const style = document.createElement("style");
         style.id = "lightSwitchStyles";
         style.textContent = `
+            /* ── wrapper sits below Contact, centred ── */
             .nav-lightswitch-wrap {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: flex-end;
                 position: absolute;
                 bottom: 64px;
                 left: 50%;
@@ -912,6 +913,8 @@ function _injectLightSwitch(navLinks) {
                 user-select: none;
                 -webkit-user-select: none;
             }
+
+            /* small label above the pill */
             .nav-ls-label {
                 font-family: var(--font-mono);
                 font-size: 9px;
@@ -919,65 +922,76 @@ function _injectLightSwitch(navLinks) {
                 text-transform: uppercase;
                 color: var(--color-secondary);
                 opacity: 0.5;
-                margin-bottom: 8px;
-                transition: opacity 0.3s ease;
+                margin-bottom: 10px;
             }
+
+            /* pill + rope live in this relative box */
             .nav-ls-container {
-                width: 160px;
-                height: 80px;
                 position: relative;
+                width: 88px;   /* pill width */
+                height: 40px;  /* pill height */
             }
+
+            /* rope SVG: anchored to bottom-left of the pill */
             .nav-ls-rope-svg {
                 position: absolute;
-                top: -110px;
-                left: 50%;
-                transform: translateX(-50%);
+                /* bottom edge of pill, left side of knob (~20px in) */
+                bottom: 0px;
+                left: 14px;
                 pointer-events: none;
                 overflow: visible;
+                z-index: 5;
             }
             .nav-ls-rope-hidden { visibility: hidden; }
+
+            /* the pill button */
             .nav-ls-btn {
                 position: absolute;
-                left: 0; top: 0; bottom: 0; right: 0;
-                background: #3c3459;
+                inset: 0;
+                background: color-mix(in srgb, var(--color-secondary) 25%, transparent);
+                border: 1.5px solid color-mix(in srgb, var(--color-secondary) 40%, transparent);
                 border-radius: 999px;
-                padding: 5px;
+                padding: 4px;
                 cursor: pointer;
-                border: none;
                 -webkit-tap-highlight-color: transparent;
-                transition: background 0.5s ease;
+                transition: background 0.4s ease, border-color 0.4s ease;
             }
-            body.dark-mode .nav-ls-btn { background: #2a2040; }
+            .nav-ls-btn.ls-is-light {
+                background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+                border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+            }
+
+            /* the sliding knob inside the pill */
             .nav-ls-knob {
-                width: 70px;
-                height: 70px;
+                width: 32px;
+                height: 32px;
                 position: relative;
                 will-change: transform;
+                border-radius: 999px;
+                overflow: hidden;
             }
+
+            /* knob face — uses secondary when dark, accent when light */
             .nav-ls-top {
-                background-color: #827d96;
+                background-color: var(--color-secondary);
                 border-radius: 999px;
                 position: absolute;
-                left: 0; right: 0; top: 0; bottom: 0;
+                inset: 0;
+                transition: background-color 0.4s ease;
+                opacity: 0.75;
             }
-            .nav-ls-glow {
-                border-radius: 999px;
+            .nav-ls-btn.ls-is-light .nav-ls-top {
+                background-color: var(--color-accent);
+                opacity: 1;
+            }
+
+            /* subtle inner highlight — no blinding glow */
+            .nav-ls-shine {
                 position: absolute;
-                width: 50px;
-                height: 50px;
-                background: radial-gradient(
-                    50% 50% at 50% 50%,
-                    #4cc3e2 10.42%,
-                    rgba(94,199,227,0.79) 27.08%,
-                    rgba(113,204,229,0.35) 45.31%,
-                    rgba(144,213,231,0.11) 65.1%,
-                    rgba(158,216,231,0.02) 78.12%,
-                    rgba(177,221,233,0) 95.83%
-                );
-                left: 50%; top: 50%;
-                transform: translate(-50%, -50%);
+                inset: 3px;
+                border-radius: 999px;
+                background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.28) 0%, transparent 65%);
                 pointer-events: none;
-                will-change: width, height;
             }
         `;
         document.head.appendChild(style);
@@ -990,57 +1004,72 @@ function _injectLightSwitch(navLinks) {
     wrap.innerHTML = `
         <span class="nav-ls-label" id="navLsLabel">Toggle Theme</span>
         <div class="nav-ls-container">
-            <svg class="nav-ls-rope-svg" width="50" height="110" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path id="ls-rope"           d="M50 0V130"                                                                                                                                                                                          stroke="#333842" stroke-width="6" />
-                <path id="ls-rope-original"  d="M50 0V130"                                                                                                                                                                                          stroke="black"   stroke-width="1" class="nav-ls-rope-hidden" />
-                <path id="ls-rope-extended"  d="M50 0V170"                                                                                                                                                                                          stroke="black"   stroke-width="1" class="nav-ls-rope-hidden" />
-                <path id="ls-rope-compressed" d="M50.6794 99.5395C50.6794 99.5395 51.0304 93.3539 50.6794 89.416C49.698 78.405 40.6105 73.7631 41.2462 62.7267C42.1339 47.3139 63.6882 46.1634 64.4843 30.7456C65.1561 17.7347 50.6794 0.375 50.6794 0.375" stroke="black" stroke-width="1" class="nav-ls-rope-hidden" />
-                <path id="ls-rope-end"        d="M39.282 5.16623C39.9597 1.92197 42.8198 -0.402344 46.134 -0.402344H54.756C58.1211 -0.402344 61.01 1.99207 61.6344 5.29871L68.4328 41.2987C69.2468 45.6092 65.941 49.5977 61.5544 49.5977H38.6135C34.1717 49.5977 30.8531 45.5141 31.7614 41.1662L39.282 5.16623Z"
-                      transform="matrix(1,0,0,1,0,120)" fill="#3B2898" />
+            <!--
+                Rope SVG: origin at top (0,0) = bottom-left of pill.
+                The rope hangs downward; pull-tab (ls-rope-end) sits at the bottom.
+                Hidden morph paths are used by GSAP MorphSVG only.
+            -->
+            <svg id="navLsRopeSvg" class="nav-ls-rope-svg"
+                 width="28" height="70"
+                 viewBox="0 0 28 70"
+                 fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                <!-- visible rope line -->
+                <path id="ls-rope"
+                      d="M14 0 L14 46"
+                      stroke="var(--color-secondary)"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      opacity="0.55"/>
+
+                <!-- morph reference paths (invisible) -->
+                <path id="ls-rope-original"   d="M14 0 L14 46"           class="nav-ls-rope-hidden" />
+                <path id="ls-rope-extended"   d="M14 0 L14 62"           class="nav-ls-rope-hidden" />
+                <path id="ls-rope-compressed" d="M14 0 C14 18 6 28 14 46" class="nav-ls-rope-hidden" />
+
+                <!-- pull-tab teardrop at bottom of rope -->
+                <path id="ls-rope-end"
+                      d="M10 50 Q10 46 14 46 Q18 46 18 50 L16 62 Q14 65 12 62 Z"
+                      fill="var(--color-accent)"
+                      opacity="0.85"/>
             </svg>
+
             <button class="nav-ls-btn" id="navLsBtn" type="button" aria-label="Toggle dark mode">
                 <div class="nav-ls-knob" id="navLsKnob">
-                    <div class="nav-ls-glow"  id="navLsGlow"></div>
                     <div class="nav-ls-top"   id="navLsTop"></div>
+                    <div class="nav-ls-shine"></div>
                 </div>
             </button>
         </div>
     `;
     navLinks.appendChild(wrap);
 
-    // ── Set initial visual state to match current theme ───────
     _syncLightSwitchToTheme(false);
-
-    // ── Bind interactions ─────────────────────────────────────
     _bindLightSwitch();
 }
 
 function _syncLightSwitchToTheme(animate) {
     const knob  = document.getElementById("navLsKnob");
-    const top   = document.getElementById("navLsTop");
-    const glow  = document.getElementById("navLsGlow");
+    const btn   = document.getElementById("navLsBtn");
     const label = document.getElementById("navLsLabel");
     if (!knob) return;
 
     const isDark = document.body.classList.contains("dark-mode");
-    // Dark mode  → knob left  (x:0),  dim glow  → "Switch to Light"
-    // Light mode → knob right (x:80), bright glow → "Switch to Dark"
-    const targetX    = isDark ? 0   : 80;
-    const targetBg   = isDark ? "#827d96" : "#FFFFFF";
-    const targetSize = isDark ? "50px"    : "250px";
-    const labelText  = isDark ? "Switch to Light" : "Switch to Dark";
+
+    // knob travel = pill width (88) - padding*2 (8) - knob width (32) = 48px
+    const targetX   = isDark ? 0  : 48;
+    const labelText = isDark ? "Switch to Light" : "Switch to Dark";
 
     if (label) label.textContent = labelText;
 
+    // toggle class on button for CSS-variable-driven color changes
+    if (btn) btn.classList.toggle("ls-is-light", !isDark);
+
     const hasGsap = typeof gsap !== "undefined";
     if (animate && hasGsap) {
-        gsap.to(knob, { x: targetX, duration: 1 });
-        gsap.to(top,  { backgroundColor: targetBg, duration: 1 });
-        gsap.to(glow, { width: targetSize, height: targetSize, duration: 1 });
+        gsap.to(knob, { x: targetX, duration: 0.55, ease: "back.out(1.4)" });
     } else {
         if (knob) knob.style.transform = `translateX(${targetX}px)`;
-        if (top)  top.style.backgroundColor = targetBg;
-        if (glow) { glow.style.width = targetSize; glow.style.height = targetSize; }
     }
 }
 
@@ -1060,34 +1089,35 @@ function _bindLightSwitch() {
     function onDown() {
         if (!hasGsap) return;
         const tl = gsap.timeline();
-        tl.to("#ls-rope-end", { duration: 0.2, y: 80 }, "start");
-        if (hasMorph) tl.to("#ls-rope", { duration: 0.2, morphSVG: "#ls-rope-extended" }, "start");
+        // rope-end drops down 18px when pulled
+        tl.to("#ls-rope-end", { duration: 0.15, y: 18, ease: "power2.out" }, "pull");
+        if (hasMorph) {
+            tl.to("#ls-rope", { duration: 0.15, morphSVG: "#ls-rope-extended", ease: "power2.out" }, "pull");
+        }
     }
 
     function onUp() {
         if (_lsAnimating) return;
         _lsAnimating = true;
 
-        // Rope spring-back
+        // spring rope back
         if (hasGsap) {
             const tl = gsap.timeline();
             if (hasMorph) {
-                tl.to("#ls-rope",  { duration: 0.4, morphSVG: "#ls-rope-compressed", ease: "bounce.out" }, "up");
-                tl.to("#ls-rope",  { duration: 0.2, morphSVG: "#ls-rope-original",   ease: "bounce.out" }, "down");
+                tl.to("#ls-rope", { duration: 0.35, morphSVG: "#ls-rope-compressed", ease: "bounce.out" }, "snap");
+                tl.to("#ls-rope", { duration: 0.2,  morphSVG: "#ls-rope-original",   ease: "none"       }, "settle");
             }
-            tl.to("#ls-rope-end", { duration: 0.4, y: 45, ease: "bounce.out" }, "up");
-            tl.to("#ls-rope-end", { duration: 0.2, y: 60, ease: "bounce.out" }, "down");
+            tl.to("#ls-rope-end", { duration: 0.35, y: 8,  ease: "bounce.out" }, "snap");
+            tl.to("#ls-rope-end", { duration: 0.2,  y: 0,  ease: "power1.out" }, "settle");
         }
 
-        // Toggle theme
+        // toggle theme
         document.body.classList.toggle("dark-mode");
         localStorage.setItem("darkMode", document.body.classList.contains("dark-mode").toString());
 
-        // Animate knob to new state
         _syncLightSwitchToTheme(true);
 
-        // Release lock after animation
-        setTimeout(() => { _lsAnimating = false; }, 1100);
+        setTimeout(() => { _lsAnimating = false; }, 700);
     }
 
     btn.addEventListener("mousedown",  onDown);
