@@ -372,16 +372,47 @@ function injectBurgerMenuDecoration() {
 }
 
 /* ── LIGHT SWITCH ─────────────────────────────────────────────────────── */
-function _injectLightSwitch(insertAfterEl) {
-    if(!document.getElementById("lightSwitchStyles")){
-        const s=document.createElement("style"); s.id="lightSwitchStyles";
-        s.textContent=`.nav-lightswitch-wrap{display:flex;flex-direction:column;align-items:center;margin-top:1.2rem;padding-bottom:90px;user-select:none;-webkit-user-select:none;pointer-events:all}.nav-ls-container{position:relative;width:116px;height:54px}.nav-ls-rope-svg{position:absolute;top:100%;left:20px;pointer-events:none;overflow:visible;z-index:5}.nav-ls-btn{position:absolute;inset:0;background:color-mix(in srgb,var(--color-secondary) 25%,transparent);border:1.5px solid color-mix(in srgb,var(--color-secondary) 40%,transparent);border-radius:999px;padding:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .4s ease,border-color .4s ease}.nav-ls-btn.ls-is-light{background:color-mix(in srgb,var(--color-accent) 22%,transparent);border-color:color-mix(in srgb,var(--color-accent) 45%,transparent)}.nav-ls-knob{width:42px;height:42px;position:relative;will-change:transform;border-radius:999px;overflow:hidden}.nav-ls-top{background-color:var(--color-secondary);border-radius:999px;position:absolute;inset:0;transition:background-color .4s ease;opacity:.75}.nav-ls-btn.ls-is-light .nav-ls-top{background-color:var(--color-accent);opacity:1}.nav-ls-shine{position:absolute;inset:3px;border-radius:999px;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.28) 0%,transparent 65%);pointer-events:none}`;
-        document.head.appendChild(s);
-    }
-    const wrap=document.createElement("div"); wrap.className="nav-lightswitch-wrap"; wrap.id="navLightSwitchWrap";
-    wrap.innerHTML=`<div class="nav-ls-container"><svg id="navLsRopeSvg" class="nav-ls-rope-svg" width="40" height="100" viewBox="0 0 40 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="ls-rope" d="M20 0 C 20 15 20 45 20 60" stroke="var(--color-secondary)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/><g id="ls-rope-end"><path d="M14 64 Q14 60 20 60 Q26 60 26 64 L24 80 Q20 85 16 80 Z" fill="var(--color-accent)" opacity="0.9"/></g></svg><button class="nav-ls-btn" id="navLsBtn" type="button" aria-label="Toggle dark mode"><div class="nav-ls-knob" id="navLsKnob"><div class="nav-ls-top" id="navLsTop"></div><div class="nav-ls-shine"></div></div></button></div>`;
-    insertAfterEl.insertAdjacentElement("afterend",wrap);
-    _syncLightSwitchToTheme(false); _bindLightSwitch();
+function _bindLightSwitch() {
+    const btn=document.getElementById("navLsBtn"); if(!btn||btn._lsBound)return; btn._lsBound=true;
+
+    const onDown=()=>{
+        if(typeof gsap==="undefined"||typeof MorphSVGPlugin==="undefined") return;
+        gsap.registerPlugin(MorphSVGPlugin);
+        const tl=gsap.timeline();
+        // Pull: rope stretches down, tab drops
+        tl.to("#ls-rope-end", { duration:0.2, y:20 }, "start");
+        tl.to("#ls-rope",     { duration:0.2, morphSVG:"#ls-rope-extended" }, "start");
+    };
+
+    const onUp=()=>{
+        if(typeof gsap==="undefined"||typeof MorphSVGPlugin==="undefined") return;
+        gsap.registerPlugin(MorphSVGPlugin);
+        const tl=gsap.timeline();
+        // Release: rope curls up with bounce, then settles straight
+        tl.to("#ls-rope",     { duration:0.4, morphSVG:"#ls-rope-compressed", ease:"bounce.out" }, "up");
+        tl.to("#ls-rope",     { duration:0.3, morphSVG:"#ls-rope-original",   ease:"power2.out" }, "down");
+        // Tab bounces back up in two stages
+        tl.to("#ls-rope-end", { duration:0.4, y:-10, ease:"bounce.out" }, "up");
+        tl.to("#ls-rope-end", { duration:0.2, y:0,   ease:"power2.out" }, "down");
+        // Toggle theme
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode",document.body.classList.contains("dark-mode").toString());
+        _syncLightSwitchToTheme(true);
+    };
+
+    const onCancel=()=>{
+        if(typeof gsap==="undefined"||typeof MorphSVGPlugin==="undefined") return;
+        gsap.registerPlugin(MorphSVGPlugin);
+        gsap.to("#ls-rope",     { duration:0.3, morphSVG:"#ls-rope-original", ease:"power2.out" });
+        gsap.to("#ls-rope-end", { duration:0.3, y:0, ease:"power2.out" });
+    };
+
+    btn.addEventListener("mousedown",  onDown);
+    btn.addEventListener("mouseup",    onUp);
+    btn.addEventListener("mouseleave", onCancel);
+    btn.addEventListener("touchstart", e=>{ e.preventDefault(); onDown();   }, {passive:false});
+    btn.addEventListener("touchend",   e=>{ e.preventDefault(); onUp();     }, {passive:false});
+    btn.addEventListener("touchcancel",e=>{ e.preventDefault(); onCancel(); }, {passive:false});
 }
 
 function _syncLightSwitchToTheme(animate) {
