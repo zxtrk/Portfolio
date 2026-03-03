@@ -884,15 +884,13 @@ function injectBurgerMenuDecoration() {
     navLinks.appendChild(dotsWrap);
 
     // ── LIGHT SWITCH: inject pull-cord dark mode toggle ──────────────
-    // Insert after the Contact link as inline flow (not absolutely positioned in navLinks)
     const contactLink = navLinks.querySelector("a[data-nav]:last-of-type");
     _injectLightSwitch(contactLink || navLinks);
 }
 
 /* ═══════════════════════════════════════════════════════════════
    LIGHT SWITCH (mobile burger menu dark mode toggle)
-   Pure JS rope animation — no MorphSVG / premium plugins needed.
-   Colors track CSS variables so admin panel theme changes apply.
+   Spring-physics rope animation — smooth pull & snap-back.
    ═══════════════════════════════════════════════════════════════ */
 function _injectLightSwitch(insertAfterEl) {
     if (!document.getElementById("lightSwitchStyles")) {
@@ -974,17 +972,15 @@ function _injectLightSwitch(insertAfterEl) {
     wrap.innerHTML = `
         <div class="nav-ls-container">
             <svg id="navLsRopeSvg" class="nav-ls-rope-svg"
-                 width="40" height="100"
-                 viewBox="0 0 40 100"
+                 width="40" height="120"
+                 viewBox="0 0 40 120"
                  fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- rope line: d is set & animated entirely by JS -->
                 <path id="ls-rope"
-                      d="M20 0 L20 60"
+                      d="M20 0 Q20 30 20 60"
                       stroke="var(--color-secondary)"
                       stroke-width="2.5"
                       stroke-linecap="round"
                       opacity="0.6"/>
-                <!-- pull-tab as a <g> so we translate it independently -->
                 <g id="ls-rope-end">
                     <path d="M14 64 Q14 60 20 60 Q26 60 26 64 L24 80 Q20 85 16 80 Z"
                           fill="var(--color-accent)" opacity="0.9"/>
@@ -1023,71 +1019,146 @@ function _syncLightSwitchToTheme(animate) {
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   _bindLightSwitch — spring-physics rope animation
+   ─────────────────────────────────────────────────────────────
+   The rope is a quadratic bezier: M20 0 Q<cx> <cy> <ex> <ey>
+   A single spring value "pos" drives everything:
+     pos = 0  → rope at rest (hanging straight)
+     pos = 1  → fully pulled down & curled
+     pos < 0  → snapped back above rest (natural overshoot)
+
+   On press  : target = 1   (rope stretches down)
+   On release: inject upward velocity kick + target = 0
+               → spring overshoots into negatives → bounces back
+   ═══════════════════════════════════════════════════════════════ */
 function _bindLightSwitch() {
     const btn = document.getElementById("navLsBtn");
     if (!btn || btn._lsBound) return;
     btn._lsBound = true;
 
-    // ── Rope states (quadratic bezier: M x1 y1 Q cx cy x2 y2) ──────────
-    // The rope and pull-tab are both animated by directly writing SVG attributes.
-    // Rope path:  M20 0 Q<cx> <cy> 20 <endY>
-    // Tab offset: translateY on the <g>, so it stays glued to rope's bottom end.
-
     const ropeEl = document.getElementById("ls-rope");
     const tabEl  = document.getElementById("ls-rope-end");
 
-    // Each state: [ctrlX, ctrlY, endX, endY, tabOffX, tabOffY]
-    const S_IDLE    = [20,  0,  20,  60,   0,   0];   // straight down
-    const S_PULL    = [ 0, 28,  -6,  66, -26,   6];   // pulled left — rope curls, cap follows
-    const S_SNAP    = [36, 16,  24,  60,   4,  -4];   // snaps back, overshoots right
-    const S_WOBBLE  = [12, 22,  18,  60,  -2,   2];   // gentle wobble left
-    const S_SETTLE  = [20,  0,  20,  60,   0,   0];   // back to idle
-    function applyState(s) {
-        if (ropeEl) ropeEl.setAttribute("d", `M20 0 Q${s[0]} ${s[1]} ${s[2]} ${s[3]}`);
-        if (tabEl)  tabEl.setAttribute("transform", `translate(${s[4]},${s[5]})`);
+    // ── Spring state ──────────────────────────────────────────
+    // pos=0: rest | pos=1: fully pulled | pos<0: overshoot above rest
+    let pos    = 0;
+    let vel    = 0;
+    let target = 0;
+    let rafId  = null;
+    let lastTs = null;
+    let isDown    = false;
+    let toggled   = false;
+
+    // Tuning: lower damping → more bouncy oscillation after snap
+    const STIFFNESS = 260;
+    const DAMPING   = 13;
+
+    // ── Map spring position → SVG path ───────────────────────
+    function applyRope(p) {
+        // Clamp for visual safety but let physics overshoot freely
+        const pv = Math.max(-0.7, Math.min(1.3, p));
+
+        // End point: pulled down when p>0, bounces up when p<0
+        const endY = 60 + pv * 24;
+        const endX = 20 + pv * 1.5;
+
+        // Control point: arcs left when pulling, swings right on overshoot
+        // This gives a natural "rope bowing" look in both directions
+        const ctrlX = 20 - pv * 15;
+        const ctrlY = 22 + pv * 18;
+
+        if (ropeEl) {
+            ropeEl.setAttribute("d",
+                `M20 0 Q${ctrlX.toFixed(2)} ${ctrlY.toFixed(2)} ${endX.toFixed(2)} ${endY.toFixed(2)}`
+            );
+        }
+
+        // Pull-tab follows the rope's end point
+        if (tabEl) {
+            const dx = (endX - 20).toFixed(2);
+            const dy = (endY - 60).toFixed(2);
+            tabEl.setAttribute("transform", `translate(${dx},${dy})`);
+        }
     }
 
-    // Initialise to idle
-    applyState(S_IDLE);
+    // ── RAF spring loop ───────────────────────────────────────
+    function tick(ts) {
+        if (lastTs === null) lastTs = ts;
+        const dt = Math.min((ts - lastTs) / 1000, 0.05); // seconds, cap at 50ms
+        lastTs = ts;
 
-    let _animating = false;
-    let _isDown    = false;
+        // Semi-implicit Euler integration
+        const force = -STIFFNESS * (pos - target) - DAMPING * vel;
+        vel += force * dt;
+        pos += vel * dt;
 
+        applyRope(pos);
+
+        // Settle check: stop RAF once motion is imperceptible
+        const settled = Math.abs(pos - target) < 0.0008 && Math.abs(vel) < 0.008;
+        if (settled) {
+            pos = target;
+            vel = 0;
+            applyRope(pos);
+            rafId  = null;
+            lastTs = null;
+        } else {
+            rafId = requestAnimationFrame(tick);
+        }
+    }
+
+    function startAnim() {
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        lastTs = null;
+        rafId = requestAnimationFrame(tick);
+    }
+
+    // Initialise rope to rest position
+    applyRope(0);
+
+    // ── Input handlers ────────────────────────────────────────
     function onDown() {
-        _isDown = true;
-        applyState(S_PULL);
+        if (isDown) return;
+        isDown  = true;
+        toggled = false;
+        target  = 1.0;   // pull rope down
+        startAnim();
     }
 
     function onUp() {
-        if (!_isDown) return;
-        _isDown = false;
-        if (_animating) return;
-        _animating = true;
+        if (!isDown) return;
+        isDown = false;
 
-        // Spring-back: snap → wobble → settle
-        applyState(S_SNAP);
-        setTimeout(() => applyState(S_WOBBLE), 110);
-        setTimeout(() => {
-            applyState(S_SETTLE);
-            _animating = false;
-        }, 240);
+        // Kick the velocity upward so it snaps past rest → satisfying bounce
+        vel   -= 9.5;
+        target = 0;
+        startAnim();
 
-        // Toggle theme
-        document.body.classList.toggle("dark-mode");
-        localStorage.setItem("darkMode", document.body.classList.contains("dark-mode").toString());
-        _syncLightSwitchToTheme(true);
+        // Toggle theme exactly once per pull
+        if (!toggled) {
+            toggled = true;
+            document.body.classList.toggle("dark-mode");
+            localStorage.setItem("darkMode", document.body.classList.contains("dark-mode").toString());
+            _syncLightSwitchToTheme(true);
+        }
     }
 
     function onCancel() {
-        if (_isDown) { _isDown = false; applyState(S_IDLE); }
+        if (!isDown) return;
+        isDown = false;
+        // Gentle return without toggle
+        vel   -= 3;
+        target = 0;
+        startAnim();
     }
 
-    btn.addEventListener("mousedown",  onDown);
-    btn.addEventListener("mouseup",    onUp);
-    btn.addEventListener("mouseleave", onCancel);
-    btn.addEventListener("touchstart", e => { e.preventDefault(); onDown(); }, { passive: false });
-    btn.addEventListener("touchend",   e => { e.preventDefault(); onUp();   }, { passive: false });
-    btn.addEventListener("touchcancel",e => { e.preventDefault(); onCancel(); }, { passive: false });
+    btn.addEventListener("mousedown",   onDown);
+    btn.addEventListener("mouseup",     onUp);
+    btn.addEventListener("mouseleave",  onCancel);
+    btn.addEventListener("touchstart",  e => { e.preventDefault(); onDown();   }, { passive: false });
+    btn.addEventListener("touchend",    e => { e.preventDefault(); onUp();     }, { passive: false });
+    btn.addEventListener("touchcancel", e => { e.preventDefault(); onCancel(); }, { passive: false });
 }
 
 function initBurgerMenu() {
