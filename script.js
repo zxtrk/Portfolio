@@ -9,7 +9,8 @@
 const projects = [
     {
         title: "Temporary Removed",
-        description: "Project has been temporarily removed due to issues with the code — last updated 14/02/26",
+        description:
+            "Project has been temporarily removed due to issues with the code — last updated 14/02/26",
         tags: ["HTML", "CSS", "JavaScript"],
         pageUrl: "404.html",
         imageUrl: "",
@@ -18,7 +19,8 @@ const projects = [
     },
     {
         title: "Coming Soon",
-        description: "A new project is currently in development. Something interesting is on the way — check back soon.",
+        description:
+            "A new project is currently in development. Something interesting is on the way — check back soon.",
         tags: ["In Progress"],
         pageUrl: null,
         imageUrl: "",
@@ -27,7 +29,8 @@ const projects = [
     },
     {
         title: "Coming Soon",
-        description: "A new project is currently in development. Something interesting is on the way — check back soon.",
+        description:
+            "A new project is currently in development. Something interesting is on the way — check back soon.",
         tags: ["Not Started"],
         pageUrl: null,
         imageUrl: "",
@@ -38,36 +41,111 @@ const projects = [
 
 // ─── QUOTE DATA ────────────────────────────────────────────────────────
 const dailyQuotes = [
-    { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-    { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
-    { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
-    { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
-    { text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", author: "Martin Fowler" },
-    { text: "The best way to predict the future is to invent it.", author: "Alan Kay" },
+    {
+        text: "The only way to do great work is to love what you do.",
+        author: "Steve Jobs",
+    },
+    {
+        text: "Innovation distinguishes between a leader and a follower.",
+        author: "Steve Jobs",
+    },
+    {
+        text: "Code is like humor. When you have to explain it, it's bad.",
+        author: "Cory House",
+    },
+    {
+        text: "First, solve the problem. Then, write the code.",
+        author: "John Johnson",
+    },
+    {
+        text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+        author: "Martin Fowler",
+    },
+    {
+        text: "The best way to predict the future is to invent it.",
+        author: "Alan Kay",
+    },
     { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
     { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
-    { text: "Technology is best when it brings people together.", author: "Matt Mullenweg" },
-    { text: "The function of good software is to make the complex appear to be simple.", author: "Grady Booch" },
-    { text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.", author: "Antoine de Saint-Exupery" },
-    { text: "I have no special talents. I am only passionately curious.", author: "Albert Einstein" },
-    { text: "Continuous improvement is better than delayed perfection.", author: "Mark Twain" },
-    { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" },
-    { text: "The most disastrous thing that you can ever learn is your first programming language.", author: "Alan Kay" },
-    { text: "Software is a great combination between artistry and engineering.", author: "Bill Gates" },
-    { text: "Good design is as little design as possible.", author: "Dieter Rams" },
-    { text: "Debugging is twice as hard as writing the code in the first place.", author: "Brian Kernighan" },
-    { text: "Every great developer you know got there by solving problems they were unqualified to solve until they actually did it.", author: "Patrick McKenzie" },
-    { text: "Walking on water and developing software from a specification are easy if both are frozen.", author: "Edward V. Berard" },
-    { text: "The best error message is the one that never shows up.", author: "Thomas Fuchs" },
+    {
+        text: "Technology is best when it brings people together.",
+        author: "Matt Mullenweg",
+    },
+    {
+        text: "The function of good software is to make the complex appear to be simple.",
+        author: "Grady Booch",
+    },
+    {
+        text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.",
+        author: "Antoine de Saint-Exupery",
+    },
+    {
+        text: "I have no special talents. I am only passionately curious.",
+        author: "Albert Einstein",
+    },
+    {
+        text: "Continuous improvement is better than delayed perfection.",
+        author: "Mark Twain",
+    },
+    {
+        text: "Programs must be written for people to read, and only incidentally for machines to execute.",
+        author: "Harold Abelson",
+    },
+    {
+        text: "The most disastrous thing that you can ever learn is your first programming language.",
+        author: "Alan Kay",
+    },
+    {
+        text: "Software is a great combination between artistry and engineering.",
+        author: "Bill Gates",
+    },
+    {
+        text: "Good design is as little design as possible.",
+        author: "Dieter Rams",
+    },
+    {
+        text: "Debugging is twice as hard as writing the code in the first place.",
+        author: "Brian Kernighan",
+    },
+    {
+        text: "Every great developer you know got there by solving problems they were unqualified to solve until they actually did it.",
+        author: "Patrick McKenzie",
+    },
+    {
+        text: "Walking on water and developing software from a specification are easy if both are frozen.",
+        author: "Edward V. Berard",
+    },
+    {
+        text: "The best error message is the one that never shows up.",
+        author: "Thomas Fuchs",
+    },
     { text: "Don't comment bad code — rewrite it.", author: "Brian Kernighan" },
-    { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+    {
+        text: "Experience is the name everyone gives to their mistakes.",
+        author: "Oscar Wilde",
+    },
     { text: "Quality is not an act, it is a habit.", author: "Aristotle" },
-    { text: "Design is not just what it looks like and feels like. Design is how it works.", author: "Steve Jobs" },
-    { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
-    { text: "It's not a bug - it's an undocumented feature.", author: "Anonymous" },
+    {
+        text: "Design is not just what it looks like and feels like. Design is how it works.",
+        author: "Steve Jobs",
+    },
+    {
+        text: "The only impossible journey is the one you never begin.",
+        author: "Tony Robbins",
+    },
+    {
+        text: "It's not a bug - it's an undocumented feature.",
+        author: "Anonymous",
+    },
     { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
-    { text: "Learning to write programs stretches your mind and helps you think better.", author: "Bill Gates" },
-    { text: "The computer was born to solve problems that did not exist before.", author: "Bill Gates" },
+    {
+        text: "Learning to write programs stretches your mind and helps you think better.",
+        author: "Bill Gates",
+    },
+    {
+        text: "The computer was born to solve problems that did not exist before.",
+        author: "Bill Gates",
+    },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -81,7 +159,9 @@ const SoundEngine = (() => {
 
     function _ensureCtx() {
         if (ctx) return ctx;
-        try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+        try {
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {}
         return ctx;
     }
 
@@ -93,11 +173,18 @@ const SoundEngine = (() => {
             if (!ctx) return;
             ctx.resume().then(() => {
                 const q = _pendingQueue.splice(0);
-                q.forEach(fn => { try { fn(); } catch (e) {} });
+                q.forEach((fn) => {
+                    try {
+                        fn();
+                    } catch (e) {}
+                });
             });
         };
-        ["mousedown", "touchstart", "keydown", "pointerdown"].forEach(ev =>
-            document.addEventListener(ev, handler, { once: true, passive: true })
+        ["mousedown", "touchstart", "keydown", "pointerdown"].forEach((ev) =>
+            document.addEventListener(ev, handler, {
+                once: true,
+                passive: true,
+            }),
         );
     }
 
@@ -105,16 +192,22 @@ const SoundEngine = (() => {
         _ensureCtx();
         if (!ctx) return;
         if (ctx.state === "running") {
-            try { fn(); } catch (e) {}
+            try {
+                fn();
+            } catch (e) {}
         } else {
             _pendingQueue.push(fn);
-            ctx.resume().then(() => {
-                const idx = _pendingQueue.indexOf(fn);
-                if (idx !== -1) {
-                    _pendingQueue.splice(idx, 1);
-                    try { fn(); } catch (e) {}
-                }
-            }).catch(() => {});
+            ctx.resume()
+                .then(() => {
+                    const idx = _pendingQueue.indexOf(fn);
+                    if (idx !== -1) {
+                        _pendingQueue.splice(idx, 1);
+                        try {
+                            fn();
+                        } catch (e) {}
+                    }
+                })
+                .catch(() => {});
         }
     }
 
@@ -132,8 +225,12 @@ const SoundEngine = (() => {
         master.connect(comp);
 
         function chimeNote(freq, start, vol, decay) {
-            [[1, 1.0], [2, 0.15], [3, 0.04]].forEach(([mult, rel]) => {
-                const osc  = ac.createOscillator();
+            [
+                [1, 1.0],
+                [2, 0.15],
+                [3, 0.04],
+            ].forEach(([mult, rel]) => {
+                const osc = ac.createOscillator();
                 const gain = ac.createGain();
                 osc.type = "sine";
                 osc.frequency.value = freq * mult;
@@ -141,14 +238,17 @@ const SoundEngine = (() => {
                 gain.connect(master);
                 gain.gain.setValueAtTime(0, start);
                 gain.gain.linearRampToValueAtTime(vol * rel, start + 0.007);
-                gain.gain.exponentialRampToValueAtTime(vol * rel * 0.35, start + 0.14);
+                gain.gain.exponentialRampToValueAtTime(
+                    vol * rel * 0.35,
+                    start + 0.14,
+                );
                 gain.gain.exponentialRampToValueAtTime(0.0001, start + decay);
                 osc.start(start);
                 osc.stop(start + decay + 0.05);
             });
             [0.05, 0.095].forEach((delayT, i) => {
-                const osc  = ac.createOscillator();
-                const dly  = ac.createDelay(0.5);
+                const osc = ac.createOscillator();
+                const dly = ac.createDelay(0.5);
                 const gain = ac.createGain();
                 osc.type = "sine";
                 osc.frequency.value = freq;
@@ -159,16 +259,19 @@ const SoundEngine = (() => {
                 const rv = vol * (i === 0 ? 0.14 : 0.07);
                 gain.gain.setValueAtTime(0, start);
                 gain.gain.linearRampToValueAtTime(rv, start + 0.01);
-                gain.gain.exponentialRampToValueAtTime(0.0001, start + decay * 0.7);
+                gain.gain.exponentialRampToValueAtTime(
+                    0.0001,
+                    start + decay * 0.7,
+                );
                 osc.start(start);
                 osc.stop(start + decay + 0.05);
             });
         }
 
-        chimeNote(392.00, t,        1.0, 1.5);
+        chimeNote(392.0, t, 1.0, 1.5);
         chimeNote(587.33, t + 0.19, 1.1, 1.9);
 
-        const shimOsc  = ac.createOscillator();
+        const shimOsc = ac.createOscillator();
         const shimGain = ac.createGain();
         shimOsc.type = "sine";
         shimOsc.frequency.setValueAtTime(1174.66, t + 0.19);
@@ -185,10 +288,14 @@ const SoundEngine = (() => {
     function playAdminOpen() {
         if (_adminSoundPlayed) return;
         _adminSoundPlayed = true;
-        _whenReady(() => { if (ctx) _playAdminOpen(ctx); });
+        _whenReady(() => {
+            if (ctx) _playAdminOpen(ctx);
+        });
     }
 
-    function resetAdminSoundGuard() { _adminSoundPlayed = false; }
+    function resetAdminSoundGuard() {
+        _adminSoundPlayed = false;
+    }
 
     _ensureCtx();
     _addUnlockListeners();
@@ -212,8 +319,12 @@ const FloatingImageSystem = (() => {
         return window.innerWidth <= 768 ? 180 : 340;
     }
 
-    function setCustomSize(px) { _customSize = px; }
-    function clearCustomSize() { _customSize = null; }
+    function setCustomSize(px) {
+        _customSize = px;
+    }
+    function clearCustomSize() {
+        _customSize = null;
+    }
 
     function setupGlobalHandlers() {
         if (_globalHandlersReady) return;
@@ -226,12 +337,20 @@ const FloatingImageSystem = (() => {
             const now = performance.now();
             const dt = now - f._lastT;
             if (dt > 0) {
-                f._velX = (cx - f._lastX) / dt * 16;
-                f._velY = (cy - f._lastY) / dt * 16;
+                f._velX = ((cx - f._lastX) / dt) * 16;
+                f._velY = ((cy - f._lastY) / dt) * 16;
             }
-            f._lastX = cx; f._lastY = cy; f._lastT = now;
-            f.x = Math.max(0, Math.min(window.innerWidth - size, cx - f._dragOffX));
-            f.y = Math.max(0, Math.min(window.innerHeight - 80, cy - f._dragOffY));
+            f._lastX = cx;
+            f._lastY = cy;
+            f._lastT = now;
+            f.x = Math.max(
+                0,
+                Math.min(window.innerWidth - size, cx - f._dragOffX),
+            );
+            f.y = Math.max(
+                0,
+                Math.min(window.innerHeight - 80, cy - f._dragOffY),
+            );
             const tilt = Math.max(-18, Math.min(18, f._velX * 0.35));
             f.el.style.transform = `translate(${f.x}px,${f.y}px) rotate(${tilt}deg) scale(1.06)`;
         };
@@ -248,13 +367,19 @@ const FloatingImageSystem = (() => {
             _dragging = null;
         };
 
-        document.addEventListener("mousemove", e => move(e.clientX, e.clientY));
+        document.addEventListener("mousemove", (e) =>
+            move(e.clientX, e.clientY),
+        );
         document.addEventListener("mouseup", up);
-        document.addEventListener("touchmove", e => {
-            if (!_dragging) return;
-            e.preventDefault();
-            move(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: false });
+        document.addEventListener(
+            "touchmove",
+            (e) => {
+                if (!_dragging) return;
+                e.preventDefault();
+                move(e.touches[0].clientX, e.touches[0].clientY);
+            },
+            { passive: false },
+        );
         document.addEventListener("touchend", up);
         document.addEventListener("touchcancel", up);
     }
@@ -262,13 +387,13 @@ const FloatingImageSystem = (() => {
     function init(db) {
         _db = db;
         if (!_db) return;
-        _db.ref("funnyImages").on("child_added", snap => {
+        _db.ref("funnyImages").on("child_added", (snap) => {
             if (!floaters.has(snap.key)) {
                 const val = snap.val();
                 spawnFloater(snap.key, val.src, val.size || null);
             }
         });
-        _db.ref("funnyImages").on("child_removed", snap => {
+        _db.ref("funnyImages").on("child_removed", (snap) => {
             dismiss(snap.key);
         });
     }
@@ -277,7 +402,11 @@ const FloatingImageSystem = (() => {
         const targetSize = sizePx || (_customSize !== null ? _customSize : 340);
         const src = await _compressImage(rawSrc, targetSize, 0.74);
         if (_db) {
-            _db.ref("funnyImages").push({ src, size: targetSize, ts: Date.now() });
+            _db.ref("funnyImages").push({
+                src,
+                size: targetSize,
+                ts: Date.now(),
+            });
         } else {
             spawnFloater("local_" + Date.now(), src, targetSize);
         }
@@ -293,17 +422,24 @@ const FloatingImageSystem = (() => {
     }
 
     function _compressImage(src, maxDim, quality) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             const img = new Image();
             img.onload = () => {
                 try {
-                    const ratio = Math.min(1, maxDim / Math.max(img.width, img.height));
+                    const ratio = Math.min(
+                        1,
+                        maxDim / Math.max(img.width, img.height),
+                    );
                     const canvas = document.createElement("canvas");
-                    canvas.width  = Math.round(img.width  * ratio);
+                    canvas.width = Math.round(img.width * ratio);
                     canvas.height = Math.round(img.height * ratio);
-                    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas
+                        .getContext("2d")
+                        .drawImage(img, 0, 0, canvas.width, canvas.height);
                     resolve(canvas.toDataURL("image/jpeg", quality));
-                } catch { resolve(src); }
+                } catch {
+                    resolve(src);
+                }
             };
             img.onerror = () => resolve(src);
             img.src = src;
@@ -345,23 +481,41 @@ const FloatingImageSystem = (() => {
         }
 
         const f = {
-            key, el, x: 0, y: 0, vx: 0, vy: 0,
-            dragging: false, alive: true, phase: "entry", floatT: 0,
+            key,
+            el,
+            x: 0,
+            y: 0,
+            vx: 0,
+            vy: 0,
+            dragging: false,
+            alive: true,
+            phase: "entry",
+            floatT: 0,
             _spawnSize: size,
-            _dragOffX: 0, _dragOffY: 0, _velX: 0, _velY: 0, _lastX: 0, _lastY: 0, _lastT: 0,
+            _dragOffX: 0,
+            _dragOffY: 0,
+            _velX: 0,
+            _velY: 0,
+            _lastX: 0,
+            _lastY: 0,
+            _lastT: 0,
         };
         floaters.set(key, f);
 
-        el.addEventListener("mousedown", e => {
+        el.addEventListener("mousedown", (e) => {
             if (f.phase !== "floating") return;
             e.preventDefault();
             _startDrag(f, e.clientX, e.clientY);
         });
-        el.addEventListener("touchstart", e => {
-            if (f.phase !== "floating") return;
-            e.preventDefault();
-            _startDrag(f, e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: false });
+        el.addEventListener(
+            "touchstart",
+            (e) => {
+                if (f.phase !== "floating") return;
+                e.preventDefault();
+                _startDrag(f, e.touches[0].clientX, e.touches[0].clientY);
+            },
+            { passive: false },
+        );
 
         _runEntryAnimation(f, img, size);
     }
@@ -369,27 +523,35 @@ const FloatingImageSystem = (() => {
     function _startDrag(f, cx, cy) {
         _dragging = f;
         f.dragging = true;
-        f._dragOffX = cx - f.x; f._dragOffY = cy - f.y;
-        f._lastX = cx; f._lastY = cy; f._lastT = performance.now();
-        f._velX = 0; f._velY = 0;
+        f._dragOffX = cx - f.x;
+        f._dragOffY = cy - f.y;
+        f._lastX = cx;
+        f._lastY = cy;
+        f._lastT = performance.now();
+        f._velX = 0;
+        f._velY = 0;
         f.el.style.cursor = "grabbing";
         f.el.style.filter = "drop-shadow(0 20px 56px rgba(0,0,0,0.45))";
         f.el.style.zIndex = "9999996";
     }
 
     function _runEntryAnimation(f, imgEl, size) {
-        const vw = window.innerWidth, vh = window.innerHeight;
-        const bloomX = vw * 0.5  - size * 0.5 + (Math.random() - 0.5) * vw * 0.18;
-        const bloomY = vh * 0.42 - size * 0.5 + (Math.random() - 0.5) * vh * 0.12;
+        const vw = window.innerWidth,
+            vh = window.innerHeight;
+        const bloomX =
+            vw * 0.5 - size * 0.5 + (Math.random() - 0.5) * vw * 0.18;
+        const bloomY =
+            vh * 0.42 - size * 0.5 + (Math.random() - 0.5) * vh * 0.12;
         const pad = size * 0.15;
         const finalX = pad + Math.random() * (vw - size - pad * 2);
-        const finalY = 90  + Math.random() * (vh - size - 200);
+        const finalY = 90 + Math.random() * (vh - size - 200);
         const DURATION = 2000;
         const start = performance.now();
-        const easeOut = t => 1 - Math.pow(1 - t, 3);
-        const easeSpring = t => {
+        const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+        const easeSpring = (t) => {
             const c4 = (2 * Math.PI) / 3;
-            if (t === 0) return 0; if (t === 1) return 1;
+            if (t === 0) return 0;
+            if (t === 1) return 1;
             return Math.pow(2, -9 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
         };
         const lerp = (a, b, t) => a + (b - a) * t;
@@ -405,15 +567,27 @@ const FloatingImageSystem = (() => {
                 f.el.style.transform = `translate(${bloomX}px,${bloomY}px) scale(${sc})`;
             } else {
                 const sp = easeSpring((prog - PHASE_SPLIT) / (1 - PHASE_SPLIT));
-                const x = lerp(bloomX, finalX, sp), y = lerp(bloomY, finalY, sp);
-                const tilt = lerp(0, (finalX - bloomX > 0 ? 6 : -6), Math.sin((prog - PHASE_SPLIT) / (1 - PHASE_SPLIT) * Math.PI));
+                const x = lerp(bloomX, finalX, sp),
+                    y = lerp(bloomY, finalY, sp);
+                const tilt = lerp(
+                    0,
+                    finalX - bloomX > 0 ? 6 : -6,
+                    Math.sin(
+                        ((prog - PHASE_SPLIT) / (1 - PHASE_SPLIT)) * Math.PI,
+                    ),
+                );
                 f.el.style.transform = `translate(${x}px,${y}px) rotate(${tilt}deg)`;
                 if (imgEl.style.animation) imgEl.style.animation = "";
             }
-            if (prog < 1) { requestAnimationFrame(tick); }
-            else {
-                f.x = finalX; f.y = finalY; f.vx = 0; f.vy = 0;
-                f.phase = "floating"; f.el.style.pointerEvents = "all";
+            if (prog < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                f.x = finalX;
+                f.y = finalY;
+                f.vx = 0;
+                f.vy = 0;
+                f.phase = "floating";
+                f.el.style.pointerEvents = "all";
                 imgEl.style.animation = "";
                 f.el.style.transform = `translate(${finalX}px,${finalY}px) rotate(0deg)`;
                 _startPhysics(f, size);
@@ -423,26 +597,50 @@ const FloatingImageSystem = (() => {
     }
 
     function _startPhysics(f, size) {
-        const DAMPING = 0.968, BOUNCE = 0.38, BOB_AMP = 8, BOB_SPD = 0.00130, DRIFT_AMP = 3.5;
+        const DAMPING = 0.968,
+            BOUNCE = 0.38,
+            BOB_AMP = 8,
+            BOB_SPD = 0.0013,
+            DRIFT_AMP = 3.5;
         let lastT = performance.now();
         const loop = (now) => {
             if (!f.alive || f.phase !== "floating") return;
             requestAnimationFrame(loop);
             if (f.dragging) return;
-            const dt = Math.min(now - lastT, 33); lastT = now; f.floatT += dt;
-            f.x += f.vx; f.y += f.vy; f.vx *= DAMPING; f.vy *= DAMPING;
-            const vw = window.innerWidth, vh = window.innerHeight;
-            if (f.x < 0)        { f.x = 0;         f.vx =  Math.abs(f.vx) * BOUNCE; }
-            if (f.x > vw - size){ f.x = vw - size;  f.vx = -Math.abs(f.vx) * BOUNCE; }
-            if (f.y < 0)        { f.y = 0;          f.vy =  Math.abs(f.vy) * BOUNCE; }
-            if (f.y > vh - 80)  { f.y = vh - 80;    f.vy = -Math.abs(f.vy) * BOUNCE; }
+            const dt = Math.min(now - lastT, 33);
+            lastT = now;
+            f.floatT += dt;
+            f.x += f.vx;
+            f.y += f.vy;
+            f.vx *= DAMPING;
+            f.vy *= DAMPING;
+            const vw = window.innerWidth,
+                vh = window.innerHeight;
+            if (f.x < 0) {
+                f.x = 0;
+                f.vx = Math.abs(f.vx) * BOUNCE;
+            }
+            if (f.x > vw - size) {
+                f.x = vw - size;
+                f.vx = -Math.abs(f.vx) * BOUNCE;
+            }
+            if (f.y < 0) {
+                f.y = 0;
+                f.vy = Math.abs(f.vy) * BOUNCE;
+            }
+            if (f.y > vh - 80) {
+                f.y = vh - 80;
+                f.vy = -Math.abs(f.vy) * BOUNCE;
+            }
             const speed = Math.sqrt(f.vx * f.vx + f.vy * f.vy);
-            let bobX = 0, bobY = 0;
+            let bobX = 0,
+                bobY = 0;
             if (speed < 0.5) {
                 bobY = Math.sin(f.floatT * BOB_SPD) * BOB_AMP;
                 bobX = Math.sin(f.floatT * BOB_SPD * 0.618 + 2.1) * DRIFT_AMP;
             }
-            const tilt = speed < 0.5 ? 0 : Math.max(-12, Math.min(12, f.vx * 1.4));
+            const tilt =
+                speed < 0.5 ? 0 : Math.max(-12, Math.min(12, f.vx * 1.4));
             f.el.style.transform = `translate(${f.x + bobX}px,${f.y + bobY}px) rotate(${tilt}deg)`;
         };
         requestAnimationFrame(loop);
@@ -453,10 +651,14 @@ const FloatingImageSystem = (() => {
         if (!f) return;
         f.alive = false;
         if (_dragging === f) _dragging = null;
-        f.el.style.transition = "opacity 0.45s ease, transform 0.45s cubic-bezier(0.4,0,1,1)";
+        f.el.style.transition =
+            "opacity 0.45s ease, transform 0.45s cubic-bezier(0.4,0,1,1)";
         f.el.style.opacity = "0";
         f.el.style.transform += " scale(0.4) rotate(25deg)";
-        setTimeout(() => { f.el.remove(); floaters.delete(key); }, 500);
+        setTimeout(() => {
+            f.el.remove();
+            floaters.delete(key);
+        }, 500);
     }
 
     return { init, add, clearAll, setCustomSize, clearCustomSize };
@@ -498,9 +700,14 @@ function initDarkMode() {
     }
     const toggle = () => {
         body.classList.toggle("dark-mode");
-        localStorage.setItem("darkMode", body.classList.contains("dark-mode").toString());
+        localStorage.setItem(
+            "darkMode",
+            body.classList.contains("dark-mode").toString(),
+        );
     };
-    document.getElementById("darkModeToggleDesktop")?.addEventListener("click", toggle);
+    document
+        .getElementById("darkModeToggleDesktop")
+        ?.addEventListener("click", toggle);
     // Note: mobile toggle is now handled by the light switch in the burger menu
 }
 
@@ -528,21 +735,31 @@ const LOCK_CONFIG = {
     aboutLocked: {
         sectionId: "about",
         overlayId: "aboutLockOverlay",
-        interactiveSelectors: [".feature-item", ".about-text-block", ".intro-paragraph"],
+        interactiveSelectors: [
+            ".feature-item",
+            ".about-text-block",
+            ".intro-paragraph",
+        ],
     },
     contactLocked: {
         sectionId: "contact",
         overlayId: "contactLockOverlay",
-        interactiveSelectors: [".contact-link", ".email-form-container", "#emailButton"],
+        interactiveSelectors: [
+            ".contact-link",
+            ".email-form-container",
+            "#emailButton",
+        ],
     },
 };
 
 function applyAllLocks() {
     let saved = {};
-    try { saved = JSON.parse(localStorage.getItem("siteConfig") || "{}"); } catch (e) {}
+    try {
+        saved = JSON.parse(localStorage.getItem("siteConfig") || "{}");
+    } catch (e) {}
     const merged = { ...(window.SiteConfig || {}), ...saved };
     Object.entries(LOCK_CONFIG).forEach(([key, opts]) =>
-        applySectionLock(merged[key] === true, opts)
+        applySectionLock(merged[key] === true, opts),
     );
 }
 
@@ -551,25 +768,46 @@ function applySectionLock(isLocked, opts) {
     const overlay = document.getElementById(opts.overlayId);
     if (!section || !overlay) return;
     const els = opts.interactiveSelectors
-        ? opts.interactiveSelectors.flatMap(s => [...document.querySelectorAll(s)])
+        ? opts.interactiveSelectors.flatMap((s) => [
+              ...document.querySelectorAll(s),
+          ])
         : [];
     if (isLocked) {
         section.classList.add("is-locked");
-        els.forEach(el => { el.setAttribute("tabindex", "-1"); el.setAttribute("aria-hidden", "true"); });
+        els.forEach((el) => {
+            el.setAttribute("tabindex", "-1");
+            el.setAttribute("aria-hidden", "true");
+        });
         if (!section._lockHandler) {
-            section._lockHandler = e => {
-                if (!e.target.closest(".section-lock-overlay")) { e.preventDefault(); e.stopPropagation(); }
+            section._lockHandler = (e) => {
+                if (!e.target.closest(".section-lock-overlay")) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             };
             section.addEventListener("click", section._lockHandler, true);
-            section.addEventListener("touchstart", section._lockHandler, { capture: true, passive: false });
-            section.addEventListener("touchend", section._lockHandler, { capture: true, passive: false });
+            section.addEventListener("touchstart", section._lockHandler, {
+                capture: true,
+                passive: false,
+            });
+            section.addEventListener("touchend", section._lockHandler, {
+                capture: true,
+                passive: false,
+            });
         }
     } else {
         section.classList.remove("is-locked");
-        els.forEach(el => { el.removeAttribute("tabindex"); el.removeAttribute("aria-hidden"); });
+        els.forEach((el) => {
+            el.removeAttribute("tabindex");
+            el.removeAttribute("aria-hidden");
+        });
         if (section._lockHandler) {
             section.removeEventListener("click", section._lockHandler, true);
-            section.removeEventListener("touchstart", section._lockHandler, true);
+            section.removeEventListener(
+                "touchstart",
+                section._lockHandler,
+                true,
+            );
             section.removeEventListener("touchend", section._lockHandler, true);
             section._lockHandler = null;
         }
@@ -592,10 +830,13 @@ function createProjectCard(project, index) {
     const imageHtml = hasImage
         ? `<div class="pgc-image"><img src="${project.imageUrl}" alt="${project.title}" /></div>`
         : `<div class="pgc-image pgc-image--empty"><div class="pgc-empty-grid"></div><span class="pgc-empty-label">${project.emptyLabel || "In Development"}</span></div>`;
-    const tagsHtml = project.tags.map(t => `<span class="pgc-tag">${t}</span>`).join("");
-    const linkHtml = project.pageUrl && project.pageUrl !== "#"
-        ? `<a href="${project.pageUrl}" class="pgc-link">View Project <span class="pgc-link-arrow">&#x2192;</span></a>`
-        : `<span class="pgc-link pgc-link--disabled">Coming Soon <span class="pgc-link-arrow">&middot;</span></span>`;
+    const tagsHtml = project.tags
+        .map((t) => `<span class="pgc-tag">${t}</span>`)
+        .join("");
+    const linkHtml =
+        project.pageUrl && project.pageUrl !== "#"
+            ? `<a href="${project.pageUrl}" class="pgc-link">View Project <span class="pgc-link-arrow">&#x2192;</span></a>`
+            : `<span class="pgc-link pgc-link--disabled">Coming Soon <span class="pgc-link-arrow">&middot;</span></span>`;
     card.innerHTML = `
         <span class="pgc-corner pgc-corner--tl"></span>
         <span class="pgc-corner pgc-corner--tr"></span>
@@ -618,7 +859,9 @@ function initQuoteOfTheDay() {
     const quoteAuthor = document.getElementById("quoteAuthor");
     if (!quoteText || !quoteAuthor) return;
     const now = new Date();
-    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    const dayOfYear = Math.floor(
+        (now - new Date(now.getFullYear(), 0, 0)) / 86400000,
+    );
     const q = dailyQuotes[dayOfYear % dailyQuotes.length];
     quoteText.textContent = q.text;
     quoteAuthor.textContent = `\u2014 ${q.author}`;
@@ -627,12 +870,18 @@ function initQuoteOfTheDay() {
 // ─── SCROLL ANIMATIONS ─────────────────────────────────────────────────
 function initScrollAnimations() {
     const observer = new IntersectionObserver(
-        entries => entries.forEach(e => {
-            if (e.isIntersecting) { e.target.classList.add("revealed"); observer.unobserve(e.target); }
-        }),
-        { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+        (entries) =>
+            entries.forEach((e) => {
+                if (e.isIntersecting) {
+                    e.target.classList.add("revealed");
+                    observer.unobserve(e.target);
+                }
+            }),
+        { threshold: 0.1, rootMargin: "0px 0px -60px 0px" },
     );
-    document.querySelectorAll("[data-reveal]").forEach(el => observer.observe(el));
+    document
+        .querySelectorAll("[data-reveal]")
+        .forEach((el) => observer.observe(el));
 }
 
 // ─── MOBILE SCROLL ANIMATIONS ──────────────────────────────────────────
@@ -680,57 +929,82 @@ function initMobileScrollAnimations() {
     document.querySelectorAll(".feature-item").forEach((el, i) => {
         el.classList.add(i % 2 === 0 ? "msa-fade-left" : "msa-fade-right");
     });
-    document.querySelectorAll(".project-grid-card").forEach(el => { el.classList.add("msa-fade-up"); });
-    document.querySelectorAll(".contact-link").forEach(el => { el.classList.add("msa-fade-up"); });
+    document.querySelectorAll(".project-grid-card").forEach((el) => {
+        el.classList.add("msa-fade-up");
+    });
+    document.querySelectorAll(".contact-link").forEach((el) => {
+        el.classList.add("msa-fade-up");
+    });
     const quoteContent = document.querySelector(".quote-content");
     if (quoteContent) quoteContent.classList.add("msa-scale");
-    document.querySelectorAll(".section-title").forEach(el => { el.classList.add("msa-fade-up"); });
+    document.querySelectorAll(".section-title").forEach((el) => {
+        el.classList.add("msa-fade-up");
+    });
 
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const siblings = [...(el.parentElement?.children || [])];
-                const sibIdx = siblings.indexOf(el);
-                const delay = sibIdx >= 0 ? sibIdx * 60 : 0;
-                setTimeout(() => { el.classList.add("msa-visible"); }, delay);
-                observer.unobserve(el);
-            }
-        });
-    }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const siblings = [...(el.parentElement?.children || [])];
+                    const sibIdx = siblings.indexOf(el);
+                    const delay = sibIdx >= 0 ? sibIdx * 60 : 0;
+                    setTimeout(() => {
+                        el.classList.add("msa-visible");
+                    }, delay);
+                    observer.unobserve(el);
+                }
+            });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -30px 0px" },
+    );
 
-    document.querySelectorAll(".msa-fade-up, .msa-fade-left, .msa-fade-right, .msa-scale")
-        .forEach(el => observer.observe(el));
+    document
+        .querySelectorAll(
+            ".msa-fade-up, .msa-fade-left, .msa-fade-right, .msa-scale",
+        )
+        .forEach((el) => observer.observe(el));
 }
 
 // ─── SMOOTH SCROLL ─────────────────────────────────────────────────────
-function isMobile() { return window.innerWidth <= 768; }
+function isMobile() {
+    return window.innerWidth <= 768;
+}
 
 function smoothScrollTo(targetY, duration) {
     document.documentElement.style.scrollBehavior = "auto";
     document.body.style.scrollBehavior = "auto";
-    const startY = window.pageYOffset, dist = targetY - startY;
+    const startY = window.pageYOffset,
+        dist = targetY - startY;
     let startTime = null;
-    const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    const step = now => {
+    const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+    const step = (now) => {
         if (!startTime) startTime = now;
         const progress = Math.min((now - startTime) / duration, 1);
         window.scrollTo(0, startY + dist * ease(progress));
-        if (progress < 1) { requestAnimationFrame(step); }
-        else { document.documentElement.style.scrollBehavior = ""; document.body.style.scrollBehavior = ""; }
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else {
+            document.documentElement.style.scrollBehavior = "";
+            document.body.style.scrollBehavior = "";
+        }
     };
     requestAnimationFrame(step);
 }
 
 function initSmoothScroll() {
-    document.querySelectorAll("[data-nav]").forEach(link => {
-        link.addEventListener("click", e => {
+    document.querySelectorAll("[data-nav]").forEach((link) => {
+        link.addEventListener("click", (e) => {
             e.preventDefault();
             const target = document.querySelector(link.getAttribute("href"));
             if (!target) return;
             const targetY = target.offsetTop - 80;
-            if (isMobile()) { closeBurgerMenu(); setTimeout(() => smoothScrollTo(targetY, 900), 80); }
-            else { smoothScrollTo(targetY, 1200); }
+            if (isMobile()) {
+                closeBurgerMenu();
+                setTimeout(() => smoothScrollTo(targetY, 900), 80);
+            } else {
+                smoothScrollTo(targetY, 1200);
+            }
         });
     });
 }
@@ -747,9 +1021,11 @@ function initHeroAnimation() {
 function initScrollIndicator() {
     const el = document.getElementById("scrollIndicator");
     if (!el || window.innerWidth <= 768) return;
-    let visible = true, fadeTimeout = null;
+    let visible = true,
+        fadeTimeout = null;
     const enableFade = () => {
-        el.style.cssText = "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
+        el.style.cssText =
+            "animation:none;transition:opacity 0.9s ease,transform 0.9s ease;opacity:1;transform:translateX(-50%) translateY(0)";
         window.removeEventListener("scroll", enableFade);
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
@@ -758,12 +1034,18 @@ function initScrollIndicator() {
         const shouldHide = window.pageYOffset > 100;
         if (shouldHide && visible) {
             visible = false;
-            el.style.opacity = "0"; el.style.transform = "translateX(-50%) translateY(14px)";
+            el.style.opacity = "0";
+            el.style.transform = "translateX(-50%) translateY(14px)";
             clearTimeout(fadeTimeout);
-            fadeTimeout = setTimeout(() => { el.style.visibility = "hidden"; }, 900);
+            fadeTimeout = setTimeout(() => {
+                el.style.visibility = "hidden";
+            }, 900);
         } else if (!shouldHide && !visible) {
-            visible = true; clearTimeout(fadeTimeout);
-            el.style.visibility = "visible"; el.style.opacity = "1"; el.style.transform = "translateX(-50%) translateY(0)";
+            visible = true;
+            clearTimeout(fadeTimeout);
+            el.style.visibility = "visible";
+            el.style.opacity = "1";
+            el.style.transform = "translateX(-50%) translateY(0)";
         }
     };
     setTimeout(enableFade, 2800);
@@ -771,18 +1053,26 @@ function initScrollIndicator() {
 
 // ─── PARALLAX ─────────────────────────────────────────────────────────
 let ticking = false;
-window.addEventListener("scroll", () => {
-    if (!ticking) {
-        requestAnimationFrame(() => {
-            const s = window.pageYOffset;
-            document.querySelectorAll(".shape").forEach((sh, i) => { sh.style.transform = `translateY(${s * (0.05 + i * 0.02)}px)`; });
-            document.querySelectorAll(".dot").forEach((d, i) => { d.style.transform = `translateY(${-s * (0.03 + i * 0.01)}px) scale(${1 + s * 0.0001})`; });
-            if (window.checkFormVisibility) window.checkFormVisibility();
-            ticking = false;
-        });
-        ticking = true;
-    }
-}, { passive: true });
+window.addEventListener(
+    "scroll",
+    () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                const s = window.pageYOffset;
+                document.querySelectorAll(".shape").forEach((sh, i) => {
+                    sh.style.transform = `translateY(${s * (0.05 + i * 0.02)}px)`;
+                });
+                document.querySelectorAll(".dot").forEach((d, i) => {
+                    d.style.transform = `translateY(${-s * (0.03 + i * 0.01)}px) scale(${1 + s * 0.0001})`;
+                });
+                if (window.checkFormVisibility) window.checkFormVisibility();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    },
+    { passive: true },
+);
 
 // ─── EMAIL FORM ────────────────────────────────────────────────────────
 function initEmailForm() {
@@ -794,39 +1084,63 @@ function initEmailForm() {
     const submitButton = emailForm?.querySelector(".submit-button");
     if (!emailButton || !emailForm) return;
     let formIsOpen = false;
-    emailButton.addEventListener("click", e => {
+    emailButton.addEventListener("click", (e) => {
         e.preventDefault();
         formIsOpen = !formIsOpen;
         if (formIsOpen) {
             emailFormContainer.classList.add("active");
-            setTimeout(() => emailFormContainer.scrollIntoView({ behavior: "smooth", block: "nearest" }), 100);
+            setTimeout(
+                () =>
+                    emailFormContainer.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest",
+                    }),
+                100,
+            );
         } else {
             emailFormContainer.classList.remove("active");
             formConfirmation?.classList.remove("show");
             formError?.classList.remove("show");
         }
     });
-    emailForm.addEventListener("submit", async e => {
+    emailForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        submitButton.disabled = true; submitButton.textContent = "Sending...";
-        formConfirmation?.classList.remove("show"); formError?.classList.remove("show");
+        submitButton.disabled = true;
+        submitButton.textContent = "Sending...";
+        formConfirmation?.classList.remove("show");
+        formError?.classList.remove("show");
         try {
-            const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(emailForm) });
+            const res = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: new FormData(emailForm),
+            });
             const data = await res.json();
             if (data.success) {
-                formConfirmation?.classList.add("show"); emailForm.reset();
-                submitButton.disabled = false; submitButton.textContent = "Send Message";
+                formConfirmation?.classList.add("show");
+                emailForm.reset();
+                submitButton.disabled = false;
+                submitButton.textContent = "Send Message";
                 setTimeout(() => {
                     formConfirmation?.classList.remove("show");
                     setTimeout(() => {
-                        emailFormContainer.classList.remove("active"); formIsOpen = false;
-                        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        emailFormContainer.classList.remove("active");
+                        formIsOpen = false;
+                        document
+                            .getElementById("contact")
+                            ?.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                            });
                     }, 500);
                 }, 3000);
             } else throw new Error(data.message || "Something went wrong.");
         } catch (err) {
-            if (formError) { formError.textContent = `\u2717 ${err.message || "Network error."}`; formError.classList.add("show"); }
-            submitButton.disabled = false; submitButton.textContent = "Send Message";
+            if (formError) {
+                formError.textContent = `\u2717 ${err.message || "Network error."}`;
+                formError.classList.add("show");
+            }
+            submitButton.disabled = false;
+            submitButton.textContent = "Send Message";
             setTimeout(() => formError?.classList.remove("show"), 5000);
         }
     });
@@ -835,7 +1149,8 @@ function initEmailForm() {
         const r = emailFormContainer.getBoundingClientRect();
         if (r.bottom < 0 || r.top > window.innerHeight + 200) {
             emailFormContainer.classList.remove("active");
-            formConfirmation?.classList.remove("show"); formError?.classList.remove("show");
+            formConfirmation?.classList.remove("show");
+            formError?.classList.remove("show");
             formIsOpen = false;
         }
     };
@@ -845,12 +1160,18 @@ function initEmailForm() {
 function initNavScroll() {
     const nav = document.querySelector(".main-nav");
     if (!nav) return;
-    window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 50), { passive: true });
+    window.addEventListener(
+        "scroll",
+        () => nav.classList.toggle("scrolled", window.scrollY > 50),
+        { passive: true },
+    );
 }
 
 // ─── BURGER MENU ───────────────────────────────────────────────────────
 let _burgerCloseCallback = null;
-function closeBurgerMenu() { if (_burgerCloseCallback) _burgerCloseCallback(); }
+function closeBurgerMenu() {
+    if (_burgerCloseCallback) _burgerCloseCallback();
+}
 
 let _burgerDecorated = false;
 function injectBurgerMenuDecoration() {
@@ -860,7 +1181,7 @@ function injectBurgerMenuDecoration() {
     if (!navLinks) return;
     navLinks.querySelectorAll("a[data-nav]").forEach((link, i) => {
         const text = link.textContent.trim();
-        link.innerHTML = `<span class="menu-index">${["01","02","03"][i] || "0"+(i+1)}</span><span class="menu-text">${text}</span><span class="menu-arrow">&#x2192;</span>`;
+        link.innerHTML = `<span class="menu-index">${["01", "02", "03"][i] || "0" + (i + 1)}</span><span class="menu-text">${text}</span><span class="menu-arrow">&#x2192;</span>`;
     });
     const topbar = document.createElement("div");
     topbar.className = "nav-menu-topbar";
@@ -870,7 +1191,7 @@ function injectBurgerMenuDecoration() {
     bottombar.className = "nav-menu-bottombar";
     bottombar.innerHTML = `<span style="display:flex;align-items:center;gap:6px"><span class="nav-menu-statusdot"></span>Available for work</span><span>Based in Latvia</span>`;
     navLinks.appendChild(bottombar);
-    ["tl","tr","bl","br"].forEach(pos => {
+    ["tl", "tr", "bl", "br"].forEach((pos) => {
         const corner = document.createElement("div");
         corner.className = `nav-menu-corner nav-menu-corner--${pos}`;
         navLinks.appendChild(corner);
@@ -884,7 +1205,9 @@ function injectBurgerMenuDecoration() {
     navLinks.appendChild(dotsWrap);
 
     // ── LIGHT SWITCH: inject pull-cord dark mode toggle ──────────────
-    _injectLightSwitch(navLinks);
+    // Insert after the Contact link as inline flow (not absolutely positioned in navLinks)
+    const contactLink = navLinks.querySelector("a[data-nav]:last-of-type");
+    _injectLightSwitch(contactLink || navLinks);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -894,24 +1217,23 @@ function injectBurgerMenuDecoration() {
      panel theme changes are reflected automatically
    - No blinding glow — just a subtle accent tint when "on"
    ═══════════════════════════════════════════════════════════════ */
-function _injectLightSwitch(navLinks) {
+function _injectLightSwitch(insertAfterEl) {
     if (!document.getElementById("lightSwitchStyles")) {
         const style = document.createElement("style");
         style.id = "lightSwitchStyles";
         style.textContent = `
-            /* ── wrapper sits below Contact, centred ── */
+            /* ── wrapper: inline flow, centred, sits right after Contact ── */
             .nav-lightswitch-wrap {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                position: absolute;
-                bottom: 64px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 10;
-                pointer-events: all;
+                margin-top: 2rem;
+                padding-bottom: 0.5rem;
                 user-select: none;
                 -webkit-user-select: none;
+                pointer-events: all;
+                /* rope hangs below, give it room */
+                padding-bottom: 80px;
             }
 
             /* small label above the pill */
@@ -922,22 +1244,21 @@ function _injectLightSwitch(navLinks) {
                 text-transform: uppercase;
                 color: var(--color-secondary);
                 opacity: 0.5;
-                margin-bottom: 10px;
+                margin-bottom: 12px;
             }
 
             /* pill + rope live in this relative box */
             .nav-ls-container {
                 position: relative;
-                width: 88px;   /* pill width */
-                height: 40px;  /* pill height */
+                width: 100px;   /* pill width */
+                height: 46px;   /* pill height */
             }
 
-            /* rope SVG: anchored to bottom-left of the pill */
+            /* rope SVG: hangs from bottom-left corner of pill (under left knob position) */
             .nav-ls-rope-svg {
                 position: absolute;
-                /* bottom edge of pill, left side of knob (~20px in) */
-                bottom: 0px;
-                left: 14px;
+                top: 100%;          /* starts at bottom edge of pill */
+                left: 18px;         /* left side, under where the knob sits when "off" */
                 pointer-events: none;
                 overflow: visible;
                 z-index: 5;
@@ -951,7 +1272,7 @@ function _injectLightSwitch(navLinks) {
                 background: color-mix(in srgb, var(--color-secondary) 25%, transparent);
                 border: 1.5px solid color-mix(in srgb, var(--color-secondary) 40%, transparent);
                 border-radius: 999px;
-                padding: 4px;
+                padding: 5px;
                 cursor: pointer;
                 -webkit-tap-highlight-color: transparent;
                 transition: background 0.4s ease, border-color 0.4s ease;
@@ -963,15 +1284,15 @@ function _injectLightSwitch(navLinks) {
 
             /* the sliding knob inside the pill */
             .nav-ls-knob {
-                width: 32px;
-                height: 32px;
+                width: 36px;
+                height: 36px;
                 position: relative;
                 will-change: transform;
                 border-radius: 999px;
                 overflow: hidden;
             }
 
-            /* knob face — uses secondary when dark, accent when light */
+            /* knob face */
             .nav-ls-top {
                 background-color: var(--color-secondary);
                 border-radius: 999px;
@@ -1004,60 +1325,54 @@ function _injectLightSwitch(navLinks) {
     wrap.innerHTML = `
         <span class="nav-ls-label" id="navLsLabel">Toggle Theme</span>
         <div class="nav-ls-container">
-            <!--
-                Rope SVG: origin at top (0,0) = bottom-left of pill.
-                The rope hangs downward; pull-tab (ls-rope-end) sits at the bottom.
-                Hidden morph paths are used by GSAP MorphSVG only.
-            -->
             <svg id="navLsRopeSvg" class="nav-ls-rope-svg"
-                 width="28" height="70"
-                 viewBox="0 0 28 70"
+                 width="32" height="80"
+                 viewBox="0 0 32 80"
                  fill="none" xmlns="http://www.w3.org/2000/svg">
 
-                <!-- visible rope line -->
                 <path id="ls-rope"
-                      d="M14 0 L14 46"
+                      d="M16 0 L16 52"
                       stroke="var(--color-secondary)"
                       stroke-width="2.5"
                       stroke-linecap="round"
                       opacity="0.55"/>
 
-                <!-- morph reference paths (invisible) -->
-                <path id="ls-rope-original"   d="M14 0 L14 46"           class="nav-ls-rope-hidden" />
-                <path id="ls-rope-extended"   d="M14 0 L14 62"           class="nav-ls-rope-hidden" />
-                <path id="ls-rope-compressed" d="M14 0 C14 18 6 28 14 46" class="nav-ls-rope-hidden" />
+                <path id="ls-rope-original"   d="M16 0 L16 52"            class="nav-ls-rope-hidden" />
+                <path id="ls-rope-extended"   d="M16 0 L16 70"            class="nav-ls-rope-hidden" />
+                <path id="ls-rope-compressed" d="M16 0 C16 20 7 32 16 52" class="nav-ls-rope-hidden" />
 
-                <!-- pull-tab teardrop at bottom of rope -->
                 <path id="ls-rope-end"
-                      d="M10 50 Q10 46 14 46 Q18 46 18 50 L16 62 Q14 65 12 62 Z"
+                      d="M11 56 Q11 52 16 52 Q21 52 21 56 L19 70 Q16 74 13 70 Z"
                       fill="var(--color-accent)"
                       opacity="0.85"/>
             </svg>
 
             <button class="nav-ls-btn" id="navLsBtn" type="button" aria-label="Toggle dark mode">
                 <div class="nav-ls-knob" id="navLsKnob">
-                    <div class="nav-ls-top"   id="navLsTop"></div>
+                    <div class="nav-ls-top" id="navLsTop"></div>
                     <div class="nav-ls-shine"></div>
                 </div>
             </button>
         </div>
     `;
-    navLinks.appendChild(wrap);
+
+    // Insert as next sibling after the Contact link (inline flow)
+    insertAfterEl.insertAdjacentElement("afterend", wrap);
 
     _syncLightSwitchToTheme(false);
     _bindLightSwitch();
 }
 
 function _syncLightSwitchToTheme(animate) {
-    const knob  = document.getElementById("navLsKnob");
-    const btn   = document.getElementById("navLsBtn");
+    const knob = document.getElementById("navLsKnob");
+    const btn = document.getElementById("navLsBtn");
     const label = document.getElementById("navLsLabel");
     if (!knob) return;
 
     const isDark = document.body.classList.contains("dark-mode");
 
-    // knob travel = pill width (88) - padding*2 (8) - knob width (32) = 48px
-    const targetX   = isDark ? 0  : 48;
+    // knob travel = pill width (100) - padding*2 (10) - knob width (36) = 54px
+    const targetX = isDark ? 0 : 54;
     const labelText = isDark ? "Switch to Light" : "Switch to Dark";
 
     if (label) label.textContent = labelText;
@@ -1078,10 +1393,12 @@ function _bindLightSwitch() {
     if (!btn || btn._lsBound) return;
     btn._lsBound = true;
 
-    const hasGsap  = typeof gsap !== "undefined";
+    const hasGsap = typeof gsap !== "undefined";
     const hasMorph = hasGsap && typeof MorphSVGPlugin !== "undefined";
     if (hasGsap && hasMorph) {
-        try { gsap.registerPlugin(MorphSVGPlugin); } catch (e) {}
+        try {
+            gsap.registerPlugin(MorphSVGPlugin);
+        } catch (e) {}
     }
 
     let _lsAnimating = false;
@@ -1090,9 +1407,21 @@ function _bindLightSwitch() {
         if (!hasGsap) return;
         const tl = gsap.timeline();
         // rope-end drops down 18px when pulled
-        tl.to("#ls-rope-end", { duration: 0.15, y: 18, ease: "power2.out" }, "pull");
+        tl.to(
+            "#ls-rope-end",
+            { duration: 0.15, y: 18, ease: "power2.out" },
+            "pull",
+        );
         if (hasMorph) {
-            tl.to("#ls-rope", { duration: 0.15, morphSVG: "#ls-rope-extended", ease: "power2.out" }, "pull");
+            tl.to(
+                "#ls-rope",
+                {
+                    duration: 0.15,
+                    morphSVG: "#ls-rope-extended",
+                    ease: "power2.out",
+                },
+                "pull",
+            );
         }
     }
 
@@ -1104,26 +1433,69 @@ function _bindLightSwitch() {
         if (hasGsap) {
             const tl = gsap.timeline();
             if (hasMorph) {
-                tl.to("#ls-rope", { duration: 0.35, morphSVG: "#ls-rope-compressed", ease: "bounce.out" }, "snap");
-                tl.to("#ls-rope", { duration: 0.2,  morphSVG: "#ls-rope-original",   ease: "none"       }, "settle");
+                tl.to(
+                    "#ls-rope",
+                    {
+                        duration: 0.35,
+                        morphSVG: "#ls-rope-compressed",
+                        ease: "bounce.out",
+                    },
+                    "snap",
+                );
+                tl.to(
+                    "#ls-rope",
+                    {
+                        duration: 0.2,
+                        morphSVG: "#ls-rope-original",
+                        ease: "none",
+                    },
+                    "settle",
+                );
             }
-            tl.to("#ls-rope-end", { duration: 0.35, y: 8,  ease: "bounce.out" }, "snap");
-            tl.to("#ls-rope-end", { duration: 0.2,  y: 0,  ease: "power1.out" }, "settle");
+            tl.to(
+                "#ls-rope-end",
+                { duration: 0.35, y: 8, ease: "bounce.out" },
+                "snap",
+            );
+            tl.to(
+                "#ls-rope-end",
+                { duration: 0.2, y: 0, ease: "power1.out" },
+                "settle",
+            );
         }
 
         // toggle theme
         document.body.classList.toggle("dark-mode");
-        localStorage.setItem("darkMode", document.body.classList.contains("dark-mode").toString());
+        localStorage.setItem(
+            "darkMode",
+            document.body.classList.contains("dark-mode").toString(),
+        );
 
         _syncLightSwitchToTheme(true);
 
-        setTimeout(() => { _lsAnimating = false; }, 700);
+        setTimeout(() => {
+            _lsAnimating = false;
+        }, 700);
     }
 
-    btn.addEventListener("mousedown",  onDown);
-    btn.addEventListener("mouseup",    onUp);
-    btn.addEventListener("touchstart", e => { e.preventDefault(); onDown(); }, { passive: false });
-    btn.addEventListener("touchend",   e => { e.preventDefault(); onUp();   }, { passive: false });
+    btn.addEventListener("mousedown", onDown);
+    btn.addEventListener("mouseup", onUp);
+    btn.addEventListener(
+        "touchstart",
+        (e) => {
+            e.preventDefault();
+            onDown();
+        },
+        { passive: false },
+    );
+    btn.addEventListener(
+        "touchend",
+        (e) => {
+            e.preventDefault();
+            onUp();
+        },
+        { passive: false },
+    );
 }
 
 function initBurgerMenu() {
@@ -1147,33 +1519,53 @@ function initBurgerMenu() {
         document.body.style.overflow = "";
     };
     _burgerCloseCallback = close;
-    burger.addEventListener("click", e => { e.stopPropagation(); burger.classList.contains("active") ? close() : open(); });
+    burger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        burger.classList.contains("active") ? close() : open();
+    });
     overlay.addEventListener("click", close);
-    links.querySelectorAll("a:not([data-nav])").forEach(a => a.addEventListener("click", close));
-    document.addEventListener("keydown", e => { if (e.key === "Escape" && links.classList.contains("active")) close(); });
+    links
+        .querySelectorAll("a:not([data-nav])")
+        .forEach((a) => a.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && links.classList.contains("active")) close();
+    });
     let resizeTimer;
     window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => { if (window.innerWidth > 768) close(); }, 50);
+        resizeTimer = setTimeout(() => {
+            if (window.innerWidth > 768) close();
+        }, 50);
     });
 }
 
 // ─── MOBILE SECTION OBSERVER ───────────────────────────────────────────
 function initMobileSectionObserver() {
     if (window.innerWidth > 768) return;
-    const sections = document.querySelectorAll(".about-section,.projects-section,.quote-section,.contact-section");
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            const el = entry.target;
-            if (entry.isIntersecting) { el.classList.add("section-visible"); el.classList.remove("section-above"); }
-            else {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < 0) { el.classList.add("section-above"); el.classList.remove("section-visible"); }
-                else { el.classList.remove("section-visible", "section-above"); }
-            }
-        });
-    }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
-    sections.forEach(s => observer.observe(s));
+    const sections = document.querySelectorAll(
+        ".about-section,.projects-section,.quote-section,.contact-section",
+    );
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                const el = entry.target;
+                if (entry.isIntersecting) {
+                    el.classList.add("section-visible");
+                    el.classList.remove("section-above");
+                } else {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < 0) {
+                        el.classList.add("section-above");
+                        el.classList.remove("section-visible");
+                    } else {
+                        el.classList.remove("section-visible", "section-above");
+                    }
+                }
+            });
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
+    );
+    sections.forEach((s) => observer.observe(s));
 }
 
 // ─── INSTANT TAP FEEDBACK ─────────────────────────────────────────────
@@ -1181,20 +1573,53 @@ function initInstantTapFeedback() {
     if (window.innerWidth > 768) return;
     const FLASH = 150;
     const flash = (el, inStyles, dur = FLASH) => {
-        el.addEventListener("touchstart", () => Object.assign(el.style, { transition: "all 0.1s ease", ...inStyles }), { passive: true });
-        const reset = () => setTimeout(() => { Object.keys(inStyles).forEach(k => el.style[k] = ""); setTimeout(() => el.style.transition = "", 300); }, dur);
+        el.addEventListener(
+            "touchstart",
+            () =>
+                Object.assign(el.style, {
+                    transition: "all 0.1s ease",
+                    ...inStyles,
+                }),
+            { passive: true },
+        );
+        const reset = () =>
+            setTimeout(() => {
+                Object.keys(inStyles).forEach((k) => (el.style[k] = ""));
+                setTimeout(() => (el.style.transition = ""), 300);
+            }, dur);
         el.addEventListener("touchend", reset, { passive: true });
         el.addEventListener("touchcancel", reset, { passive: true });
     };
     const logo = document.querySelector(".logo");
-    if (logo) flash(logo, { color: "var(--color-accent)", transform: "scale(1.08) rotate(-4deg)" });
-    document.querySelectorAll(".contact-link").forEach(el => flash(el, { borderColor: "var(--color-accent)", transform: "translateX(5px)" }));
-    document.querySelectorAll(".feature-item").forEach(el => flash(el, { borderLeftWidth: "6px", transform: "translateX(5px)" }, FLASH + 50));
-    document.querySelectorAll(".project-grid-card").forEach(el => flash(el, { borderColor: "var(--color-accent)" }));
+    if (logo)
+        flash(logo, {
+            color: "var(--color-accent)",
+            transform: "scale(1.08) rotate(-4deg)",
+        });
+    document
+        .querySelectorAll(".contact-link")
+        .forEach((el) =>
+            flash(el, {
+                borderColor: "var(--color-accent)",
+                transform: "translateX(5px)",
+            }),
+        );
+    document
+        .querySelectorAll(".feature-item")
+        .forEach((el) =>
+            flash(
+                el,
+                { borderLeftWidth: "6px", transform: "translateX(5px)" },
+                FLASH + 50,
+            ),
+        );
+    document
+        .querySelectorAll(".project-grid-card")
+        .forEach((el) => flash(el, { borderColor: "var(--color-accent)" }));
     const submitBtn = document.querySelector(".submit-button");
-    if (submitBtn) flash(submitBtn, { opacity: "0.78", transform: "scale(0.98)" });
+    if (submitBtn)
+        flash(submitBtn, { opacity: "0.78", transform: "scale(0.98)" });
 }
-
 
 /* ═══════════════════════════════════════════════════════════════
    ADMIN PANEL
@@ -1204,46 +1629,49 @@ function initInstantTapFeedback() {
    ═══════════════════════════════════════════════════════════════ */
 
 function initAdminPanel() {
-    const ADMIN_PIN    = "2604";
-    const TRIGGER_WORD = ["h","i","t","m","a","n","2"];
+    const ADMIN_PIN = "2604";
+    const TRIGGER_WORD = ["h", "i", "t", "m", "a", "n", "2"];
 
-    let keyBuffer   = [];
-    let panelOpen   = false;
+    let keyBuffer = [];
+    let panelOpen = false;
     let pinVerified = false;
-    let db          = null;
+    let db = null;
     let activityLog = [];
-    let pinInput    = "";
+    let pinInput = "";
 
     // ── Staged image state ────────────────────────────────────
-    let _stagedRawSrc  = null;
-    let _stagedSize    = 340;
+    let _stagedRawSrc = null;
+    let _stagedSize = 340;
 
     const DEFAULTS = {
-        projectsLocked:  false,
-        aboutLocked:     false,
-        contactLocked:   false,
-        accentColor:     "#c17a5a",
-        secondaryColor:  "#7a8e7e",
-        heroStatus:      "Online",
-        heroSubtext:     "Currently, working on project",
+        projectsLocked: false,
+        aboutLocked: false,
+        contactLocked: false,
+        accentColor: "#c17a5a",
+        secondaryColor: "#7a8e7e",
+        heroStatus: "Online",
+        heroSubtext: "Currently, working on project",
         maintenanceMode: false,
-        footerNote:      "Designed & developed with care.",
+        footerNote: "Designed & developed with care.",
     };
 
     // ── Firebase ──────────────────────────────────────────────
     function initFirebase() {
         if (!window.FIREBASE_ENABLED || typeof firebase === "undefined") return;
         try {
-            if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+            if (!firebase.apps.length)
+                firebase.initializeApp(window.firebaseConfig);
             db = firebase.database();
             FloatingImageSystem.init(db);
-            db.ref("siteConfig").on("value", snap => {
+            db.ref("siteConfig").on("value", (snap) => {
                 const data = snap.val();
                 if (!data) return;
                 applyToSite(data);
                 if (panelOpen && pinVerified) populatePanel(data);
             });
-        } catch (e) { console.warn("[Admin] Firebase:", e.message); }
+        } catch (e) {
+            console.warn("[Admin] Firebase:", e.message);
+        }
     }
 
     function pushFirebase(config) {
@@ -1253,21 +1681,33 @@ function initAdminPanel() {
 
     function fetchLog() {
         if (!db) return;
-        db.ref("adminLog").orderByChild("ts").limitToLast(20).once("value", snap => {
-            const data = snap.val();
-            if (!data) return;
-            activityLog = Object.values(data).sort((a, b) => b.ts - a.ts);
-            renderLog();
-        });
+        db.ref("adminLog")
+            .orderByChild("ts")
+            .limitToLast(20)
+            .once("value", (snap) => {
+                const data = snap.val();
+                if (!data) return;
+                activityLog = Object.values(data).sort((a, b) => b.ts - a.ts);
+                renderLog();
+            });
     }
 
     // ── Config ────────────────────────────────────────────────
     function getConfig() {
-        try { return JSON.parse(localStorage.getItem("siteConfig") || "{}"); } catch { return {}; }
+        try {
+            return JSON.parse(localStorage.getItem("siteConfig") || "{}");
+        } catch {
+            return {};
+        }
     }
 
     function saveConfig(updates) {
-        const next = { ...DEFAULTS, ...getConfig(), ...updates, _lastUpdated: Date.now() };
+        const next = {
+            ...DEFAULTS,
+            ...getConfig(),
+            ...updates,
+            _lastUpdated: Date.now(),
+        };
         localStorage.setItem("siteConfig", JSON.stringify(next));
         applyToSite(next);
         pushFirebase(next);
@@ -1278,11 +1718,17 @@ function initAdminPanel() {
     // ── Apply config to the live site ────────────────────────
     function applyToSite(config) {
         const c = { ...DEFAULTS, ...config };
-        applySectionLock(c.aboutLocked,    LOCK_CONFIG.aboutLocked);
+        applySectionLock(c.aboutLocked, LOCK_CONFIG.aboutLocked);
         applySectionLock(c.projectsLocked, LOCK_CONFIG.projectsLocked);
-        applySectionLock(c.contactLocked,  LOCK_CONFIG.contactLocked);
-        document.documentElement.style.setProperty("--color-accent",    c.accentColor);
-        document.documentElement.style.setProperty("--color-secondary", c.secondaryColor);
+        applySectionLock(c.contactLocked, LOCK_CONFIG.contactLocked);
+        document.documentElement.style.setProperty(
+            "--color-accent",
+            c.accentColor,
+        );
+        document.documentElement.style.setProperty(
+            "--color-secondary",
+            c.secondaryColor,
+        );
         let colorOverride = document.getElementById("adminColorOverride");
         if (!colorOverride) {
             colorOverride = document.createElement("style");
@@ -1298,23 +1744,32 @@ function initAdminPanel() {
             const dot = statusEl.querySelector(".hero-status-dot");
             statusEl.innerHTML = "";
             if (dot) statusEl.appendChild(dot);
-            statusEl.appendChild(document.createTextNode(" " + (c.heroStatus || "Online")));
+            statusEl.appendChild(
+                document.createTextNode(" " + (c.heroStatus || "Online")),
+            );
         }
         const metaEl = document.querySelector(".hero-meta-item");
         if (metaEl) metaEl.textContent = c.heroSubtext || DEFAULTS.heroSubtext;
         const footerNote = document.querySelector(".footer-note");
-        if (footerNote) footerNote.textContent = c.footerNote || DEFAULTS.footerNote;
-        document.querySelectorAll(".nav-menu-statusdot").forEach(d => { d.style.background = "var(--color-accent)"; });
+        if (footerNote)
+            footerNote.textContent = c.footerNote || DEFAULTS.footerNote;
+        document.querySelectorAll(".nav-menu-statusdot").forEach((d) => {
+            d.style.background = "var(--color-accent)";
+        });
         let banner = document.getElementById("adminMaintenanceBanner");
         if (c.maintenanceMode) {
             if (!banner) {
                 banner = document.createElement("div");
                 banner.id = "adminMaintenanceBanner";
-                banner.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99998;background:var(--color-accent);color:#fff;text-align:center;padding:8px 16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;";
-                banner.textContent = "\u26a0 Site under maintenance \u2014 some features may be unavailable";
+                banner.style.cssText =
+                    "position:fixed;top:0;left:0;right:0;z-index:99998;background:var(--color-accent);color:#fff;text-align:center;padding:8px 16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;";
+                banner.textContent =
+                    "\u26a0 Site under maintenance \u2014 some features may be unavailable";
                 document.body.prepend(banner);
             }
-        } else { banner?.remove(); }
+        } else {
+            banner?.remove();
+        }
     }
 
     // ── Activity log ──────────────────────────────────────────
@@ -1329,28 +1784,44 @@ function initAdminPanel() {
     function renderLog() {
         const el = document.getElementById("adminActivityLog");
         if (!el) return;
-        el.innerHTML = activityLog.slice(0, 8).map(e => {
-            const t = new Date(e.ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-            return `<div class="adm-log-item"><span class="adm-log-time">${t}</span><span class="adm-log-msg">${e.msg}</span></div>`;
-        }).join("") || '<span class="adm-log-empty">No activity yet</span>';
+        el.innerHTML =
+            activityLog
+                .slice(0, 8)
+                .map((e) => {
+                    const t = new Date(e.ts).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    });
+                    return `<div class="adm-log-item"><span class="adm-log-time">${t}</span><span class="adm-log-msg">${e.msg}</span></div>`;
+                })
+                .join("") ||
+            '<span class="adm-log-empty">No activity yet</span>';
     }
 
     // ── Keyboard trigger ─────────────────────────────────────
-    document.addEventListener("keydown", e => {
-        if (["INPUT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
+    document.addEventListener("keydown", (e) => {
+        if (["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName))
+            return;
         keyBuffer.push(e.key.toLowerCase());
         if (keyBuffer.length > TRIGGER_WORD.length) keyBuffer.shift();
-        if (keyBuffer.join("") === TRIGGER_WORD.join("")) { keyBuffer = []; openPanel(); }
+        if (keyBuffer.join("") === TRIGGER_WORD.join("")) {
+            keyBuffer = [];
+            openPanel();
+        }
     });
 
     // ── Triple-tap footer (mobile) ────────────────────────────
-    let tapCount = 0, tapTimer = null;
-    document.addEventListener("touchend", e => {
+    let tapCount = 0,
+        tapTimer = null;
+    document.addEventListener("touchend", (e) => {
         if (!e.target.closest(".main-footer")) return;
         tapCount++;
         clearTimeout(tapTimer);
-        tapTimer = setTimeout(() => tapCount = 0, 800);
-        if (tapCount >= 3) { tapCount = 0; openPanel(); }
+        tapTimer = setTimeout(() => (tapCount = 0), 800);
+        if (tapCount >= 3) {
+            tapCount = 0;
+            openPanel();
+        }
     });
 
     // ── Open / Close ──────────────────────────────────────────
@@ -1360,8 +1831,11 @@ function initAdminPanel() {
         SoundEngine.playAdminOpen();
         injectPanel();
         requestAnimationFrame(() => {
-            document.getElementById("adminPanel")?.classList.add("adm--visible");
-            if (!pinVerified) showPin(); else showMain();
+            document
+                .getElementById("adminPanel")
+                ?.classList.add("adm--visible");
+            if (!pinVerified) showPin();
+            else showMain();
         });
     }
 
@@ -1369,7 +1843,10 @@ function initAdminPanel() {
         panelOpen = false;
         _resetStaging();
         const p = document.getElementById("adminPanel");
-        if (p) { p.classList.remove("adm--visible"); setTimeout(() => p.remove(), 500); }
+        if (p) {
+            p.classList.remove("adm--visible");
+            setTimeout(() => p.remove(), 500);
+        }
     }
 
     // ── Staging helpers ───────────────────────────────────────
@@ -1536,7 +2013,7 @@ function initAdminPanel() {
                 </div>
                 <div class="adm-pin-err" id="admPinErr"></div>
                 <div class="adm-pin-pad">
-                  ${[1,2,3,4,5,6,7,8,9,"",0,"\u232b"].map(k=>`<button class="adm-key ${k===''?'adm-key--blank':''}" data-k="${k}">${k}</button>`).join("")}
+                  ${[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "\u232b"].map((k) => `<button class="adm-key ${k === "" ? "adm-key--blank" : ""}" data-k="${k}">${k}</button>`).join("")}
                 </div>
                 <button class="adm-pin-cancel" id="admPinCancel">Cancel</button>
               </div>
@@ -1629,188 +2106,358 @@ function initAdminPanel() {
     }
 
     function showPin() {
-        document.getElementById("admPinScreen")?.classList.remove("adm-screen--off");
-        document.getElementById("admMainScreen")?.classList.add("adm-screen--off");
-        pinInput = ""; updateDots();
+        document
+            .getElementById("admPinScreen")
+            ?.classList.remove("adm-screen--off");
+        document
+            .getElementById("admMainScreen")
+            ?.classList.add("adm-screen--off");
+        pinInput = "";
+        updateDots();
     }
 
     function showMain() {
-        document.getElementById("admPinScreen")?.classList.add("adm-screen--off");
-        document.getElementById("admMainScreen")?.classList.remove("adm-screen--off");
-        loadMainPanel(); fetchLog();
+        document
+            .getElementById("admPinScreen")
+            ?.classList.add("adm-screen--off");
+        document
+            .getElementById("admMainScreen")
+            ?.classList.remove("adm-screen--off");
+        loadMainPanel();
+        fetchLog();
     }
 
     function updateDots() {
-        document.querySelectorAll(".adm-pin-dot").forEach((d, i) =>
-            d.classList.toggle("adm-pin-dot--on", i < pinInput.length));
+        document
+            .querySelectorAll(".adm-pin-dot")
+            .forEach((d, i) =>
+                d.classList.toggle("adm-pin-dot--on", i < pinInput.length),
+            );
     }
 
     function handlePinKey(key) {
-        if (key === "\u232b") { pinInput = pinInput.slice(0, -1); updateDots(); return; }
+        if (key === "\u232b") {
+            pinInput = pinInput.slice(0, -1);
+            updateDots();
+            return;
+        }
         if (pinInput.length >= 4) return;
-        pinInput += key; updateDots();
+        pinInput += key;
+        updateDots();
         if (pinInput.length === 4) {
             if (pinInput === ADMIN_PIN) {
                 pinVerified = true;
-                document.getElementById("admPinDots")?.classList.add("adm-pin-dots--ok");
+                document
+                    .getElementById("admPinDots")
+                    ?.classList.add("adm-pin-dots--ok");
                 setTimeout(showMain, 380);
                 logActivity("Panel unlocked");
             } else {
-                document.getElementById("admPinDots")?.classList.add("adm-pin-dots--err");
-                if (document.getElementById("admPinErr")) document.getElementById("admPinErr").textContent = "Incorrect PIN";
+                document
+                    .getElementById("admPinDots")
+                    ?.classList.add("adm-pin-dots--err");
+                if (document.getElementById("admPinErr"))
+                    document.getElementById("admPinErr").textContent =
+                        "Incorrect PIN";
                 setTimeout(() => {
-                    document.getElementById("admPinDots")?.classList.remove("adm-pin-dots--err");
-                    if (document.getElementById("admPinErr")) document.getElementById("admPinErr").textContent = "";
-                    pinInput = ""; updateDots();
+                    document
+                        .getElementById("admPinDots")
+                        ?.classList.remove("adm-pin-dots--err");
+                    if (document.getElementById("admPinErr"))
+                        document.getElementById("admPinErr").textContent = "";
+                    pinInput = "";
+                    updateDots();
                 }, 750);
             }
         }
     }
 
     function loadMainPanel() {
-        const load = data => {
+        const load = (data) => {
             const c = { ...DEFAULTS, ...data };
-            setCheck("admLockAbout",    c.aboutLocked);
+            setCheck("admLockAbout", c.aboutLocked);
             setCheck("admLockProjects", c.projectsLocked);
-            setCheck("admLockContact",  c.contactLocked);
-            setCheck("admMaintenance",  c.maintenanceMode);
-            setVal("admColorAccent",    c.accentColor);
+            setCheck("admLockContact", c.contactLocked);
+            setCheck("admMaintenance", c.maintenanceMode);
+            setVal("admColorAccent", c.accentColor);
             setVal("admColorSecondary", c.secondaryColor);
-            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = c.accentColor;
-            if (document.getElementById("admSecHex"))    document.getElementById("admSecHex").textContent    = c.secondaryColor;
-            setVal("admHeroStatus",  c.heroStatus);
-            setVal("admHeroSub",     c.heroSubtext);
-            setVal("admFooterNote",  c.footerNote);
+            if (document.getElementById("admAccentHex"))
+                document.getElementById("admAccentHex").textContent =
+                    c.accentColor;
+            if (document.getElementById("admSecHex"))
+                document.getElementById("admSecHex").textContent =
+                    c.secondaryColor;
+            setVal("admHeroStatus", c.heroStatus);
+            setVal("admHeroSub", c.heroSubtext);
+            setVal("admFooterNote", c.footerNote);
             if (c._lastUpdated) {
                 const d = new Date(c._lastUpdated);
-                if (document.getElementById("admStatTime")) document.getElementById("admStatTime").textContent = d.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" });
-                if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = d.toLocaleDateString([], { month:"short", day:"numeric" });
+                if (document.getElementById("admStatTime"))
+                    document.getElementById("admStatTime").textContent =
+                        d.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        });
+                if (document.getElementById("admStatDate"))
+                    document.getElementById("admStatDate").textContent =
+                        d.toLocaleDateString([], {
+                            month: "short",
+                            day: "numeric",
+                        });
             } else {
-                if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([], { month:"short", day:"numeric" });
+                if (document.getElementById("admStatDate"))
+                    document.getElementById("admStatDate").textContent =
+                        new Date().toLocaleDateString([], {
+                            month: "short",
+                            day: "numeric",
+                        });
             }
         };
         if (db) {
-            if (document.getElementById("admStatSync")) document.getElementById("admStatSync").textContent = "\u2713 Live";
-            db.ref("siteConfig").once("value").then(snap => load({ ...getConfig(), ...(snap.val() || {}) }));
+            if (document.getElementById("admStatSync"))
+                document.getElementById("admStatSync").textContent =
+                    "\u2713 Live";
+            db.ref("siteConfig")
+                .once("value")
+                .then((snap) =>
+                    load({ ...getConfig(), ...(snap.val() || {}) }),
+                );
         } else {
-            if (document.getElementById("admStatSync")) document.getElementById("admStatSync").textContent = "Local";
+            if (document.getElementById("admStatSync"))
+                document.getElementById("admStatSync").textContent = "Local";
             load(getConfig());
-            if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([], { month:"short", day:"numeric" });
+            if (document.getElementById("admStatDate"))
+                document.getElementById("admStatDate").textContent =
+                    new Date().toLocaleDateString([], {
+                        month: "short",
+                        day: "numeric",
+                    });
         }
     }
 
-    function populatePanel(data) { if (!pinVerified || !panelOpen) return; loadMainPanel(); }
-    function setCheck(id, val) { const el = document.getElementById(id); if (el) el.checked = !!val; }
-    function setVal(id, val)   { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; }
+    function populatePanel(data) {
+        if (!pinVerified || !panelOpen) return;
+        loadMainPanel();
+    }
+    function setCheck(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.checked = !!val;
+    }
+    function setVal(id, val) {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.value = val;
+    }
 
     function bindEvents() {
-        document.getElementById("admBackdrop")?.addEventListener("click",  closePanel);
-        document.getElementById("admClose")?.addEventListener("click",     closePanel);
-        document.getElementById("admPinCancel")?.addEventListener("click", closePanel);
-        document.getElementById("admPinMobileClose")?.addEventListener("click",  closePanel);
-        document.getElementById("admMainMobileClose")?.addEventListener("click", closePanel);
-        document.getElementById("admLockPanel")?.addEventListener("click", () => { pinVerified = false; showPin(); });
+        document
+            .getElementById("admBackdrop")
+            ?.addEventListener("click", closePanel);
+        document
+            .getElementById("admClose")
+            ?.addEventListener("click", closePanel);
+        document
+            .getElementById("admPinCancel")
+            ?.addEventListener("click", closePanel);
+        document
+            .getElementById("admPinMobileClose")
+            ?.addEventListener("click", closePanel);
+        document
+            .getElementById("admMainMobileClose")
+            ?.addEventListener("click", closePanel);
+        document
+            .getElementById("admLockPanel")
+            ?.addEventListener("click", () => {
+                pinVerified = false;
+                showPin();
+            });
 
-        document.querySelectorAll(".adm-key:not(.adm-key--blank)").forEach(btn =>
-            btn.addEventListener("click", () => handlePinKey(btn.dataset.k))
-        );
+        document
+            .querySelectorAll(".adm-key:not(.adm-key--blank)")
+            .forEach((btn) =>
+                btn.addEventListener("click", () =>
+                    handlePinKey(btn.dataset.k),
+                ),
+            );
 
         const toggleMap = {
-            admLockAbout:    "aboutLocked",
+            admLockAbout: "aboutLocked",
             admLockProjects: "projectsLocked",
-            admLockContact:  "contactLocked",
-            admMaintenance:  "maintenanceMode",
+            admLockContact: "contactLocked",
+            admMaintenance: "maintenanceMode",
         };
         Object.entries(toggleMap).forEach(([id, key]) => {
-            document.getElementById(id)?.addEventListener("change", e => saveConfig({ [key]: e.target.checked }));
+            document
+                .getElementById(id)
+                ?.addEventListener("change", (e) =>
+                    saveConfig({ [key]: e.target.checked }),
+                );
         });
 
         let accentSaveTimer = null;
-        document.getElementById("admColorAccent")?.addEventListener("input", e => {
-            const colorOverride = document.getElementById("adminColorOverride");
-            if (colorOverride) {
-                const secVal = document.getElementById("admColorSecondary")?.value || DEFAULTS.secondaryColor;
-                colorOverride.textContent = `:root{--color-accent:${e.target.value}!important;--color-secondary:${secVal}!important}body.dark-mode{--color-accent:${e.target.value}!important;--color-secondary:${secVal}!important}`;
-            }
-            document.documentElement.style.setProperty("--color-accent", e.target.value);
-            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = e.target.value;
-            clearTimeout(accentSaveTimer);
-            accentSaveTimer = setTimeout(() => saveConfig({ accentColor: e.target.value }), 300);
-        });
-        document.getElementById("admColorAccent")?.addEventListener("change", e => {
-            document.documentElement.style.setProperty("--color-accent", e.target.value);
-            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = e.target.value;
-            clearTimeout(accentSaveTimer);
-            saveConfig({ accentColor: e.target.value });
-        });
+        document
+            .getElementById("admColorAccent")
+            ?.addEventListener("input", (e) => {
+                const colorOverride =
+                    document.getElementById("adminColorOverride");
+                if (colorOverride) {
+                    const secVal =
+                        document.getElementById("admColorSecondary")?.value ||
+                        DEFAULTS.secondaryColor;
+                    colorOverride.textContent = `:root{--color-accent:${e.target.value}!important;--color-secondary:${secVal}!important}body.dark-mode{--color-accent:${e.target.value}!important;--color-secondary:${secVal}!important}`;
+                }
+                document.documentElement.style.setProperty(
+                    "--color-accent",
+                    e.target.value,
+                );
+                if (document.getElementById("admAccentHex"))
+                    document.getElementById("admAccentHex").textContent =
+                        e.target.value;
+                clearTimeout(accentSaveTimer);
+                accentSaveTimer = setTimeout(
+                    () => saveConfig({ accentColor: e.target.value }),
+                    300,
+                );
+            });
+        document
+            .getElementById("admColorAccent")
+            ?.addEventListener("change", (e) => {
+                document.documentElement.style.setProperty(
+                    "--color-accent",
+                    e.target.value,
+                );
+                if (document.getElementById("admAccentHex"))
+                    document.getElementById("admAccentHex").textContent =
+                        e.target.value;
+                clearTimeout(accentSaveTimer);
+                saveConfig({ accentColor: e.target.value });
+            });
 
         let secSaveTimer = null;
-        document.getElementById("admColorSecondary")?.addEventListener("input", e => {
-            const colorOverride = document.getElementById("adminColorOverride");
-            if (colorOverride) {
-                const accVal = document.getElementById("admColorAccent")?.value || DEFAULTS.accentColor;
-                colorOverride.textContent = `:root{--color-accent:${accVal}!important;--color-secondary:${e.target.value}!important}body.dark-mode{--color-accent:${accVal}!important;--color-secondary:${e.target.value}!important}`;
-            }
-            document.documentElement.style.setProperty("--color-secondary", e.target.value);
-            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = e.target.value;
-            clearTimeout(secSaveTimer);
-            secSaveTimer = setTimeout(() => saveConfig({ secondaryColor: e.target.value }), 300);
-        });
-        document.getElementById("admColorSecondary")?.addEventListener("change", e => {
-            document.documentElement.style.setProperty("--color-secondary", e.target.value);
-            if (document.getElementById("admSecHex")) document.getElementById("admSecHex").textContent = e.target.value;
-            clearTimeout(secSaveTimer);
-            saveConfig({ secondaryColor: e.target.value });
-        });
-
-        document.getElementById("admResetColors")?.addEventListener("click", () => {
-            saveConfig({ accentColor: DEFAULTS.accentColor, secondaryColor: DEFAULTS.secondaryColor });
-            setVal("admColorAccent", DEFAULTS.accentColor); setVal("admColorSecondary", DEFAULTS.secondaryColor);
-            if (document.getElementById("admAccentHex")) document.getElementById("admAccentHex").textContent = DEFAULTS.accentColor;
-            if (document.getElementById("admSecHex"))    document.getElementById("admSecHex").textContent    = DEFAULTS.secondaryColor;
-        });
-
-        document.getElementById("admSaveText")?.addEventListener("click", () => {
-            saveConfig({
-                heroStatus:  document.getElementById("admHeroStatus")?.value  || DEFAULTS.heroStatus,
-                heroSubtext: document.getElementById("admHeroSub")?.value     || DEFAULTS.heroSubtext,
-                footerNote:  document.getElementById("admFooterNote")?.value  || DEFAULTS.footerNote,
+        document
+            .getElementById("admColorSecondary")
+            ?.addEventListener("input", (e) => {
+                const colorOverride =
+                    document.getElementById("adminColorOverride");
+                if (colorOverride) {
+                    const accVal =
+                        document.getElementById("admColorAccent")?.value ||
+                        DEFAULTS.accentColor;
+                    colorOverride.textContent = `:root{--color-accent:${accVal}!important;--color-secondary:${e.target.value}!important}body.dark-mode{--color-accent:${accVal}!important;--color-secondary:${e.target.value}!important}`;
+                }
+                document.documentElement.style.setProperty(
+                    "--color-secondary",
+                    e.target.value,
+                );
+                if (document.getElementById("admSecHex"))
+                    document.getElementById("admSecHex").textContent =
+                        e.target.value;
+                clearTimeout(secSaveTimer);
+                secSaveTimer = setTimeout(
+                    () => saveConfig({ secondaryColor: e.target.value }),
+                    300,
+                );
             });
-            const btn = document.getElementById("admSaveText");
-            if (btn) { const orig = btn.textContent; btn.textContent = "Saved \u2713"; btn.style.background = "var(--color-secondary)"; setTimeout(() => { btn.textContent = orig; btn.style.background = ""; }, 1500); }
-        });
+        document
+            .getElementById("admColorSecondary")
+            ?.addEventListener("change", (e) => {
+                document.documentElement.style.setProperty(
+                    "--color-secondary",
+                    e.target.value,
+                );
+                if (document.getElementById("admSecHex"))
+                    document.getElementById("admSecHex").textContent =
+                        e.target.value;
+                clearTimeout(secSaveTimer);
+                saveConfig({ secondaryColor: e.target.value });
+            });
+
+        document
+            .getElementById("admResetColors")
+            ?.addEventListener("click", () => {
+                saveConfig({
+                    accentColor: DEFAULTS.accentColor,
+                    secondaryColor: DEFAULTS.secondaryColor,
+                });
+                setVal("admColorAccent", DEFAULTS.accentColor);
+                setVal("admColorSecondary", DEFAULTS.secondaryColor);
+                if (document.getElementById("admAccentHex"))
+                    document.getElementById("admAccentHex").textContent =
+                        DEFAULTS.accentColor;
+                if (document.getElementById("admSecHex"))
+                    document.getElementById("admSecHex").textContent =
+                        DEFAULTS.secondaryColor;
+            });
+
+        document
+            .getElementById("admSaveText")
+            ?.addEventListener("click", () => {
+                saveConfig({
+                    heroStatus:
+                        document.getElementById("admHeroStatus")?.value ||
+                        DEFAULTS.heroStatus,
+                    heroSubtext:
+                        document.getElementById("admHeroSub")?.value ||
+                        DEFAULTS.heroSubtext,
+                    footerNote:
+                        document.getElementById("admFooterNote")?.value ||
+                        DEFAULTS.footerNote,
+                });
+                const btn = document.getElementById("admSaveText");
+                if (btn) {
+                    const orig = btn.textContent;
+                    btn.textContent = "Saved \u2713";
+                    btn.style.background = "var(--color-secondary)";
+                    setTimeout(() => {
+                        btn.textContent = orig;
+                        btn.style.background = "";
+                    }, 1500);
+                }
+            });
 
         // ── Floating images — staging flow ───────────────────
-        const funnyBtn       = document.getElementById("admFunnyBtn");
+        const funnyBtn = document.getElementById("admFunnyBtn");
         const funnyFileInput = document.getElementById("admFunnyFileInput");
-        const imgStaging     = document.getElementById("admImgStaging");
-        const imgPreview     = document.getElementById("admImgPreview");
-        const sizeSlider     = document.getElementById("admImgSizeSlider");
-        const sizeLabel      = document.getElementById("admSizeLabel");
-        const launchBtn      = document.getElementById("admLaunchBtn");
-        const cancelBtn      = document.getElementById("admCancelStaging");
-        const imgCount       = document.getElementById("admImgCount");
+        const imgStaging = document.getElementById("admImgStaging");
+        const imgPreview = document.getElementById("admImgPreview");
+        const sizeSlider = document.getElementById("admImgSizeSlider");
+        const sizeLabel = document.getElementById("admSizeLabel");
+        const launchBtn = document.getElementById("admLaunchBtn");
+        const cancelBtn = document.getElementById("admCancelStaging");
+        const imgCount = document.getElementById("admImgCount");
 
         let _activeCount = 0;
         const updateCount = (n) => {
             _activeCount = Math.max(0, n);
             if (!imgCount) return;
-            if (_activeCount > 0) { imgCount.textContent = String(_activeCount); imgCount.style.display = "inline-block"; }
-            else { imgCount.style.display = "none"; }
+            if (_activeCount > 0) {
+                imgCount.textContent = String(_activeCount);
+                imgCount.style.display = "inline-block";
+            } else {
+                imgCount.style.display = "none";
+            }
         };
 
-        if (db) { db.ref("funnyImages").on("value", snap => { updateCount(snap.numChildren ? snap.numChildren() : 0); }); }
+        if (db) {
+            db.ref("funnyImages").on("value", (snap) => {
+                updateCount(snap.numChildren ? snap.numChildren() : 0);
+            });
+        }
 
-        funnyBtn?.addEventListener("click", () => { funnyFileInput.value = ""; funnyFileInput.click(); });
+        funnyBtn?.addEventListener("click", () => {
+            funnyFileInput.value = "";
+            funnyFileInput.click();
+        });
 
-        funnyFileInput?.addEventListener("change", e => {
+        funnyFileInput?.addEventListener("change", (e) => {
             const file = e.target.files?.[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = ev => {
+            reader.onload = (ev) => {
                 _stagedRawSrc = ev.target.result;
                 if (imgPreview) imgPreview.src = _stagedRawSrc;
-                if (sizeSlider) { sizeSlider.value = 340; }
+                if (sizeSlider) {
+                    sizeSlider.value = 340;
+                }
                 if (sizeLabel) sizeLabel.textContent = "340px";
                 _stagedSize = 340;
                 if (launchBtn) {
@@ -1819,13 +2466,22 @@ function initAdminPanel() {
                 }
                 if (imgStaging) imgStaging.style.display = "block";
                 if (funnyBtn) funnyBtn.style.display = "none";
-                setTimeout(() => imgStaging?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
+                setTimeout(
+                    () =>
+                        imgStaging?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "nearest",
+                        }),
+                    60,
+                );
             };
-            reader.onerror = () => { _resetStaging(); };
+            reader.onerror = () => {
+                _resetStaging();
+            };
             reader.readAsDataURL(file);
         });
 
-        sizeSlider?.addEventListener("input", e => {
+        sizeSlider?.addEventListener("input", (e) => {
             _stagedSize = parseInt(e.target.value, 10);
             if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
         });
@@ -1839,40 +2495,81 @@ function initAdminPanel() {
             try {
                 await FloatingImageSystem.add(srcToLaunch, sizeToLaunch);
                 if (!db) updateCount(_activeCount + 1);
-                logActivity(`Floating image launched (${sizeToLaunch}px) \uD83D\uDE80`);
+                logActivity(
+                    `Floating image launched (${sizeToLaunch}px) \uD83D\uDE80`,
+                );
             } catch (err) {
                 console.warn("[Admin] Launch failed:", err);
             }
             _resetStaging();
         });
 
-        cancelBtn?.addEventListener("click", () => { _resetStaging(); });
-
-        document.getElementById("admClearImages")?.addEventListener("click", () => {
-            FloatingImageSystem.clearAll();
-            if (!db) updateCount(0);
-            logActivity("Cleared all floating images");
-            const btn = document.getElementById("admClearImages");
-            if (btn) { const orig = btn.innerHTML; btn.innerHTML = "\u2713 &nbsp;Cleared!"; btn.style.color = "var(--color-secondary)"; setTimeout(() => { btn.innerHTML = orig; btn.style.color = ""; }, 1500); }
+        cancelBtn?.addEventListener("click", () => {
+            _resetStaging();
         });
 
-        document.getElementById("admResetAll")?.addEventListener("click", () => {
-            if (!confirm("Reset all settings to defaults?")) return;
-            localStorage.removeItem("siteConfig");
-            pushFirebase({ ...DEFAULTS, _lastUpdated: Date.now() });
-            applyToSite(DEFAULTS); loadMainPanel();
-            SoundEngine.resetAdminSoundGuard();
-            logActivity("Reset all settings to defaults");
-        });
+        document
+            .getElementById("admClearImages")
+            ?.addEventListener("click", () => {
+                FloatingImageSystem.clearAll();
+                if (!db) updateCount(0);
+                logActivity("Cleared all floating images");
+                const btn = document.getElementById("admClearImages");
+                if (btn) {
+                    const orig = btn.innerHTML;
+                    btn.innerHTML = "\u2713 &nbsp;Cleared!";
+                    btn.style.color = "var(--color-secondary)";
+                    setTimeout(() => {
+                        btn.innerHTML = orig;
+                        btn.style.color = "";
+                    }, 1500);
+                }
+            });
+
+        document
+            .getElementById("admResetAll")
+            ?.addEventListener("click", () => {
+                if (!confirm("Reset all settings to defaults?")) return;
+                localStorage.removeItem("siteConfig");
+                pushFirebase({ ...DEFAULTS, _lastUpdated: Date.now() });
+                applyToSite(DEFAULTS);
+                loadMainPanel();
+                SoundEngine.resetAdminSoundGuard();
+                logActivity("Reset all settings to defaults");
+            });
 
         // Swipe down to close
         const drawer = document.getElementById("admDrawer");
         const handle = document.getElementById("admHandle");
         if (drawer && handle) {
-            let startY = 0, curY = 0, dragging = false;
-            handle.addEventListener("touchstart", e => { startY = e.touches[0].clientY; dragging = true; drawer.style.transition = "none"; }, { passive: true });
-            document.addEventListener("touchmove", e => { if (!dragging) return; curY = e.touches[0].clientY; drawer.style.transform = `translateY(${Math.max(0, curY - startY)}px)`; }, { passive: true });
-            document.addEventListener("touchend", () => { if (!dragging) return; dragging = false; drawer.style.transition = ""; if (curY - startY > 120) closePanel(); else drawer.style.transform = ""; });
+            let startY = 0,
+                curY = 0,
+                dragging = false;
+            handle.addEventListener(
+                "touchstart",
+                (e) => {
+                    startY = e.touches[0].clientY;
+                    dragging = true;
+                    drawer.style.transition = "none";
+                },
+                { passive: true },
+            );
+            document.addEventListener(
+                "touchmove",
+                (e) => {
+                    if (!dragging) return;
+                    curY = e.touches[0].clientY;
+                    drawer.style.transform = `translateY(${Math.max(0, curY - startY)}px)`;
+                },
+                { passive: true },
+            );
+            document.addEventListener("touchend", () => {
+                if (!dragging) return;
+                dragging = false;
+                drawer.style.transition = "";
+                if (curY - startY > 120) closePanel();
+                else drawer.style.transform = "";
+            });
         }
     }
 
