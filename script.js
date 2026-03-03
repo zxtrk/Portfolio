@@ -917,7 +917,7 @@ function _injectLightSwitch(insertAfterEl) {
             .nav-ls-rope-svg {
                 position: absolute;
                 top: 100%;
-                left: 20px;
+                left: 28px;        /* ~1/4 of 112px pill — left side with gap from edge */
                 pointer-events: none;
                 overflow: visible;
                 z-index: 5;
@@ -1028,67 +1028,116 @@ function _bindLightSwitch() {
     if (!btn || btn._lsBound) return;
     btn._lsBound = true;
 
-    // ── Rope states (quadratic bezier: M x1 y1 Q cx cy x2 y2) ──────────
-    // The rope and pull-tab are both animated by directly writing SVG attributes.
-    // Rope path:  M20 0 Q<cx> <cy> 20 <endY>
-    // Tab offset: translateY on the <g>, so it stays glued to rope's bottom end.
-
     const ropeEl = document.getElementById("ls-rope");
     const tabEl  = document.getElementById("ls-rope-end");
 
-    // Each state: [controlX, controlY, endY, tabOffsetY]
-    const S_IDLE    = [20,  0,  60,  0];   // straight down
-    const S_PULL    = [20, 40,  88, 28];   // pulled — rope stretches, tab drops
-    const S_SNAP    = [32, 22,  60, -5];   // snaps back, overshoots right
-    const S_WOBBLE  = [12, 28,  60,  3];   // small wobble left
-    const S_SETTLE  = [20,  0,  60,  0];   // back to idle
+    // ── Spring physics state ──────────────────────────────────────────────
+    // We simulate two independent damped springs:
+    //   tabY  — how far the pull-tab (and rope bottom) has moved down
+    //   swing — horizontal swing of the rope's control point (gives sway)
+    const ROPE_ANCHOR_Y = 56;   // rope length at rest in SVG units
 
-    function applyState(s) {
-        if (ropeEl) ropeEl.setAttribute("d", `M20 0 Q${s[0]} ${s[1]} 20 ${s[2]}`);
-        if (tabEl)  tabEl.setAttribute("transform", `translate(0,${s[3]})`);
+    let tabY   = 0,  tabV   = 0,  tabTarget   = 0;
+    let swing  = 0,  swingV = 0,  swingTarget = 0;
+    let rafId  = null;
+
+    // Spring constants  — stiffness / damping tuned for a light cord feel
+    const K_TAB   = 220,  D_TAB   = 16;   // tab: snappy with 1-2 overshoots
+    const K_SWING = 160,  D_SWING = 10;   // swing: a little slower/looser
+
+    function buildPath() {
+        const endY = ROPE_ANCHOR_Y + tabY;
+        // Cubic bezier — top anchor fixed, bottom follows tabY.
+        // Control points swing sideways to make the rope look natural.
+        const cp1x = 18 + swing * 0.6;
+        const cp1y = endY * 0.3;
+        const cp2x = 18 - swing * 0.3;
+        const cp2y = endY * 0.7;
+        return `M18 0 C${cp1x} ${cp1y} ${cp2x} ${cp2y} 18 ${endY}`;
     }
 
-    // Initialise to idle
-    applyState(S_IDLE);
+    function physicsLoop(last) {
+        const now = performance.now();
+        const dt  = Math.min((now - last) / 1000, 0.05); // cap to 50ms
 
-    let _animating = false;
-    let _isDown    = false;
+        // Integrate tab spring
+        const aTab   = (-K_TAB   * (tabY  - tabTarget)  - D_TAB   * tabV)  ;
+        tabV  += aTab   * dt;
+        tabY  += tabV   * dt;
+
+        // Integrate swing spring
+        const aSwing = (-K_SWING * (swing - swingTarget) - D_SWING * swingV);
+        swingV += aSwing * dt;
+        swing  += swingV * dt;
+
+        // Write to DOM
+        if (ropeEl) ropeEl.setAttribute("d", buildPath());
+        if (tabEl)  tabEl.setAttribute("transform", `translate(0,${tabY})`);
+
+        const settled =
+            Math.abs(tabY - tabTarget)   < 0.12 && Math.abs(tabV)   < 0.12 &&
+            Math.abs(swing - swingTarget) < 0.12 && Math.abs(swingV) < 0.12;
+
+        if (settled) {
+            tabY = tabTarget; swing = swingTarget; tabV = 0; swingV = 0;
+            if (ropeEl) ropeEl.setAttribute("d", buildPath());
+            if (tabEl)  tabEl.setAttribute("transform", `translate(0,${tabY})`);
+            rafId = null;
+        } else {
+            rafId = requestAnimationFrame(() => physicsLoop(now));
+        }
+    }
+
+    function kick() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => physicsLoop(performance.now()));
+    }
+
+    // Initialise rope to idle straight position
+    if (ropeEl) ropeEl.setAttribute("d", buildPath());
+
+    let _isDown = false;
 
     function onDown() {
         _isDown = true;
-        applyState(S_PULL);
+        // Pull down: tab drops, rope gains a slight left-lean as if pulled
+        tabTarget   = 26;
+        swingTarget = -6;
+        kick();
     }
 
     function onUp() {
         if (!_isDown) return;
         _isDown = false;
-        if (_animating) return;
-        _animating = true;
 
-        // Spring-back: snap → wobble → settle
-        applyState(S_SNAP);
-        setTimeout(() => applyState(S_WOBBLE), 110);
-        setTimeout(() => {
-            applyState(S_SETTLE);
-            _animating = false;
-        }, 240);
+        // Release: snap back to idle, but give the tab a hard upward velocity
+        // so it shoots past idle and bounces naturally before settling.
+        tabTarget   = 0;
+        swingTarget = 0;
+        tabV        = -340;   // upward kick — will overshoot, then spring settles it
+        swingV      =  30;    // small rightward flick for sway
+        kick();
 
-        // Toggle theme
+        // Toggle theme at the moment the finger lifts
         document.body.classList.toggle("dark-mode");
         localStorage.setItem("darkMode", document.body.classList.contains("dark-mode").toString());
         _syncLightSwitchToTheme(true);
     }
 
     function onCancel() {
-        if (_isDown) { _isDown = false; applyState(S_IDLE); }
+        if (!_isDown) return;
+        _isDown = false;
+        tabTarget   = 0;
+        swingTarget = 0;
+        kick();
     }
 
-    btn.addEventListener("mousedown",  onDown);
-    btn.addEventListener("mouseup",    onUp);
-    btn.addEventListener("mouseleave", onCancel);
-    btn.addEventListener("touchstart", e => { e.preventDefault(); onDown(); }, { passive: false });
-    btn.addEventListener("touchend",   e => { e.preventDefault(); onUp();   }, { passive: false });
-    btn.addEventListener("touchcancel",e => { e.preventDefault(); onCancel(); }, { passive: false });
+    btn.addEventListener("mousedown",   onDown);
+    btn.addEventListener("mouseup",     onUp);
+    btn.addEventListener("mouseleave",  onCancel);
+    btn.addEventListener("touchstart",  e => { e.preventDefault(); onDown();   }, { passive: false });
+    btn.addEventListener("touchend",    e => { e.preventDefault(); onUp();     }, { passive: false });
+    btn.addEventListener("touchcancel", e => { e.preventDefault(); onCancel(); }, { passive: false });
 }
 
 function initBurgerMenu() {
