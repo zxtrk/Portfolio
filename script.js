@@ -501,7 +501,7 @@ function initDarkMode() {
         localStorage.setItem("darkMode", body.classList.contains("dark-mode").toString());
     };
     document.getElementById("darkModeToggleDesktop")?.addEventListener("click", toggle);
-    document.getElementById("darkModeToggle")?.addEventListener("click", toggle);
+    // Note: mobile toggle is now handled by the light switch in the burger menu
 }
 
 // ─── LOADING SCREEN ────────────────────────────────────────────────────
@@ -639,12 +639,10 @@ function initScrollAnimations() {
 function initMobileScrollAnimations() {
     if (window.innerWidth > 768) return;
 
-    // Inject keyframes for mobile scroll animations
     if (!document.getElementById("mobile-scroll-anim-css")) {
         const style = document.createElement("style");
         style.id = "mobile-scroll-anim-css";
         style.textContent = `
-            /* Mobile scroll-reveal base states */
             @media (max-width: 768px) {
                 .msa-fade-up {
                     opacity: 0;
@@ -679,43 +677,23 @@ function initMobileScrollAnimations() {
         document.head.appendChild(style);
     }
 
-    // Assign animation classes to elements
-    // Feature items: slide in alternating left/right
     document.querySelectorAll(".feature-item").forEach((el, i) => {
         el.classList.add(i % 2 === 0 ? "msa-fade-left" : "msa-fade-right");
     });
-
-    // Project cards: fade up with stagger
-    document.querySelectorAll(".project-grid-card").forEach(el => {
-        el.classList.add("msa-fade-up");
-    });
-
-    // Contact links: fade up
-    document.querySelectorAll(".contact-link").forEach(el => {
-        el.classList.add("msa-fade-up");
-    });
-
-    // Quote: scale in
+    document.querySelectorAll(".project-grid-card").forEach(el => { el.classList.add("msa-fade-up"); });
+    document.querySelectorAll(".contact-link").forEach(el => { el.classList.add("msa-fade-up"); });
     const quoteContent = document.querySelector(".quote-content");
     if (quoteContent) quoteContent.classList.add("msa-scale");
+    document.querySelectorAll(".section-title").forEach(el => { el.classList.add("msa-fade-up"); });
 
-    // Section titles get fade-up
-    document.querySelectorAll(".section-title").forEach(el => {
-        el.classList.add("msa-fade-up");
-    });
-
-    // Observe all animated elements
     const observer = new IntersectionObserver(entries => {
-        entries.forEach((entry, idx) => {
+        entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 const el = entry.target;
-                // Stagger delay based on sibling index
                 const siblings = [...(el.parentElement?.children || [])];
                 const sibIdx = siblings.indexOf(el);
                 const delay = sibIdx >= 0 ? sibIdx * 60 : 0;
-                setTimeout(() => {
-                    el.classList.add("msa-visible");
-                }, delay);
+                setTimeout(() => { el.classList.add("msa-visible"); }, delay);
                 observer.unobserve(el);
             }
         });
@@ -904,6 +882,218 @@ function injectBurgerMenuDecoration() {
     dotsWrap.className = "nav-menu-dots";
     dotsWrap.innerHTML = `<div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div><div class="nav-menu-dot"></div>`;
     navLinks.appendChild(dotsWrap);
+
+    // ── LIGHT SWITCH: inject pull-cord dark mode toggle ──────────────
+    _injectLightSwitch(navLinks);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT SWITCH (mobile burger menu dark mode toggle)
+   Pull-cord switch with GSAP rope physics.
+   Falls back gracefully if GSAP/MorphSVG are unavailable.
+   ═══════════════════════════════════════════════════════════════ */
+function _injectLightSwitch(navLinks) {
+    // ── Styles ────────────────────────────────────────────────
+    if (!document.getElementById("lightSwitchStyles")) {
+        const style = document.createElement("style");
+        style.id = "lightSwitchStyles";
+        style.textContent = `
+            .nav-lightswitch-wrap {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+                position: absolute;
+                bottom: 64px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10;
+                pointer-events: all;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            .nav-ls-label {
+                font-family: var(--font-mono);
+                font-size: 9px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                opacity: 0.5;
+                margin-bottom: 8px;
+                transition: opacity 0.3s ease;
+            }
+            .nav-ls-container {
+                width: 160px;
+                height: 80px;
+                position: relative;
+            }
+            .nav-ls-rope-svg {
+                position: absolute;
+                top: -110px;
+                left: 50%;
+                transform: translateX(-50%);
+                pointer-events: none;
+                overflow: visible;
+            }
+            .nav-ls-rope-hidden { visibility: hidden; }
+            .nav-ls-btn {
+                position: absolute;
+                left: 0; top: 0; bottom: 0; right: 0;
+                background: #3c3459;
+                border-radius: 999px;
+                padding: 5px;
+                cursor: pointer;
+                border: none;
+                -webkit-tap-highlight-color: transparent;
+                transition: background 0.5s ease;
+            }
+            body.dark-mode .nav-ls-btn { background: #2a2040; }
+            .nav-ls-knob {
+                width: 70px;
+                height: 70px;
+                position: relative;
+                will-change: transform;
+            }
+            .nav-ls-top {
+                background-color: #827d96;
+                border-radius: 999px;
+                position: absolute;
+                left: 0; right: 0; top: 0; bottom: 0;
+            }
+            .nav-ls-glow {
+                border-radius: 999px;
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                background: radial-gradient(
+                    50% 50% at 50% 50%,
+                    #4cc3e2 10.42%,
+                    rgba(94,199,227,0.79) 27.08%,
+                    rgba(113,204,229,0.35) 45.31%,
+                    rgba(144,213,231,0.11) 65.1%,
+                    rgba(158,216,231,0.02) 78.12%,
+                    rgba(177,221,233,0) 95.83%
+                );
+                left: 50%; top: 50%;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+                will-change: width, height;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // ── HTML ──────────────────────────────────────────────────
+    const wrap = document.createElement("div");
+    wrap.className = "nav-lightswitch-wrap";
+    wrap.id = "navLightSwitchWrap";
+    wrap.innerHTML = `
+        <span class="nav-ls-label" id="navLsLabel">Toggle Theme</span>
+        <div class="nav-ls-container">
+            <svg class="nav-ls-rope-svg" width="50" height="110" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path id="ls-rope"           d="M50 0V130"                                                                                                                                                                                          stroke="#333842" stroke-width="6" />
+                <path id="ls-rope-original"  d="M50 0V130"                                                                                                                                                                                          stroke="black"   stroke-width="1" class="nav-ls-rope-hidden" />
+                <path id="ls-rope-extended"  d="M50 0V170"                                                                                                                                                                                          stroke="black"   stroke-width="1" class="nav-ls-rope-hidden" />
+                <path id="ls-rope-compressed" d="M50.6794 99.5395C50.6794 99.5395 51.0304 93.3539 50.6794 89.416C49.698 78.405 40.6105 73.7631 41.2462 62.7267C42.1339 47.3139 63.6882 46.1634 64.4843 30.7456C65.1561 17.7347 50.6794 0.375 50.6794 0.375" stroke="black" stroke-width="1" class="nav-ls-rope-hidden" />
+                <path id="ls-rope-end"        d="M39.282 5.16623C39.9597 1.92197 42.8198 -0.402344 46.134 -0.402344H54.756C58.1211 -0.402344 61.01 1.99207 61.6344 5.29871L68.4328 41.2987C69.2468 45.6092 65.941 49.5977 61.5544 49.5977H38.6135C34.1717 49.5977 30.8531 45.5141 31.7614 41.1662L39.282 5.16623Z"
+                      transform="matrix(1,0,0,1,0,120)" fill="#3B2898" />
+            </svg>
+            <button class="nav-ls-btn" id="navLsBtn" type="button" aria-label="Toggle dark mode">
+                <div class="nav-ls-knob" id="navLsKnob">
+                    <div class="nav-ls-glow"  id="navLsGlow"></div>
+                    <div class="nav-ls-top"   id="navLsTop"></div>
+                </div>
+            </button>
+        </div>
+    `;
+    navLinks.appendChild(wrap);
+
+    // ── Set initial visual state to match current theme ───────
+    _syncLightSwitchToTheme(false);
+
+    // ── Bind interactions ─────────────────────────────────────
+    _bindLightSwitch();
+}
+
+function _syncLightSwitchToTheme(animate) {
+    const knob  = document.getElementById("navLsKnob");
+    const top   = document.getElementById("navLsTop");
+    const glow  = document.getElementById("navLsGlow");
+    const label = document.getElementById("navLsLabel");
+    if (!knob) return;
+
+    const isDark = document.body.classList.contains("dark-mode");
+    // Dark mode  → knob left  (x:0),  dim glow  → "Switch to Light"
+    // Light mode → knob right (x:80), bright glow → "Switch to Dark"
+    const targetX    = isDark ? 0   : 80;
+    const targetBg   = isDark ? "#827d96" : "#FFFFFF";
+    const targetSize = isDark ? "50px"    : "250px";
+    const labelText  = isDark ? "Switch to Light" : "Switch to Dark";
+
+    if (label) label.textContent = labelText;
+
+    const hasGsap = typeof gsap !== "undefined";
+    if (animate && hasGsap) {
+        gsap.to(knob, { x: targetX, duration: 1 });
+        gsap.to(top,  { backgroundColor: targetBg, duration: 1 });
+        gsap.to(glow, { width: targetSize, height: targetSize, duration: 1 });
+    } else {
+        if (knob) knob.style.transform = `translateX(${targetX}px)`;
+        if (top)  top.style.backgroundColor = targetBg;
+        if (glow) { glow.style.width = targetSize; glow.style.height = targetSize; }
+    }
+}
+
+function _bindLightSwitch() {
+    const btn = document.getElementById("navLsBtn");
+    if (!btn || btn._lsBound) return;
+    btn._lsBound = true;
+
+    const hasGsap  = typeof gsap !== "undefined";
+    const hasMorph = hasGsap && typeof MorphSVGPlugin !== "undefined";
+    if (hasGsap && hasMorph) {
+        try { gsap.registerPlugin(MorphSVGPlugin); } catch (e) {}
+    }
+
+    let _lsAnimating = false;
+
+    function onDown() {
+        if (!hasGsap) return;
+        const tl = gsap.timeline();
+        tl.to("#ls-rope-end", { duration: 0.2, y: 80 }, "start");
+        if (hasMorph) tl.to("#ls-rope", { duration: 0.2, morphSVG: "#ls-rope-extended" }, "start");
+    }
+
+    function onUp() {
+        if (_lsAnimating) return;
+        _lsAnimating = true;
+
+        // Rope spring-back
+        if (hasGsap) {
+            const tl = gsap.timeline();
+            if (hasMorph) {
+                tl.to("#ls-rope",  { duration: 0.4, morphSVG: "#ls-rope-compressed", ease: "bounce.out" }, "up");
+                tl.to("#ls-rope",  { duration: 0.2, morphSVG: "#ls-rope-original",   ease: "bounce.out" }, "down");
+            }
+            tl.to("#ls-rope-end", { duration: 0.4, y: 45, ease: "bounce.out" }, "up");
+            tl.to("#ls-rope-end", { duration: 0.2, y: 60, ease: "bounce.out" }, "down");
+        }
+
+        // Toggle theme
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", document.body.classList.contains("dark-mode").toString());
+
+        // Animate knob to new state
+        _syncLightSwitchToTheme(true);
+
+        // Release lock after animation
+        setTimeout(() => { _lsAnimating = false; }, 1100);
+    }
+
+    btn.addEventListener("mousedown",  onDown);
+    btn.addEventListener("mouseup",    onUp);
+    btn.addEventListener("touchstart", e => { e.preventDefault(); onDown(); }, { passive: false });
+    btn.addEventListener("touchend",   e => { e.preventDefault(); onUp();   }, { passive: false });
 }
 
 function initBurgerMenu() {
@@ -917,6 +1107,8 @@ function initBurgerMenu() {
         links.classList.add("active");
         overlay.classList.add("active");
         document.body.style.overflow = "hidden";
+        // Sync light switch state every time menu opens (theme may have changed via desktop toggle)
+        setTimeout(() => _syncLightSwitchToTheme(false), 50);
     };
     const close = () => {
         burger.classList.remove("active");
@@ -1151,7 +1343,6 @@ function initAdminPanel() {
     }
 
     // ── Staging helpers ───────────────────────────────────────
-    // FIX: fully reset all staging UI state including re-enabling the launch button
     function _resetStaging() {
         _stagedRawSrc = null;
         _stagedSize = 340;
@@ -1168,7 +1359,6 @@ function initAdminPanel() {
         if (staging) staging.style.display = "none";
         if (btn) btn.style.display = "";
         if (fi) fi.value = "";
-        // FIX: always re-enable the launch button and restore its label
         if (launchBtn) {
             launchBtn.disabled = false;
             launchBtn.textContent = "\uD83D\uDE80 \u00A0Launch Image!";
@@ -1581,10 +1771,8 @@ function initAdminPanel() {
 
         if (db) { db.ref("funnyImages").on("value", snap => { updateCount(snap.numChildren ? snap.numChildren() : 0); }); }
 
-        // "Select Image" button → open file picker
         funnyBtn?.addEventListener("click", () => { funnyFileInput.value = ""; funnyFileInput.click(); });
 
-        // File selected → show staging panel with preview
         funnyFileInput?.addEventListener("change", e => {
             const file = e.target.files?.[0];
             if (!file) return;
@@ -1595,7 +1783,6 @@ function initAdminPanel() {
                 if (sizeSlider) { sizeSlider.value = 340; }
                 if (sizeLabel) sizeLabel.textContent = "340px";
                 _stagedSize = 340;
-                // FIX: always ensure launch button is ready when new image is staged
                 if (launchBtn) {
                     launchBtn.disabled = false;
                     launchBtn.textContent = "\uD83D\uDE80 \u00A0Launch Image!";
@@ -1608,14 +1795,11 @@ function initAdminPanel() {
             reader.readAsDataURL(file);
         });
 
-        // Slider → update size label in real-time
         sizeSlider?.addEventListener("input", e => {
             _stagedSize = parseInt(e.target.value, 10);
             if (sizeLabel) sizeLabel.textContent = `${_stagedSize}px`;
         });
 
-        // "Launch Image!" → compress at chosen size and send
-        // FIX: reset staging fully after launch so next image can be sent
         launchBtn?.addEventListener("click", async () => {
             if (!_stagedRawSrc) return;
             const srcToLaunch = _stagedRawSrc;
@@ -1629,14 +1813,11 @@ function initAdminPanel() {
             } catch (err) {
                 console.warn("[Admin] Launch failed:", err);
             }
-            // FIX: always reset after launch attempt (success or failure)
             _resetStaging();
         });
 
-        // "Cancel" → reset staging UI
         cancelBtn?.addEventListener("click", () => { _resetStaging(); });
 
-        // "Clear All Images"
         document.getElementById("admClearImages")?.addEventListener("click", () => {
             FloatingImageSystem.clearAll();
             if (!db) updateCount(0);
