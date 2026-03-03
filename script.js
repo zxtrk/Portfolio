@@ -971,21 +971,32 @@ function _injectLightSwitch(insertAfterEl) {
     wrap.id = "navLightSwitchWrap";
     wrap.innerHTML = `
         <div class="nav-ls-container">
+            <!--
+              overflow:visible lets the rope swing beyond the SVG bounds
+              during the pendulum phase. Anchor is fixed at (20, 0).
+            -->
             <svg id="navLsRopeSvg" class="nav-ls-rope-svg"
-                 width="40" height="120"
-                 viewBox="0 0 40 120"
-                 fill="none" xmlns="http://www.w3.org/2000/svg">
+                 width="40" height="100"
+                 viewBox="0 0 40 100"
+                 fill="none"
+                 style="overflow:visible;"
+                 xmlns="http://www.w3.org/2000/svg">
+
+                <!-- Rope body: quadratic bezier redrawn every RAF frame -->
                 <path id="ls-rope"
                       d="M20 0 Q20 30 20 60"
                       stroke="var(--color-secondary)"
                       stroke-width="2.5"
                       stroke-linecap="round"
-                      opacity="0.6"/>
+                      opacity="0.65"/>
+
+                <!-- Pull-tab: teardrop, translated + rotated by JS to follow end -->
                 <g id="ls-rope-end">
-                    <path d="M14 64 Q14 60 20 60 Q26 60 26 64 L24 80 Q20 85 16 80 Z"
-                          fill="var(--color-accent)" opacity="0.9"/>
+                    <path d="M14 4 Q14 0 20 0 Q26 0 26 4 L24 20 Q20 25 16 20 Z"
+                          fill="var(--color-accent)" opacity="0.92"/>
                 </g>
             </svg>
+
             <button class="nav-ls-btn" id="navLsBtn" type="button" aria-label="Toggle dark mode">
                 <div class="nav-ls-knob" id="navLsKnob">
                     <div class="nav-ls-top" id="navLsTop"></div>
@@ -1020,17 +1031,28 @@ function _syncLightSwitchToTheme(animate) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   _bindLightSwitch — spring-physics rope animation
+   _bindLightSwitch — dual-physics rope animation
    ─────────────────────────────────────────────────────────────
-   The rope is a quadratic bezier: M20 0 Q<cx> <cy> <ex> <ey>
-   A single spring value "pos" drives everything:
-     pos = 0  → rope at rest (hanging straight)
-     pos = 1  → fully pulled down & curled
-     pos < 0  → snapped back above rest (natural overshoot)
+   Two independent physics axes run in a single RAF loop:
 
-   On press  : target = 1   (rope stretches down)
-   On release: inject upward velocity kick + target = 0
-               → spring overshoots into negatives → bounces back
+   VERTICAL SPRING  (stretch.pos / stretch.vel)
+     pos = 0  → rope at natural rest length
+     pos = 1  → rope fully pulled down
+     On press:   target = 1  (stretches down smoothly)
+     On release: inject large upward vel kick so rope snaps back
+                 and overshoots above rest — curled, not straight
+
+   PENDULUM  (pend.angle / pend.vel)
+     Standard damped harmonic oscillator: α = −ω²θ − 2ζω·θ̇
+     On release: inject angular velocity so rope swings left/right
+     Exponential decay from damping ratio ζ creates natural slowdown
+
+   RENDERING
+     Rope end position is computed in polar coords from the anchor:
+       endX = anchor + sin(angle) × ropeLength   (horizontal arc)
+       endY = anchor + cos(angle) × ropeLength   (vertical depth)
+     Bezier control point bows opposite to velocity (rope lags
+     behind its own end, just like a real swinging cord).
    ═══════════════════════════════════════════════════════════════ */
 function _bindLightSwitch() {
     const btn = document.getElementById("navLsBtn");
@@ -1040,67 +1062,128 @@ function _bindLightSwitch() {
     const ropeEl = document.getElementById("ls-rope");
     const tabEl  = document.getElementById("ls-rope-end");
 
-    // ── Spring state ──────────────────────────────────────────
-    // pos=0: rest | pos=1: fully pulled | pos<0: overshoot above rest
-    let pos    = 0;
-    let vel    = 0;
-    let target = 0;
-    let rafId  = null;
-    let lastTs = null;
-    let isDown    = false;
-    let toggled   = false;
+    /* ── Rope geometry constants ────────────────────────────────
+       All values are in SVG user units.
+       The anchor point (top of rope) is always fixed at (AX, AY).  */
+    const AX           = 20;   // Anchor X — must match SVG path start
+    const AY           = 0;    // Anchor Y — top, fixed forever
+    const REST_LEN     = 60;   // Natural rope length when hanging at rest
+    const PULL_EXTRA   = 26;   // Extra length added when fully pulled down
 
-    // Tuning: lower damping → more bouncy oscillation after snap
-    const STIFFNESS = 260;
-    const DAMPING   = 13;
+    /* ── Vertical spring tuning ─────────────────────────────────
+       Higher stiffness = faster snap-back.
+       Lower damping = more vertical oscillation after snap.       */
+    const V_STIFF  = 240;   // Spring stiffness  (N/m equivalent)
+    const V_DAMP   = 11;    // Spring damping    (lower = bouncier)
 
-    // ── Map spring position → SVG path ───────────────────────
-    function applyRope(p) {
-        // Clamp for visual safety but let physics overshoot freely
-        const pv = Math.max(-0.7, Math.min(1.3, p));
+    /* ── Pendulum tuning ────────────────────────────────────────
+       OMEGA controls swing frequency (higher = faster oscillation).
+       ZETA is the damping ratio (0 = no decay, 1 = critically damped,
+       values 0.15–0.35 give a natural 3-5 swing feel).             */
+    const P_OMEGA  = 7.8;   // Angular frequency  (rad/s)
+    const P_ZETA   = 0.22;  // Damping ratio      (dimensionless)
 
-        // End point: pulled down when p>0, bounces up when p<0
-        const endY = 60 + pv * 24;
-        const endX = 20 + pv * 1.5;
+    /* ── Physics state ──────────────────────────────────────────
+       All position values start at rest.                           */
+    const stretch = { pos: 0, vel: 0, target: 0 };   // 0=rest, 1=pulled
+    const pend    = { angle: 0, vel: 0 };             // radians from vertical
 
-        // Control point: arcs left when pulling, swings right on overshoot
-        // This gives a natural "rope bowing" look in both directions
-        const ctrlX = 20 - pv * 15;
-        const ctrlY = 22 + pv * 18;
+    let isDown  = false;   // Is the button currently held?
+    let toggled = false;   // Has the theme been toggled this press?
+    let rafId   = null;    // requestAnimationFrame handle
+    let lastTs  = null;    // Timestamp of previous frame
 
+    /* ── renderRope ─────────────────────────────────────────────
+       Called once per frame. Converts physics state → SVG path.    */
+    function renderRope() {
+        // Current total rope length (rest + pull extension)
+        const ropeLen = REST_LEN + stretch.pos * PULL_EXTRA;
+
+        // End-point of the rope in SVG space (polar → cartesian)
+        const endX = AX + Math.sin(pend.angle) * ropeLen;
+        const endY = AY + Math.cos(pend.angle) * ropeLen;
+
+        // Bezier control point: sits at the midpoint of the rope
+        // but bows *opposite* to current velocity so the rope looks
+        // like it's trailing behind — the hallmark of a real swinging cord.
+        const midX = (AX + endX) * 0.5;
+        const midY = (AY + endY) * 0.5;
+
+        // Horizontal bow: trails opposite to angular velocity
+        const bowX = -pend.vel * 4.5;
+        // Vertical bow: slight forward sag when pulled, straightens on return
+        const bowY = stretch.pos * 6;
+
+        const ctrlX = midX + bowX;
+        const ctrlY = midY + bowY;
+
+        // Write the quadratic bezier path
         if (ropeEl) {
             ropeEl.setAttribute("d",
-                `M20 0 Q${ctrlX.toFixed(2)} ${ctrlY.toFixed(2)} ${endX.toFixed(2)} ${endY.toFixed(2)}`
+                `M${AX} ${AY} ` +
+                `Q${ctrlX.toFixed(2)} ${ctrlY.toFixed(2)} ` +
+                `${endX.toFixed(2)} ${endY.toFixed(2)}`
             );
         }
 
-        // Pull-tab follows the rope's end point
+        // Move the pull-tab to track the rope's end point.
+        // translate() moves it to the end, rotate() tilts it with the swing
+        // so it always looks perpendicular to the rope direction.
         if (tabEl) {
-            const dx = (endX - 20).toFixed(2);
-            const dy = (endY - 60).toFixed(2);
-            tabEl.setAttribute("transform", `translate(${dx},${dy})`);
+            const dx  = (endX - AX).toFixed(2);
+            const dy  = (endY - REST_LEN).toFixed(2);
+            const deg = (pend.angle * 180 / Math.PI).toFixed(2);
+            tabEl.setAttribute("transform",
+                `translate(${dx},${dy}) rotate(${deg},6,10)`
+            );
         }
     }
 
-    // ── RAF spring loop ───────────────────────────────────────
+    /* ── tick ───────────────────────────────────────────────────
+       Single RAF callback. Integrates both physics systems then
+       redraws the rope. Stops when both systems have settled.      */
     function tick(ts) {
+        // Compute delta-time in seconds; clamp to avoid giant jumps
+        // after tab-switches or long pauses.
         if (lastTs === null) lastTs = ts;
-        const dt = Math.min((ts - lastTs) / 1000, 0.05); // seconds, cap at 50ms
+        const dt = Math.min((ts - lastTs) / 1000, 0.048);
         lastTs = ts;
 
-        // Semi-implicit Euler integration
-        const force = -STIFFNESS * (pos - target) - DAMPING * vel;
-        vel += force * dt;
-        pos += vel * dt;
+        /* --- Vertical spring (semi-implicit Euler) ---
+           F = -k·(x - target) - c·v
+           v += F·dt
+           x += v·dt                                                 */
+        const vF  = -V_STIFF * (stretch.pos - stretch.target) - V_DAMP * stretch.vel;
+        stretch.vel += vF * dt;
+        stretch.pos += stretch.vel * dt;
 
-        applyRope(pos);
+        /* --- Pendulum (damped harmonic oscillator) ---
+           α = −ω²·θ − 2·ζ·ω·θ̇
+           This is the standard equation for a damped harmonic oscillator.
+           It gives exponentially decaying sinusoidal motion.              */
+        const pA  = -(P_OMEGA * P_OMEGA) * pend.angle
+                    - 2 * P_ZETA * P_OMEGA * pend.vel;
+        pend.vel   += pA * dt;
+        pend.angle += pend.vel * dt;
 
-        // Settle check: stop RAF once motion is imperceptible
-        const settled = Math.abs(pos - target) < 0.0008 && Math.abs(vel) < 0.008;
-        if (settled) {
-            pos = target;
-            vel = 0;
-            applyRope(pos);
+        // Draw the new rope shape
+        renderRope();
+
+        /* --- Settle check ---
+           Stop the RAF loop once both systems are imperceptibly close
+           to their rest positions. This saves battery and CPU.           */
+        const vSettled = Math.abs(stretch.pos - stretch.target) < 0.0015
+                      && Math.abs(stretch.vel)  < 0.015;
+        const pSettled = Math.abs(pend.angle)   < 0.0008
+                      && Math.abs(pend.vel)     < 0.005;
+
+        if (vSettled && pSettled) {
+            // Snap cleanly to rest so there's no floating-point drift
+            stretch.pos = stretch.target;
+            stretch.vel = 0;
+            pend.angle  = 0;
+            pend.vel    = 0;
+            renderRope();
             rafId  = null;
             lastTs = null;
         } else {
@@ -1108,59 +1191,82 @@ function _bindLightSwitch() {
         }
     }
 
+    /* ── startAnim ──────────────────────────────────────────────
+       Cancels any in-flight animation and starts a fresh tick loop. */
     function startAnim() {
-        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
         lastTs = null;
-        rafId = requestAnimationFrame(tick);
+        rafId  = requestAnimationFrame(tick);
     }
 
-    // Initialise rope to rest position
-    applyRope(0);
+    // Draw rope in its default resting position immediately
+    renderRope();
 
-    // ── Input handlers ────────────────────────────────────────
+    /* ── onDown ─────────────────────────────────────────────────
+       User presses the button. Pull the rope downward.             */
     function onDown() {
         if (isDown) return;
-        isDown  = true;
-        toggled = false;
-        target  = 1.0;   // pull rope down
+        isDown          = true;
+        toggled         = false;
+        stretch.target  = 1.0;   // Animate rope to full-pull length
         startAnim();
     }
 
+    /* ── onUp ───────────────────────────────────────────────────
+       User releases. Three things happen simultaneously:
+       1. Stretch target returns to 0 (rope wants to shorten back)
+       2. A large upward velocity kick causes it to snap PAST rest
+          and overshoot — giving that satisfying whip-back feeling.
+       3. Angular velocity is injected into the pendulum so the rope
+          swings left or right like a real cord after a pull.        */
     function onUp() {
         if (!isDown) return;
-        isDown = false;
+        isDown         = false;
+        stretch.target = 0;
 
-        // Kick the velocity upward so it snaps past rest → satisfying bounce
-        vel   -= 9.5;
-        target = 0;
+        // Upward velocity kick: the bigger this value the higher the overshoot.
+        // 15 units/s gives a snappy but not violent snap-back.
+        stretch.vel -= 15;
+
+        // Swing direction: alternate each pull so it doesn't always go the
+        // same way. A tiny alternating flag makes it feel more natural.
+        onUp._dir = -(onUp._dir || 1);
+        // Initial angular velocity in rad/s — determines swing amplitude.
+        pend.vel = onUp._dir * 3.6;
+
         startAnim();
 
-        // Toggle theme exactly once per pull
+        // Toggle dark/light mode exactly once per pull cycle
         if (!toggled) {
             toggled = true;
             document.body.classList.toggle("dark-mode");
-            localStorage.setItem("darkMode", document.body.classList.contains("dark-mode").toString());
+            localStorage.setItem("darkMode",
+                document.body.classList.contains("dark-mode").toString());
             _syncLightSwitchToTheme(true);
         }
     }
 
+    /* ── onCancel ───────────────────────────────────────────────
+       Pointer left the button while held (no theme toggle).
+       Give a gentle return without the full snap energy.           */
     function onCancel() {
         if (!isDown) return;
-        isDown = false;
-        // Gentle return without toggle
-        vel   -= 3;
-        target = 0;
+        isDown         = false;
+        stretch.target = 0;
+        stretch.vel   -= 5;   // Softer kick — no aggressive snap
         startAnim();
     }
 
-    btn.addEventListener("mousedown",   onDown);
-    btn.addEventListener("mouseup",     onUp);
-    btn.addEventListener("mouseleave",  onCancel);
+    // Mouse events
+    btn.addEventListener("mousedown",  onDown);
+    btn.addEventListener("mouseup",    onUp);
+    btn.addEventListener("mouseleave", onCancel);
+
+    // Touch events (preventDefault stops ghost mouse events on mobile)
     btn.addEventListener("touchstart",  e => { e.preventDefault(); onDown();   }, { passive: false });
     btn.addEventListener("touchend",    e => { e.preventDefault(); onUp();     }, { passive: false });
     btn.addEventListener("touchcancel", e => { e.preventDefault(); onCancel(); }, { passive: false });
 }
-
 function initBurgerMenu() {
     const burger = document.getElementById("burgerMenu");
     const links = document.getElementById("navLinks");
