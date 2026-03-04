@@ -16,11 +16,8 @@
         <meta name="twitter:image" content="https://artjomjapins.site/preview.jpg" />
         <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Artjom Japins","url":"https://artjomjapins.site","jobTitle":"Creative Technology Enthusiast","sameAs":["https://github.com/zxtrk","https://www.pinterest.com/"]}</script>
 
-        <!-- Firebase SDK (needed for admin panel live sync) -->
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-        <!-- GSAP + MorphSVG for light switch animation in mobile menu -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js"></script>
 
@@ -28,14 +25,12 @@
         <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
 
         <style>
-            /* ── ICON COLOR FIX ── */
             .feature-icon svg,
             .contact-icon svg {
                 color: var(--color-accent);
                 transition: color 0.3s ease;
             }
 
-            /* ── HERO (inline to avoid FOUC) ── */
             .hero {
                 min-height: 100vh;
                 display: flex;
@@ -48,8 +43,8 @@
             .hero-content { max-width: 1400px; width: 100%; position: relative; z-index: 2; }
             .hero-layout { display: flex; flex-direction: column; }
             .hero-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 1.5rem; opacity: 0; animation: fadeInUp 0.5s ease 0.3s forwards; }
-            .hero-name-block { position: relative; padding-bottom: 2.5rem; margin-bottom: 2.5rem; }
-            .hero-name-block::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; width: 0; background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%); animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards; }
+            .hero-name-block { position: relative; padding-bottom: 2.75rem; margin-bottom: 2.5rem; }
+            .hero-name-block::after { content: ''; position: absolute; bottom: -18px; left: 0; height: 4px; width: 0; border-radius: 3px; background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%); animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards; }
             @keyframes heroLineGrow { to { width: 100%; } }
             .hero-title { font-family: var(--font-display); font-size: clamp(3.5rem, 10.5vw, 9rem); font-weight: 400; line-height: 1.0; letter-spacing: -0.03em; }
             .title-line { display: block; opacity: 0; transform: translateY(40px); }
@@ -75,7 +70,6 @@
                 .hero-info-right { align-items: center; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 0.875rem; }
             }
 
-            /* ── LOADING SCREEN (inline for zero flash) ── */
             .loader-screen { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--color-bg); }
             body.dark-mode .loader-screen { background: #111111; }
             .loader-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(193,122,90,0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 60% at 70% 60%, rgba(122,142,126,0.05) 0%, transparent 70%); }
@@ -120,7 +114,6 @@
                 .loader-monogram { font-size: 1.6rem; }
             }
 
-            /* ── LOCK OVERLAY (inline so it's ready before JS) ── */
             .section-lock-overlay { display: none; }
             #about.is-locked, #projects.is-locked, #contact.is-locked { overflow: hidden; }
             #about.is-locked .section-lock-overlay, #projects.is-locked .section-lock-overlay, #contact.is-locked .section-lock-overlay {
@@ -150,7 +143,6 @@
             .lock-dot-indicator { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); flex-shrink: 0; animation: dotBlink 1.8s ease-in-out infinite; }
             @keyframes dotBlink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-            /* ── QUOTE ── */
             .quote-section { padding: 2rem var(--spacing-lg); background: transparent; position: relative; }
             .quote-content { max-width: 900px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-md); text-align: center; position: relative; opacity: 0; transform: translateY(30px); }
             .quote-content.revealed { animation: fadeInUp 0.8s ease forwards; }
@@ -183,7 +175,6 @@
 
     <body>
 
-        <!-- LOADING SCREEN -->
         <div id="loadingScreen" class="loader-screen">
             <div class="loader-bg"></div>
             <div class="loader-corner loader-corner--tl"></div>
@@ -232,7 +223,6 @@
                     <a href="#about" data-nav>About</a>
                     <a href="#projects" data-nav>Projects</a>
                     <a href="#contact" data-nav>Contact</a>
-                    <!-- Dark mode toggle replaced by light switch widget (injected by JS into mobile burger menu) -->
                 </div>
                 <button class="dark-mode-toggle desktop-only" id="darkModeToggleDesktop" type="button" aria-label="Toggle dark mode">
                     <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -242,7 +232,6 @@
         </nav>
         <div class="nav-overlay" id="navOverlay"></div>
 
-        <!-- HERO -->
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-layout">
@@ -274,7 +263,6 @@
             </div>
         </section>
 
-        <!-- ABOUT -->
         <section id="about" class="about-section">
             <div class="about-content">
                 <h2 class="section-title" data-reveal>About Me</h2>
@@ -310,7 +298,6 @@
             </div>
         </section>
 
-        <!-- PROJECTS -->
         <section id="projects" class="projects-section">
             <div class="projects-header">
                 <h2 class="section-title" data-reveal>Selected Projects</h2>
@@ -328,7 +315,6 @@
             </div>
         </section>
 
-        <!-- QUOTE -->
         <section class="quote-section">
             <div class="quote-content" data-reveal>
                 <div class="quote-icon">"</div>
@@ -338,7 +324,6 @@
             </div>
         </section>
 
-        <!-- CONTACT -->
         <section id="contact" class="contact-section">
             <div class="contact-content">
                 <h2 class="section-title" data-reveal>Get In Touch</h2>
