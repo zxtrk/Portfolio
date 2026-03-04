@@ -1130,7 +1130,7 @@ function _bindLightSwitch() {
         // translate() moves it to the end, rotate() tilts it with the swing
         // so it always looks perpendicular to the rope direction.
         if (tabEl) {
-            const dx  = (endX - AX).toFixed(2);
+            const dx  = endX.toFixed(2);
             const dy  = endY.toFixed(2);
             const deg = (pend.angle * 180 / Math.PI).toFixed(2);
             tabEl.setAttribute("transform",
