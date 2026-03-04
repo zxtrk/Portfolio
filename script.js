@@ -992,7 +992,7 @@ function _injectLightSwitch(insertAfterEl) {
 
                 <!-- Pull-tab: teardrop, translated + rotated by JS to follow end -->
                 <g id="ls-rope-end">
-                    <path d="M14 4 Q14 0 20 0 Q26 0 26 4 L24 20 Q20 25 16 20 Z"
+                    <path d="M-6 4 Q-6 0 0 0 Q6 0 6 4 L4 20 Q0 25 -4 20 Z"
                           fill="var(--color-accent)" opacity="0.92"/>
                 </g>
             </svg>
@@ -1131,10 +1131,10 @@ function _bindLightSwitch() {
         // so it always looks perpendicular to the rope direction.
         if (tabEl) {
             const dx  = (endX - AX).toFixed(2);
-            const dy  = (endY - REST_LEN).toFixed(2);
+            const dy  = endY.toFixed(2);
             const deg = (pend.angle * 180 / Math.PI).toFixed(2);
             tabEl.setAttribute("transform",
-                `translate(${dx},${dy}) rotate(${deg},6,10)`
+                `translate(${dx},${dy}) rotate(${deg},0,0)`
             );
         }
     }
