@@ -651,10 +651,10 @@ const WeatherEffects = (() => {
     };
 
     function injectAdminSection(saveConfig, getConfig) {
-        // Wait for panel body to exist
         const body = document.querySelector(".adm-body");
         if (!body) return;
-        if (document.getElementById("admFxSection")) return;
+        // Section already in this exact DOM instance — skip
+        if (body.querySelector("#admFxSection")) return;
 
         const sec = document.createElement("div");
         sec.className = "adm-sec";
@@ -787,20 +787,35 @@ const WeatherEffects = (() => {
     function init() {
         _injectCSS();
 
-        // Poll for the admin panel to open, then inject our section.
-        // We watch for admMainScreen becoming visible.
-        const _watchAdmin = setInterval(() => {
+        // Watch for the admin panel to open (and reopen after close).
+        // The existing panel removes its DOM on close, so we can't use a
+        // one-shot check — instead we use a MutationObserver on document.body
+        // that fires whenever children are added or class attributes change.
+        // Each time admMainScreen appears without adm-screen--off we reinject.
+
+        let _lastInjectedPanel = null; // track which panel instance we injected into
+
+        const _adminObserver = new MutationObserver(() => {
             const screen = document.getElementById("admMainScreen");
             if (!screen) return;
             if (screen.classList.contains("adm-screen--off")) return;
-            clearInterval(_watchAdmin);
 
-            // Grab saveConfig / getConfig from the global scope the admin
-            // panel exposes — or re-implement a local shim if not exposed.
-            // The existing admin panel keeps these as closures, so we hook
-            // via localStorage (same as the existing applyToSite pathway).
+            // The panel DOM was destroyed and recreated — reinject every time
+            // admMainScreen is present and visible.
+            const body = document.querySelector(".adm-body");
+            if (!body) return;
+            if (body === _lastInjectedPanel) return; // already injected into this instance
+            _lastInjectedPanel = body;
+
             injectAdminSection(_localSave, _localGet);
-        }, 300);
+        });
+
+        _adminObserver.observe(document.body, {
+            childList: true,      // catches panel being added / removed
+            subtree: true,        // catches class changes deep in the tree
+            attributes: true,     // catches adm-screen--off being removed
+            attributeFilter: ["class"],
+        });
 
         // Apply persisted effect immediately on page load.
         const cfg = _localGet();

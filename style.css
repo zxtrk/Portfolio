@@ -508,15 +508,16 @@ section:first-of-type::before { display: none; }
 
 .hero-name-block {
     position: relative;
-    padding-bottom: 2.5rem;
-    margin-bottom: 2.5rem;
+    padding-bottom: 1.75rem;
+    margin-bottom: 2.75rem;
 }
 
 .hero-name-block::after {
     content: '';
     position: absolute;
-    bottom: 0; left: 0;
-    height: 1px; width: 0;
+    bottom: -8px; left: 0;
+    height: 3px; width: 0;
+    border-radius: 2px;
     background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-secondary) 55%, transparent 100%);
     animation: heroLineGrow 1s cubic-bezier(0.77, 0, 0.175, 1) 0.85s forwards;
 }
