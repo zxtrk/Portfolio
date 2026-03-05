@@ -194,6 +194,16 @@
                 transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease;
                 user-select: none;
                 -webkit-user-select: none;
+                /* ── FIX: kill the yellow mobile tap highlight ── */
+                -webkit-tap-highlight-color: transparent !important;
+                tap-highlight-color: transparent;
+                touch-action: manipulation;
+                outline: none;
+            }
+
+            /* Kill tap highlight on every child too */
+            .tv-wrap *, .tv-wrap *::before, .tv-wrap *::after {
+                -webkit-tap-highlight-color: transparent !important;
             }
 
             .tv-wrap:active {
@@ -568,6 +578,9 @@
                 border: 1px solid #3a2a1a;
                 transition: background 0.3s ease, box-shadow 0.3s ease;
                 cursor: pointer;
+                /* Kill tap highlight on channel dots too */
+                -webkit-tap-highlight-color: transparent !important;
+                touch-action: manipulation;
             }
 
             .tv-ch-dot.active {
@@ -1233,7 +1246,6 @@
                 auth.textContent = '— ' + q.author;
             }
 
-            // Run immediately in case script.js already set the elements
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', setQuote);
             } else {
@@ -1621,8 +1633,9 @@
                 }, 250);
             }
 
-            /* ── CLICK HANDLER ── */
-            tvWrap.addEventListener('click', () => {
+            /* ── CLICK / TOUCH HANDLERS (fixed: no yellow flash) ── */
+            tvWrap.addEventListener('click', (e) => {
+                e.preventDefault();
                 if (!tvOn && !booting) {
                     bootTV();
                 } else if (tvOn) {
@@ -1630,15 +1643,56 @@
                 }
             });
 
+            /* Absorb touchstart so the browser never applies its tap highlight,
+               and fire the action on touchend instead of waiting for click. */
+            tvWrap.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+            }, { passive: false });
+
+            tvWrap.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                if (!tvOn && !booting) {
+                    bootTV();
+                } else if (tvOn) {
+                    nextChannel();
+                }
+            }, { passive: false });
+
             tvWrap.addEventListener('keydown', e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    tvWrap.click();
+                    if (!tvOn && !booting) {
+                        bootTV();
+                    } else if (tvOn) {
+                        nextChannel();
+                    }
                 }
             });
 
             /* ── CHANNEL DOTS AS SHORTCUTS ── */
             tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((dot, i) => {
+                dot.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, { passive: false });
+
+                dot.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!tvOn) return;
+                    stopCycle();
+                    const targetIdx = i < PALETTES.length ? i : i % PALETTES.length;
+                    tvNoiseCanvas.style.opacity = '0.3';
+                    tvPaletteDisplay.style.opacity = '0';
+                    setTimeout(() => {
+                        palIdx = targetIdx;
+                        applyPalette(palIdx, false);
+                        tvPaletteDisplay.style.opacity = '1';
+                        tvNoiseCanvas.style.opacity    = '0.07';
+                        startCycle();
+                    }, 200);
+                }, { passive: false });
+
                 dot.addEventListener('click', e => {
                     e.stopPropagation();
                     if (!tvOn) return;
