@@ -23,6 +23,7 @@
 
         <link rel="stylesheet" href="style.css" />
         <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 
         <style>
             .feature-icon svg,
@@ -155,6 +156,663 @@
 
             @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
             @keyframes revealText { to { opacity: 1; transform: translateY(0); } }
+
+            /* ═══════════════════════════════════════════
+               RETRO TV COLOUR PALETTE SECTION
+            ═══════════════════════════════════════════ */
+
+            .tv-palette-section {
+                padding: var(--spacing-xl) var(--spacing-lg);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .tv-palette-inner {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 4rem;
+                align-items: center;
+            }
+
+            /* ── TV SIDE ── */
+            .tv-stage {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                perspective: 900px;
+                min-height: 420px;
+                position: relative;
+            }
+
+            .tv-wrap {
+                transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg);
+                transform-style: preserve-3d;
+                filter: drop-shadow(40px 30px 60px rgba(0,0,0,0.45)) drop-shadow(8px 8px 20px rgba(0,0,0,0.3));
+                cursor: pointer;
+                transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+
+            .tv-wrap:active {
+                transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg) scale(0.97);
+            }
+
+            /* TV body */
+            .tv-body {
+                width: 440px;
+                background: linear-gradient(160deg, #4a3a2a 0%, #2e2318 40%, #1e1610 70%, #2a1e14 100%);
+                border-radius: 22px 22px 28px 28px;
+                padding: 22px 22px 26px;
+                position: relative;
+                border: 2px solid #5a4530;
+                box-shadow:
+                    inset 0 2px 4px rgba(255,200,120,0.08),
+                    inset 0 -4px 12px rgba(0,0,0,0.5),
+                    4px 0 0 #1a1208,
+                    8px 4px 0 #110d07,
+                    0 6px 0 #1a1208,
+                    0 12px 6px #0d0908;
+                transform-style: preserve-3d;
+            }
+
+            /* 3D right face */
+            .tv-body::before {
+                content: '';
+                position: absolute;
+                top: 2px; right: -10px;
+                width: 10px;
+                height: calc(100% - 4px);
+                background: linear-gradient(to bottom, #1a1208, #0d0908 50%, #1a1208);
+                border-radius: 0 6px 6px 0;
+                transform: rotateY(90deg) translateZ(-5px);
+                clip-path: polygon(0 0, 100% 8px, 100% calc(100% - 8px), 0 100%);
+            }
+
+            /* 3D bottom face */
+            .tv-body::after {
+                content: '';
+                position: absolute;
+                bottom: -10px; left: 2px;
+                width: calc(100% - 4px);
+                height: 10px;
+                background: linear-gradient(to right, #1a1208, #0d0908 50%, #1a1208);
+                border-radius: 0 0 8px 8px;
+                clip-path: polygon(4px 0, calc(100% - 4px) 0, 100% 100%, 0 100%);
+            }
+
+            /* decorative wood-grain lines */
+            .tv-grain {
+                position: absolute;
+                inset: 0;
+                border-radius: 22px 22px 28px 28px;
+                background: repeating-linear-gradient(
+                    175deg,
+                    transparent 0px,
+                    transparent 4px,
+                    rgba(255,180,80,0.015) 4px,
+                    rgba(255,180,80,0.015) 5px
+                );
+                pointer-events: none;
+            }
+
+            /* TV screen bezel */
+            .tv-bezel {
+                background: linear-gradient(145deg, #1a1410 0%, #0d0a08 60%, #1a1410 100%);
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 14px;
+                position: relative;
+                border: 1px solid rgba(100,70,40,0.3);
+                box-shadow:
+                    inset 0 0 30px rgba(0,0,0,0.8),
+                    inset 0 2px 4px rgba(0,0,0,0.6),
+                    0 2px 4px rgba(255,180,80,0.06);
+            }
+
+            /* screen scanline overlay */
+            .tv-screen {
+                width: 100%;
+                aspect-ratio: 4/3;
+                border-radius: 6px;
+                background: #050302;
+                position: relative;
+                overflow: hidden;
+                border: 1px solid #000;
+                box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+            }
+
+            /* CRT curvature vignette */
+            .tv-screen::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(ellipse 90% 85% at 50% 50%, transparent 60%, rgba(0,0,0,0.65) 100%);
+                pointer-events: none;
+                z-index: 10;
+                border-radius: 6px;
+            }
+
+            /* scanlines */
+            .tv-scanlines {
+                position: absolute;
+                inset: 0;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.15) 2px,
+                    rgba(0,0,0,0.15) 4px
+                );
+                pointer-events: none;
+                z-index: 8;
+                border-radius: 6px;
+            }
+
+            /* screen glow when on */
+            .tv-screen-glow {
+                position: absolute;
+                inset: -20px;
+                border-radius: 50%;
+                background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(120,200,160,0.0), transparent 70%);
+                pointer-events: none;
+                z-index: -1;
+                transition: background 1.2s ease;
+            }
+
+            /* OFF state */
+            .tv-screen-content {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 5;
+            }
+
+            .tv-off-dot {
+                width: 2px;
+                height: 2px;
+                background: rgba(255,255,255,0.15);
+                border-radius: 50%;
+                box-shadow: 0 0 8px rgba(255,255,255,0.1);
+                transition: all 0.3s ease;
+            }
+
+            /* channel tag (top left of screen) */
+            .tv-channel-tag {
+                position: absolute;
+                top: 10px; left: 12px;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 14px;
+                color: rgba(255,255,255,0.0);
+                letter-spacing: 0.12em;
+                z-index: 9;
+                transition: color 0.4s ease;
+                text-shadow: 0 0 10px currentColor;
+            }
+
+            /* status bar (bottom of screen) */
+            .tv-status-bar {
+                position: absolute;
+                bottom: 10px; left: 12px; right: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 11px;
+                color: rgba(255,255,255,0.0);
+                letter-spacing: 0.1em;
+                z-index: 9;
+                transition: color 0.4s ease;
+                text-shadow: 0 0 6px rgba(0,0,0,0.8);
+            }
+
+            /* palette swatches on screen */
+            .tv-palette-display {
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                z-index: 6;
+                opacity: 0;
+                transition: opacity 0.6s ease;
+                padding: 24px 20px 36px;
+            }
+
+            .tv-palette-name {
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 16px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: rgba(255,255,255,0.95);
+                text-shadow: 0 0 16px rgba(255,255,255,0.6), 0 0 32px rgba(255,255,255,0.2);
+                text-align: center;
+                margin-bottom: 8px;
+            }
+
+            .tv-swatches {
+                display: flex;
+                gap: 8px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .tv-swatch {
+                flex: 1;
+                max-width: 62px;
+                height: 64px;
+                border-radius: 4px;
+                position: relative;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+                transition: all 0.5s cubic-bezier(0.22,1,0.36,1);
+                margin-bottom: 26px;
+            }
+
+            .tv-swatch-hex {
+                position: absolute;
+                bottom: -22px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 9px;
+                color: rgba(255,255,255,0.75);
+                white-space: nowrap;
+                letter-spacing: 0.04em;
+                text-shadow: 0 0 6px rgba(0,0,0,0.8);
+            }
+
+            /* loading animation */
+            .tv-loading {
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 12px;
+                z-index: 7;
+                opacity: 0;
+                pointer-events: none;
+                overflow: hidden;
+            }
+
+            .tv-load-bar-wrap {
+                width: 60%;
+                height: 3px;
+                background: rgba(255,255,255,0.08);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .tv-load-bar {
+                height: 100%;
+                width: 0%;
+                background: rgba(255,255,255,0.7);
+                border-radius: 2px;
+                box-shadow: 0 0 8px rgba(255,255,255,0.5);
+            }
+
+            .tv-load-text {
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 9px;
+                color: rgba(255,255,255,0.6);
+                letter-spacing: 0.2em;
+                text-align: center;
+            }
+
+            /* static noise on boot */
+            .tv-static {
+                position: absolute;
+                inset: 0;
+                z-index: 6;
+                opacity: 0;
+                pointer-events: none;
+                border-radius: 6px;
+            }
+
+            /* horizontal scan line boot effect */
+            .tv-boot-line {
+                position: absolute;
+                left: 0; right: 0;
+                height: 2px;
+                background: rgba(255,255,255,0.8);
+                box-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.3);
+                z-index: 7;
+                top: 50%;
+                transform: scaleY(0);
+                pointer-events: none;
+            }
+
+            /* controls row */
+            .tv-controls {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 6px;
+            }
+
+            .tv-brand {
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 10px;
+                letter-spacing: 0.25em;
+                text-transform: uppercase;
+                color: rgba(180,140,90,0.6);
+            }
+
+            .tv-ctrl-right {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            /* on-air indicator */
+            .tv-on-air {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 8px;
+                letter-spacing: 0.12em;
+                color: rgba(180,80,80,0.0);
+                transition: color 0.5s ease;
+            }
+
+            .tv-on-air-dot {
+                width: 5px; height: 5px;
+                border-radius: 50%;
+                background: rgba(200,80,80,0.0);
+                transition: background 0.5s ease, box-shadow 0.5s ease;
+            }
+
+            /* knobs */
+            .tv-knob {
+                width: 20px; height: 20px;
+                border-radius: 50%;
+                background: radial-gradient(circle at 35% 35%, #5a4a38, #2a1e14);
+                border: 1.5px solid #3a2a1a;
+                box-shadow:
+                    inset 0 1px 3px rgba(255,180,80,0.12),
+                    0 2px 4px rgba(0,0,0,0.5);
+                position: relative;
+                cursor: default;
+            }
+
+            .tv-knob::after {
+                content: '';
+                position: absolute;
+                top: 3px; left: 50%;
+                transform: translateX(-50%);
+                width: 2px; height: 6px;
+                background: rgba(255,180,80,0.3);
+                border-radius: 1px;
+            }
+
+            /* channel dots */
+            .tv-channels {
+                display: flex;
+                gap: 5px;
+                margin-top: 8px;
+                justify-content: center;
+            }
+
+            .tv-ch-dot {
+                width: 8px; height: 8px;
+                border-radius: 50%;
+                background: #1a1208;
+                border: 1px solid #3a2a1a;
+                transition: background 0.3s ease, box-shadow 0.3s ease;
+                cursor: pointer;
+            }
+
+            .tv-ch-dot.active {
+                background: var(--tv-active-color, #c17a5a);
+                box-shadow: 0 0 6px var(--tv-active-color, #c17a5a);
+            }
+
+            /* legs */
+            .tv-legs {
+                display: flex;
+                justify-content: space-between;
+                padding: 0 30px;
+                margin-top: 2px;
+            }
+
+            .tv-leg {
+                width: 16px; height: 20px;
+                background: linear-gradient(to bottom, #2a1e14, #1a1208);
+                border-radius: 0 0 6px 6px;
+                border: 1px solid #3a2a18;
+                border-top: none;
+            }
+
+            /* ── TV POWER HINT ── */
+            .tv-hint {
+                text-align: center;
+                margin-top: 16px;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                opacity: 0.5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                transition: opacity 0.3s ease;
+            }
+
+            .tv-hint-dot {
+                width: 4px; height: 4px;
+                border-radius: 50%;
+                background: var(--color-accent);
+                animation: tvHintPulse 2s ease-in-out infinite;
+            }
+
+            @keyframes tvHintPulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+
+            /* ── TEXT SIDE ── */
+            .tv-text-side {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            .tv-text-side.revealed {
+                animation: fadeInRight 0.8s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+            }
+
+            @keyframes fadeInRight { to { opacity:1; transform: translateX(0); } }
+
+            .tv-eyebrow {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--color-accent);
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .tv-eyebrow::before {
+                content: '';
+                display: block;
+                width: 28px; height: 1px;
+                background: var(--color-accent);
+                opacity: 0.5;
+            }
+
+            .tv-heading {
+                font-family: var(--font-display);
+                font-size: clamp(2rem, 4vw, 3.2rem);
+                font-weight: 400;
+                line-height: 1.2;
+                letter-spacing: -0.02em;
+                color: var(--color-text);
+                margin-bottom: 1.5rem;
+            }
+
+            .tv-heading em {
+                font-style: normal;
+                color: var(--color-accent);
+            }
+
+            .tv-body-text {
+                font-family: var(--font-mono);
+                font-size: 13px;
+                line-height: 1.8;
+                color: var(--color-secondary);
+                margin-bottom: 2rem;
+                max-width: 440px;
+            }
+
+            /* feature bullets */
+            .tv-features {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 2rem;
+            }
+
+            .tv-feature {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                font-family: var(--font-mono);
+                font-size: 12px;
+                color: var(--color-text);
+                line-height: 1.5;
+            }
+
+            .tv-feature-icon {
+                width: 20px; height: 20px;
+                border: 1px solid var(--color-border);
+                border-radius: 3px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 10px;
+                color: var(--color-accent);
+                background: var(--color-light);
+                margin-top: 1px;
+            }
+
+            /* live palette preview strip */
+            .tv-preview-strip {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                padding: 12px 16px;
+                background: var(--color-light);
+                border: 1px solid var(--color-border);
+                border-left: 3px solid var(--color-accent);
+            }
+
+            .tv-preview-label {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                margin-right: 4px;
+                white-space: nowrap;
+            }
+
+            .tv-preview-swatch {
+                flex: 1;
+                height: 24px;
+                border-radius: 2px;
+                background: var(--color-border);
+                transition: background 0.8s cubic-bezier(0.22,1,0.36,1);
+                box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            }
+
+            /* currently showing palette name */
+            .tv-now-showing {
+                margin-top: 12px;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                opacity: 0.5;
+                transition: opacity 0.4s ease;
+            }
+
+            .tv-now-showing.active {
+                opacity: 1;
+                color: var(--color-text);
+            }
+
+            .tv-now-dot {
+                width: 5px; height: 5px;
+                border-radius: 50%;
+                background: var(--color-accent);
+                flex-shrink: 0;
+                animation: tvHintPulse 1.5s ease-in-out infinite;
+            }
+
+            /* ── MOBILE RESPONSIVE ── */
+            @media (max-width: 900px) {
+                .tv-palette-inner {
+                    grid-template-columns: 1fr;
+                    gap: 2.5rem;
+                }
+                .tv-stage { min-height: 300px; }
+                .tv-body { width: 320px; }
+                .tv-wrap { transform: rotateY(-10deg) rotateX(4deg) rotateZ(2deg); }
+                .tv-text-side { text-align: center; }
+                .tv-eyebrow { justify-content: center; }
+                .tv-body-text { max-width: 100%; margin: 0 auto 2rem; }
+                .tv-features { align-items: flex-start; max-width: 400px; margin: 0 auto 2rem; }
+                .tv-preview-strip { max-width: 400px; margin: 0 auto; }
+                .tv-now-showing { justify-content: center; }
+            }
+
+            @media (max-width: 600px) {
+                .tv-body { width: 270px; }
+                .tv-stage { perspective: 600px; }
+                .tv-swatch { height: 50px; margin-bottom: 22px; }
+                .tv-swatch-hex { font-size: 8px; }
+                .tv-palette-name { font-size: 13px; }
+            }
+
+            /* ── STATIC NOISE CANVAS ── */
+            .tv-noise-canvas {
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                z-index: 6;
+                pointer-events: none;
+                border-radius: 6px;
+                mix-blend-mode: screen;
+                display: block;
+            }
+
+            /* glow ring around tv when on */
+            .tv-glow-ring {
+                position: absolute;
+                inset: -30px;
+                border-radius: 30px;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 1.2s ease, background 1.2s ease;
+                z-index: -1;
+            }
+
         </style>
 
         <script>
@@ -315,6 +973,154 @@
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════
+             RETRO TV COLOUR PALETTE SECTION
+        ═══════════════════════════════════════════ -->
+        <section class="tv-palette-section" id="tvPaletteSection">
+            <div class="tv-palette-inner">
+
+                <!-- LEFT: TV -->
+                <div class="tv-stage" id="tvStage">
+                    <div>
+                        <div class="tv-wrap" id="tvWrap" role="button" tabindex="0" aria-label="Click to power on the TV and see colour palettes">
+                            <!-- glow ring behind tv -->
+                            <div class="tv-glow-ring" id="tvGlowRing"></div>
+
+                            <div class="tv-body">
+                                <div class="tv-grain"></div>
+
+                                <!-- bezel + screen -->
+                                <div class="tv-bezel">
+                                    <div class="tv-screen" id="tvScreen">
+                                        <!-- static noise canvas -->
+                                        <canvas class="tv-noise-canvas" id="tvNoiseCanvas"></canvas>
+
+                                        <!-- scanlines overlay -->
+                                        <div class="tv-scanlines"></div>
+
+                                        <!-- boot scan line -->
+                                        <div class="tv-boot-line" id="tvBootLine"></div>
+
+                                        <!-- off dot -->
+                                        <div class="tv-screen-content" id="tvOffState">
+                                            <div class="tv-off-dot" id="tvOffDot"></div>
+                                        </div>
+
+                                        <!-- loading state -->
+                                        <div class="tv-loading" id="tvLoading">
+                                            <div class="tv-load-text" id="tvLoadText">INITIALIZING...</div>
+                                            <div class="tv-load-bar-wrap">
+                                                <div class="tv-load-bar" id="tvLoadBar"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- palette display -->
+                                        <div class="tv-palette-display" id="tvPaletteDisplay">
+                                            <div class="tv-palette-name" id="tvPaletteName">PALETTE NAME</div>
+                                            <div class="tv-swatches" id="tvSwatches">
+                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
+                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
+                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
+                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
+                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- channel tag -->
+                                        <div class="tv-channel-tag" id="tvChannelTag">CH 01</div>
+
+                                        <!-- status bar -->
+                                        <div class="tv-status-bar" id="tvStatusBar">
+                                            <span id="tvStatusName">PETRICHOR</span>
+                                            <span id="tvStatusHex">#1A1814</span>
+                                        </div>
+
+                                        <!-- screen glow -->
+                                        <div class="tv-screen-glow" id="tvScreenGlow"></div>
+                                    </div>
+                                </div>
+
+                                <!-- controls -->
+                                <div class="tv-controls">
+                                    <div class="tv-brand">PETRICHOR</div>
+                                    <div class="tv-ctrl-right">
+                                        <div class="tv-on-air" id="tvOnAir">
+                                            <div class="tv-on-air-dot" id="tvOnAirDot"></div>
+                                            ON AIR
+                                        </div>
+                                        <div class="tv-knob"></div>
+                                        <div class="tv-knob"></div>
+                                    </div>
+                                </div>
+
+                                <!-- channel dots -->
+                                <div class="tv-channels" id="tvChannelDots">
+                                    <div class="tv-ch-dot active" data-ch="0"></div>
+                                    <div class="tv-ch-dot" data-ch="1"></div>
+                                    <div class="tv-ch-dot" data-ch="2"></div>
+                                    <div class="tv-ch-dot" data-ch="3"></div>
+                                    <div class="tv-ch-dot" data-ch="4"></div>
+                                    <div class="tv-ch-dot" data-ch="5"></div>
+                                    <div class="tv-ch-dot" data-ch="6"></div>
+                                    <div class="tv-ch-dot" data-ch="7"></div>
+                                </div>
+                            </div>
+
+                            <!-- legs -->
+                            <div class="tv-legs">
+                                <div class="tv-leg"></div>
+                                <div class="tv-leg"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- RIGHT: text -->
+                <div class="tv-text-side" id="tvTextSide">
+                    <div class="tv-eyebrow">Colour Explorer</div>
+                    <h2 class="tv-heading">
+                        Your next palette,<br>
+                        <em>broadcast live.</em>
+                    </h2>
+                    <p class="tv-body-text">
+                        This old set doesn't just sit there collecting dust — power it on and it tunes into a rotating signal of handcrafted colour palettes, each with a name and a mood. Every channel is a different world.
+                    </p>
+
+                    <div class="tv-features">
+                        <div class="tv-feature">
+                            <div class="tv-feature-icon">◈</div>
+                            <span>Each palette is named — <em>Petrichor, Dusk Wire, Ember Static</em> and more. Real colour stories, not random noise.</span>
+                        </div>
+                        <div class="tv-feature">
+                            <div class="tv-feature-icon">↻</div>
+                            <span>The TV cycles through palettes automatically. Or click it again to skip to the next one.</span>
+                        </div>
+                        <div class="tv-feature">
+                            <div class="tv-feature-icon">▦</div>
+                            <span>Five swatches per palette with HEX codes — ready to use in your next project.</span>
+                        </div>
+                    </div>
+
+                    <div class="tv-preview-strip" id="tvPreviewStrip">
+                        <span class="tv-preview-label">Live</span>
+                        <div class="tv-preview-swatch" id="tvPs0"></div>
+                        <div class="tv-preview-swatch" id="tvPs1"></div>
+                        <div class="tv-preview-swatch" id="tvPs2"></div>
+                        <div class="tv-preview-swatch" id="tvPs3"></div>
+                        <div class="tv-preview-swatch" id="tvPs4"></div>
+                    </div>
+
+                    <div class="tv-now-showing" id="tvNowShowing">
+                        <div class="tv-now-dot"></div>
+                        <span id="tvNowName">— power off —</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- END TV SECTION -->
+
         <section class="quote-section">
             <div class="quote-content" data-reveal>
                 <div class="quote-icon">"</div>
@@ -381,5 +1187,497 @@
         <script src="config.js"></script>
         <script src="script.js"></script>
         <script src="weather-effects.js"></script>
+
+        <!-- Quote override: non-coding random quotes -->
+        <script>
+        (function() {
+            const QUOTES = [
+                { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+                { text: "In the middle of every difficulty lies opportunity.", author: "Albert Einstein" },
+                { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+                { text: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+                { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+                { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
+                { text: "Spread love everywhere you go. Let no one ever come to you without leaving happier.", author: "Mother Teresa" },
+                { text: "When you reach the end of your rope, tie a knot in it and hang on.", author: "Franklin D. Roosevelt" },
+                { text: "Always remember that you are absolutely unique. Just like everyone else.", author: "Margaret Mead" },
+                { text: "Do not go where the path may lead, go instead where there is no path and leave a trail.", author: "Ralph Waldo Emerson" },
+                { text: "You will face many defeats in life, but never let yourself be defeated.", author: "Maya Angelou" },
+                { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela" },
+                { text: "In the end, it's not the years in your life that count. It's the life in your years.", author: "Abraham Lincoln" },
+                { text: "Never let the fear of striking out keep you from playing the game.", author: "Babe Ruth" },
+                { text: "Life is either a daring adventure or nothing at all.", author: "Helen Keller" },
+                { text: "Many of life's failures are people who did not realize how close they were to success when they gave up.", author: "Thomas A. Edison" },
+                { text: "You have brains in your head. You have feet in your shoes. You can steer yourself any direction you choose.", author: "Dr. Seuss" },
+                { text: "If life were predictable it would cease to be life, and be without flavour.", author: "Eleanor Roosevelt" },
+                { text: "If you look at what you have in life, you'll always have more.", author: "Oprah Winfrey" },
+                { text: "If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success.", author: "James Cameron" },
+                { text: "If you want to live a happy life, tie it to a goal, not to people or things.", author: "Albert Einstein" },
+                { text: "Never let the fear of striking out keep you from playing the game.", author: "Babe Ruth" },
+                { text: "Money and success don't change people; they merely amplify what is already there.", author: "Will Smith" },
+                { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs" },
+                { text: "Not how long, but how well you have lived is the main thing.", author: "Seneca" },
+                { text: "It is not the man who has too little, but the man who craves more, that is poor.", author: "Seneca" },
+                { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
+                { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+                { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+                { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            ];
+
+            function setQuote() {
+                const el   = document.getElementById('quoteText');
+                const auth = document.getElementById('quoteAuthor');
+                if (!el || !auth) return;
+                const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+                el.textContent   = q.text;
+                auth.textContent = '— ' + q.author;
+            }
+
+            // Run immediately in case script.js already set the elements
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setQuote);
+            } else {
+                setQuote();
+            }
+        })();
+        </script>
+
+        <!-- ═══════════════════════════════════════════
+             RETRO TV JAVASCRIPT
+        ═══════════════════════════════════════════ -->
+        <script>
+        (function() {
+            'use strict';
+
+            /* ── PALETTE DATA ── */
+            const PALETTES = [
+                { name: 'PETRICHOR',      colors: ['#1A1814','#3D3228','#7A6248','#C4A882','#E8D5B0'] },
+                { name: 'DUSK WIRE',      colors: ['#0D0F1A','#1A2040','#2E4080','#6080C0','#A0B8E8'] },
+                { name: 'EMBER STATIC',   colors: ['#1A0A00','#3D1800','#8B3A00','#D4722A','#F0B870'] },
+                { name: 'MOSS SIGNAL',    colors: ['#0A1208','#1A2818','#2E4828','#5A7848','#9AB880'] },
+                { name: 'LAVENDER HAZE',  colors: ['#120A1A','#281840','#4A3070','#8060A8','#C0A0D8'] },
+                { name: 'COLD IRON',      colors: ['#0A0C0E','#1A1E22','#2E3840','#5A6878','#98A8B8'] },
+                { name: 'DESERT TAPE',    colors: ['#1A1008','#382218','#6A4830','#A87858','#D8B890'] },
+                { name: 'NEON GHOST',     colors: ['#080A10','#101828','#183048','#284870','#48A888'] },
+                { name: 'VELVET BURN',    colors: ['#100810','#281820','#502840','#903060','#C87090'] },
+                { name: 'CHALK STATIC',   colors: ['#181614','#302C28','#504840','#808070','#C8C4B8'] },
+                { name: 'COPPER DREAM',   colors: ['#0E0A06','#281A0C','#583A1A','#986030','#D09860'] },
+                { name: 'STORM CHANNEL',  colors: ['#080C12','#101820','#1E3040','#386080','#60A0C0'] },
+            ];
+
+            /* ── STATE ── */
+            let tvOn       = false;
+            let booting    = false;
+            let palIdx     = 0;
+            let cycleTimer = null;
+            let noiseRaf   = null;
+            let noiseCtx   = null;
+
+            /* ── DOM refs ── */
+            const tvWrap          = document.getElementById('tvWrap');
+            const tvScreen        = document.getElementById('tvScreen');
+            const tvNoiseCanvas   = document.getElementById('tvNoiseCanvas');
+            const tvBootLine      = document.getElementById('tvBootLine');
+            const tvOffState      = document.getElementById('tvOffState');
+            const tvLoading       = document.getElementById('tvLoading');
+            const tvLoadBar       = document.getElementById('tvLoadBar');
+            const tvLoadText      = document.getElementById('tvLoadText');
+            const tvPaletteDisplay= document.getElementById('tvPaletteDisplay');
+            const tvPaletteName   = document.getElementById('tvPaletteName');
+            const tvSwatches      = document.getElementById('tvSwatches');
+            const tvChannelTag    = document.getElementById('tvChannelTag');
+            const tvStatusBar     = document.getElementById('tvStatusBar');
+            const tvStatusName    = document.getElementById('tvStatusName');
+            const tvStatusHex     = document.getElementById('tvStatusHex');
+            const tvOnAir         = document.getElementById('tvOnAir');
+            const tvOnAirDot      = document.getElementById('tvOnAirDot');
+            const tvGlowRing      = document.getElementById('tvGlowRing');
+            const tvChannelDots   = document.getElementById('tvChannelDots');
+            const tvNowShowing    = document.getElementById('tvNowShowing');
+            const tvNowName       = document.getElementById('tvNowName');
+            const tvTextSide      = document.getElementById('tvTextSide');
+
+            /* preview swatches on text side */
+            const previewSwatches = [
+                document.getElementById('tvPs0'),
+                document.getElementById('tvPs1'),
+                document.getElementById('tvPs2'),
+                document.getElementById('tvPs3'),
+                document.getElementById('tvPs4'),
+            ];
+
+            /* ── NOISE CANVAS ── */
+            function getScreenSize() {
+                const rect = tvScreen.getBoundingClientRect();
+                return {
+                    w: Math.round(rect.width)  || tvScreen.offsetWidth  || 360,
+                    h: Math.round(rect.height) || tvScreen.offsetHeight || 270,
+                };
+            }
+
+            function startNoise(opacity) {
+                const canvas = tvNoiseCanvas;
+                const { w, h } = getScreenSize();
+                canvas.width  = w;
+                canvas.height = h;
+                noiseCtx = canvas.getContext('2d');
+                canvas.style.opacity = opacity || 0.18;
+
+                function drawNoise() {
+                    const cw = canvas.width, ch = canvas.height;
+                    const img = noiseCtx.createImageData(cw, ch);
+                    const data = img.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const v = Math.random() * 255 | 0;
+                        data[i] = data[i+1] = data[i+2] = v;
+                        data[i+3] = 80;
+                    }
+                    noiseCtx.putImageData(img, 0, 0);
+                    noiseRaf = requestAnimationFrame(drawNoise);
+                }
+                drawNoise();
+            }
+
+            function stopNoise() {
+                if (noiseRaf) { cancelAnimationFrame(noiseRaf); noiseRaf = null; }
+                tvNoiseCanvas.style.opacity = 0;
+            }
+
+            /* ── APPLY PALETTE ── */
+            function applyPalette(idx, animate) {
+                const p = PALETTES[idx];
+                const swatchEls = tvSwatches.querySelectorAll('.tv-swatch');
+
+                // screen palette
+                swatchEls.forEach((el, i) => {
+                    const col = p.colors[i] || '#000';
+                    if (animate) {
+                        el.style.transition = `background 0.7s cubic-bezier(0.22,1,0.36,1) ${i*0.08}s`;
+                    }
+                    el.style.background = col;
+                    const hexEl = el.querySelector('.tv-swatch-hex');
+                    if (hexEl) hexEl.textContent = col;
+                });
+
+                // screen text
+                tvPaletteName.textContent = p.name;
+                tvChannelTag.textContent  = `CH ${String(idx+1).padStart(2,'0')}`;
+                tvStatusName.textContent  = p.name;
+                tvStatusHex.textContent   = p.colors[0];
+
+                // preview strip on text side
+                previewSwatches.forEach((el, i) => {
+                    el.style.background = p.colors[i] || 'transparent';
+                });
+
+                // now showing label
+                tvNowName.textContent = p.name;
+                tvNowShowing.classList.add('active');
+
+                // glow ring colour = middle swatch
+                const glowCol = p.colors[2] || p.colors[0];
+                tvGlowRing.style.background = `radial-gradient(ellipse at 50% 50%, ${glowCol}22 0%, transparent 70%)`;
+
+                // channel dots
+                tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((d, i) => {
+                    d.classList.toggle('active', i === idx % 8);
+                    d.style.setProperty('--tv-active-color', p.colors[2]);
+                });
+
+                // screen glow
+                tvGlowRing.style.opacity = '1';
+            }
+
+            /* ── AUTO CYCLE ── */
+            function startCycle() {
+                stopCycle();
+                cycleTimer = setInterval(() => {
+                    if (!tvOn) return;
+                    // brief static flash between palettes
+                    tvNoiseCanvas.style.opacity = 0.35;
+                    setTimeout(() => {
+                        palIdx = (palIdx + 1) % PALETTES.length;
+                        applyPalette(palIdx, true);
+                        tvNoiseCanvas.style.opacity = 0.08;
+                    }, 200);
+                }, 5000);
+            }
+
+            function stopCycle() {
+                if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
+            }
+
+            /* ── BOOT SEQUENCE (old Windows / BIOS style) ── */
+            const BIOS_LINES = [
+                'PETRICHOR BIOS v2.07',
+                'Copyright (C) 1998-2001',
+                '',
+                'CPU: PALETTE-386 @ 33MHz',
+                'Memory Test: 640K OK',
+                'Checking extended memory...',
+                '4096K OK',
+                '',
+                'Detecting drives...',
+                'HDD0: COLOUR_BANK  [OK]',
+                'HDD1: PALETTE_DB   [OK]',
+                '',
+                'Loading PETRICHOR OS...',
+                'Press any key to continue_',
+            ];
+
+            function bootTV() {
+                if (booting) return;
+                booting = true;
+
+                // hide off dot
+                tvOffState.style.opacity = '0';
+
+                // step 1: screen flicker on — white flash then settle dark
+                tvScreen.style.background = '#111';
+                tvNoiseCanvas.style.opacity = '0.6';
+                startNoise(0.6);
+
+                setTimeout(() => {
+                    tvNoiseCanvas.style.opacity = '0.0';
+                    stopNoise();
+                    tvScreen.style.background = '#050302';
+
+                    // step 2: BIOS POST text — green phosphor style
+                    tvLoading.style.opacity = '1';
+                    tvLoading.style.flexDirection = 'column';
+                    tvLoading.style.alignItems = 'flex-start';
+                    tvLoading.style.padding = '14px 18px';
+                    tvLoading.style.justifyContent = 'flex-start';
+                    tvLoading.style.gap = '0px';
+
+                    // create a bios text container
+                    let biosEl = document.getElementById('tvBiosText');
+                    if (!biosEl) {
+                        biosEl = document.createElement('div');
+                        biosEl.id = 'tvBiosText';
+                        biosEl.style.cssText = [
+                            'font-family:"Share Tech Mono",monospace',
+                            'font-size:9px',
+                            'line-height:1.6',
+                            'color:rgba(160,220,160,0.92)',
+                            'text-shadow:0 0 6px rgba(120,200,120,0.5)',
+                            'white-space:pre',
+                            'width:100%',
+                            'letter-spacing:0.04em',
+                        ].join(';');
+                        tvLoading.appendChild(biosEl);
+                    }
+                    biosEl.textContent = '';
+
+                    // hide the old load bar / text
+                    tvLoadText.style.display = 'none';
+                    document.querySelector('.tv-load-bar-wrap') && (document.querySelector('.tv-load-bar-wrap').style.display = 'none');
+
+                    // type BIOS lines one by one
+                    let lineI = 0;
+                    function typeLine() {
+                        if (lineI >= BIOS_LINES.length) {
+                            // done with BIOS — show Windows progress bar
+                            setTimeout(showWinProgress, 300);
+                            return;
+                        }
+                        biosEl.textContent += BIOS_LINES[lineI] + '\n';
+                        lineI++;
+                        const delay = BIOS_LINES[lineI-1] === '' ? 40 : 90 + Math.random() * 80;
+                        setTimeout(typeLine, delay);
+                    }
+                    typeLine();
+
+                }, 600);
+            }
+
+            function showWinProgress() {
+                // clear BIOS screen
+                tvLoading.innerHTML = '';
+
+                // Windows XP-style loading screen
+                const winEl = document.createElement('div');
+                winEl.style.cssText = [
+                    'display:flex','flex-direction:column',
+                    'align-items:center','justify-content:center',
+                    'width:100%','height:100%','gap:18px',
+                ].join(';');
+
+                // OS name
+                const title = document.createElement('div');
+                title.style.cssText = [
+                    'font-family:"Share Tech Mono",monospace',
+                    'font-size:15px','letter-spacing:0.12em',
+                    'color:rgba(200,200,220,0.9)',
+                    'text-shadow:0 0 12px rgba(160,160,220,0.6)',
+                    'text-transform:uppercase',
+                ].join(';');
+                title.textContent = 'PETRICHOR OS';
+
+                const sub = document.createElement('div');
+                sub.style.cssText = [
+                    'font-family:"Share Tech Mono",monospace',
+                    'font-size:8px','letter-spacing:0.2em',
+                    'color:rgba(140,140,180,0.6)',
+                    'text-transform:uppercase',
+                    'margin-top:-12px',
+                ].join(';');
+                sub.textContent = 'Professional Edition';
+
+                // progress track (segmented Windows XP style)
+                const trackWrap = document.createElement('div');
+                trackWrap.style.cssText = [
+                    'width:55%','height:14px',
+                    'background:rgba(20,20,30,0.8)',
+                    'border:1px solid rgba(100,100,160,0.4)',
+                    'border-radius:2px','overflow:hidden',
+                    'display:flex','gap:2px','padding:2px',
+                ].join(';');
+
+                const SEGS = 12;
+                const segs = [];
+                for (let i = 0; i < SEGS; i++) {
+                    const s = document.createElement('div');
+                    s.style.cssText = [
+                        'flex:1','height:100%',
+                        'border-radius:1px',
+                        'background:rgba(60,80,180,0.15)',
+                        'transition:background 0.15s ease',
+                    ].join(';');
+                    trackWrap.appendChild(s);
+                    segs.push(s);
+                }
+
+                const statusTxt = document.createElement('div');
+                statusTxt.style.cssText = [
+                    'font-family:"Share Tech Mono",monospace',
+                    'font-size:8px','letter-spacing:0.14em',
+                    'color:rgba(120,120,180,0.7)',
+                    'text-transform:uppercase',
+                ].join(';');
+                statusTxt.textContent = 'Starting up...';
+
+                winEl.appendChild(title);
+                winEl.appendChild(sub);
+                winEl.appendChild(trackWrap);
+                winEl.appendChild(statusTxt);
+                tvLoading.appendChild(winEl);
+
+                const statusMsgs = ['Loading palettes...','Calibrating colours...','Almost ready...','Done.'];
+                let seg = 0;
+                let msgI = 0;
+
+                const segTimer = setInterval(() => {
+                    if (seg < SEGS) {
+                        segs[seg].style.background = 'linear-gradient(to bottom, rgba(100,130,255,0.9), rgba(60,80,200,0.8))';
+                        segs[seg].style.boxShadow  = '0 0 6px rgba(100,130,255,0.5)';
+                        seg++;
+                        if (seg % Math.ceil(SEGS / statusMsgs.length) === 0 && msgI < statusMsgs.length) {
+                            statusTxt.textContent = statusMsgs[msgI++];
+                        }
+                    } else {
+                        clearInterval(segTimer);
+                        // launch palette display
+                        setTimeout(launchPalette, 400);
+                    }
+                }, 130);
+            }
+
+            function launchPalette() {
+                tvLoading.style.opacity = '0';
+                setTimeout(() => {
+                    tvLoading.innerHTML = '';
+                    tvLoadText.style.display = '';
+
+                    tvNoiseCanvas.style.opacity = '0.07';
+                    tvPaletteDisplay.style.opacity = '1';
+                    tvChannelTag.style.color = 'rgba(255,255,255,0.55)';
+                    tvStatusBar.querySelectorAll('span').forEach(s => s.style.color = 'rgba(255,255,255,0.45)');
+
+                    tvOnAir.style.color        = 'rgba(200,80,80,0.9)';
+                    tvOnAirDot.style.background = '#c85050';
+                    tvOnAirDot.style.boxShadow  = '0 0 6px #c85050';
+
+                    applyPalette(palIdx, false);
+                    tvOn    = true;
+                    booting = false;
+
+                    startCycle();
+                }, 300);
+            }
+
+            /* ── NEXT CHANNEL (when already on) ── */
+            function nextChannel() {
+                stopCycle();
+                tvNoiseCanvas.style.opacity = '0.3';
+                tvPaletteDisplay.style.opacity = '0';
+
+                setTimeout(() => {
+                    palIdx = (palIdx + 1) % PALETTES.length;
+                    applyPalette(palIdx, false);
+                    tvPaletteDisplay.style.opacity = '1';
+                    tvNoiseCanvas.style.opacity = '0.07';
+                    startCycle();
+                }, 250);
+            }
+
+            /* ── CLICK HANDLER ── */
+            tvWrap.addEventListener('click', () => {
+                if (!tvOn && !booting) {
+                    bootTV();
+                } else if (tvOn) {
+                    nextChannel();
+                }
+            });
+
+            tvWrap.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    tvWrap.click();
+                }
+            });
+
+            /* ── CHANNEL DOTS AS SHORTCUTS ── */
+            tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((dot, i) => {
+                dot.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (!tvOn) return;
+                    stopCycle();
+                    const targetIdx = i < PALETTES.length ? i : i % PALETTES.length;
+                    tvNoiseCanvas.style.opacity = '0.3';
+                    tvPaletteDisplay.style.opacity = '0';
+                    setTimeout(() => {
+                        palIdx = targetIdx;
+                        applyPalette(palIdx, false);
+                        tvPaletteDisplay.style.opacity = '1';
+                        tvNoiseCanvas.style.opacity    = '0.07';
+                        startCycle();
+                    }, 200);
+                });
+            });
+
+            /* ── INTERSECTION OBSERVER: reveal text side ── */
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        tvTextSide.classList.add('revealed');
+                        observer.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+            observer.observe(document.getElementById('tvPaletteSection'));
+
+            /* ── Size noise canvas on resize ── */
+            window.addEventListener('resize', () => {
+                if (tvNoiseCanvas && noiseCtx) {
+                    const { w, h } = getScreenSize();
+                    tvNoiseCanvas.width  = w;
+                    tvNoiseCanvas.height = h;
+                }
+            }, { passive: true });
+
+        })();
+        </script>
+
     </body>
 </html>
