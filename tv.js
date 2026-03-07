@@ -1,9 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════
-   RETRO TV COLOUR PALETTE — tv.js  v3
-   Fix: yellow tap highlight fully eliminated on iOS/Android by
-   routing ALL touch events through a transparent overlay div
-   that sits on top and calls preventDefault before the browser
-   can paint any highlight colour.
+   RETRO TV COLOUR PALETTE — tv.js  v4
+
+   FIXES:
+   1. Yellow tap highlight — overlay now appends INSIDE tvWrap
+      (not tvStage/tvStageInner) so it only covers the TV body.
+      tvWrap gets position:relative so the overlay's
+      position:absolute covers exactly the TV card area.
+      All touch events on the overlay call preventDefault()
+      before the browser can render any highlight colour.
+
+   2. Smoother palette transitions — CSS transitions on swatches,
+      palette name, status bar text. Channel dot active state
+      also transitions. The noise flash between channels is
+      shorter and the palette crossfade uses opacity smoothly.
+
+   3. Status bar animates — name and hex fade in on each change.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -55,23 +66,30 @@
     const tvTextSide       = document.getElementById('tvTextSide');
     const tvStage          = document.getElementById('tvStage');
 
-    const previewSwatches = [
-        document.getElementById('tvPs0'),
-        document.getElementById('tvPs1'),
-        document.getElementById('tvPs2'),
-        document.getElementById('tvPs3'),
-        document.getElementById('tvPs4'),
-    ];
+    const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i));
 
     /* ══════════════════════════════════════════════════════════
-       YELLOW HIGHLIGHT FIX
-       Create a transparent overlay that sits above the entire
-       TV and intercepts every touch event with preventDefault()
-       before the browser has a chance to paint any highlight.
-       The overlay is invisible and pointer-events:all so it
-       catches touches but passes the logical action via JS.
+       YELLOW HIGHLIGHT FIX v4
+
+       Root cause: the previous overlay was appended to
+       tvStage/tvStageInner which is a flex-row containing BOTH
+       the TV card AND the text side. The overlay therefore
+       covered the text side too, causing layout/interaction
+       issues — but worse, it wasn't sized correctly over the TV.
+
+       Correct approach:
+       - Append overlay directly inside tvWrap.
+       - Set tvWrap { position:relative } so the overlay's
+         position:absolute covers exactly tvWrap's bounding box.
+       - tvWrap already wraps only the TV card, nothing else.
+       - preventDefault on every touchstart/touchend kills the
+         yellow highlight at the earliest possible moment.
     ══════════════════════════════════════════════════════════ */
+
     function _createTouchOverlay() {
+        // Ensure tvWrap is a positioning context
+        tvWrap.style.position = 'relative';
+
         const overlay = document.createElement('div');
         overlay.id = 'tvTouchOverlay';
         overlay.style.cssText = [
@@ -87,16 +105,12 @@
             'cursor:pointer',
         ].join(';');
 
-        // The overlay must be inside a positioned ancestor — use tvStage
-        // which already has position:relative equivalent via flex
-        const stageInner = document.getElementById('tvStageInner') || tvStage;
-        // Make sure the container is positioned so the overlay can be absolute
-        if (stageInner) {
-            stageInner.style.position = 'relative';
-            stageInner.appendChild(overlay);
-        }
+        // Append inside tvWrap — covers only the TV card
+        tvWrap.appendChild(overlay);
 
-        // All touch events preventDefault on the overlay itself
+        // preventDefault on touchstart is the critical step:
+        // it stops WebKit from painting the yellow highlight
+        // before JavaScript even runs.
         overlay.addEventListener('touchstart', e => {
             e.preventDefault();
             e.stopPropagation();
@@ -112,7 +126,7 @@
             e.preventDefault();
         }, { passive: false });
 
-        // Mouse click passthrough for desktop
+        // Desktop click
         overlay.addEventListener('click', e => {
             e.preventDefault();
             _handleTap();
@@ -126,6 +140,59 @@
         else if (tvOn) nextChannel();
     }
 
+    /* ── inject smooth-transition CSS ── */
+    function _injectTvTransitionCSS() {
+        if (document.getElementById('tv-transition-styles')) return;
+        const s = document.createElement('style');
+        s.id = 'tv-transition-styles';
+        s.textContent = `
+            /* Swatch colour crossfade */
+            .tv-swatch {
+                transition: background 0.55s cubic-bezier(0.22,1,0.36,1) !important;
+            }
+            /* Palette name fade */
+            #tvPaletteName {
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+            #tvPaletteName.tv-name-exit {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            #tvPaletteName.tv-name-enter {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            /* Status bar */
+            #tvStatusName, #tvStatusHex {
+                transition: opacity 0.25s ease;
+            }
+            #tvStatusName.tv-fade-out, #tvStatusHex.tv-fade-out {
+                opacity: 0;
+            }
+            /* Channel tag */
+            #tvChannelTag {
+                transition: opacity 0.2s ease;
+            }
+            /* Channel dots */
+            .tv-ch-dot {
+                transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            }
+            /* Palette display crossfade */
+            #tvPaletteDisplay {
+                transition: opacity 0.25s ease !important;
+            }
+            /* Noise canvas */
+            #tvNoiseCanvas {
+                transition: opacity 0.18s ease !important;
+            }
+            /* Now-showing badge */
+            #tvNowShowing {
+                transition: opacity 0.3s ease !important;
+            }
+        `;
+        document.head.appendChild(s);
+    }
+
     /* ── NOISE CANVAS ── */
     function getScreenSize() {
         const rect = tvScreen.getBoundingClientRect();
@@ -136,14 +203,13 @@
     }
 
     function startNoise(opacity) {
-        const canvas = tvNoiseCanvas;
         const { w, h } = getScreenSize();
-        canvas.width  = w;
-        canvas.height = h;
-        noiseCtx = canvas.getContext('2d');
-        canvas.style.opacity = opacity || 0.18;
+        tvNoiseCanvas.width  = w;
+        tvNoiseCanvas.height = h;
+        noiseCtx = tvNoiseCanvas.getContext('2d');
+        tvNoiseCanvas.style.opacity = opacity || 0.18;
         function drawNoise() {
-            const img  = noiseCtx.createImageData(canvas.width, canvas.height);
+            const img  = noiseCtx.createImageData(tvNoiseCanvas.width, tvNoiseCanvas.height);
             const data = img.data;
             for (let i = 0; i < data.length; i += 4) {
                 const v = Math.random() * 255 | 0;
@@ -161,33 +227,55 @@
         tvNoiseCanvas.style.opacity = 0;
     }
 
-    /* ── APPLY PALETTE ── */
-    function applyPalette(idx, animate) {
-        const p       = PALETTES[idx];
-        const swEls   = tvSwatches.querySelectorAll('.tv-swatch');
+    /* ── APPLY PALETTE (smooth) ── */
+    function applyPalette(idx) {
+        const p = PALETTES[idx];
 
-        swEls.forEach((el, i) => {
-            const col = p.colors[i] || '#000';
-            if (animate) {
-                el.style.transition = `background 0.7s cubic-bezier(0.22,1,0.36,1) ${i*0.08}s`;
-            }
-            el.style.background = col;
+        // Swatches: CSS transition handles the colour fade
+        tvSwatches.querySelectorAll('.tv-swatch').forEach((el, i) => {
+            // Stagger via transition-delay so it feels like a wipe
+            el.style.transitionDelay = `${i * 0.07}s`;
+            el.style.background = p.colors[i] || '#000';
             const hexEl = el.querySelector('.tv-swatch-hex');
-            if (hexEl) hexEl.textContent = col;
+            if (hexEl) hexEl.textContent = p.colors[i] || '';
         });
 
-        tvPaletteName.textContent = p.name;
-        tvChannelTag.textContent  = 'CH ' + String(idx + 1).padStart(2, '0');
-        tvStatusName.textContent  = p.name;
-        tvStatusHex.textContent   = p.colors[0];
-
+        // Preview swatches on text side
         previewSwatches.forEach((el, i) => {
             if (el) el.style.background = p.colors[i] || 'transparent';
         });
 
-        tvNowName.textContent = p.name;
-        tvNowShowing.classList.add('active');
+        // Palette name: exit → update → enter
+        if (tvPaletteName) {
+            tvPaletteName.classList.add('tv-name-exit');
+            setTimeout(() => {
+                tvPaletteName.textContent = p.name;
+                tvPaletteName.classList.remove('tv-name-exit');
+                tvPaletteName.classList.add('tv-name-enter');
+                requestAnimationFrame(() => {
+                    tvPaletteName.classList.remove('tv-name-enter');
+                });
+            }, 150);
+        }
 
+        // Channel tag
+        if (tvChannelTag) tvChannelTag.textContent = 'CH ' + String(idx + 1).padStart(2, '0');
+
+        // Status bar fade
+        if (tvStatusName) {
+            tvStatusName.classList.add('tv-fade-out');
+            tvStatusHex && tvStatusHex.classList.add('tv-fade-out');
+            setTimeout(() => {
+                if (tvStatusName) { tvStatusName.textContent = p.name; tvStatusName.classList.remove('tv-fade-out'); }
+                if (tvStatusHex)  { tvStatusHex.textContent  = p.colors[0]; tvStatusHex.classList.remove('tv-fade-out'); }
+            }, 130);
+        }
+
+        // Now showing badge
+        if (tvNowName)    tvNowName.textContent = p.name;
+        if (tvNowShowing) tvNowShowing.classList.add('active');
+
+        // Glow ring
         const glowCol = p.colors[2] || p.colors[0];
         if (tvGlowRing) {
             tvGlowRing.style.background =
@@ -195,6 +283,7 @@
             tvGlowRing.style.opacity = '0.7';
         }
 
+        // Channel dots
         tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((d, i) => {
             d.classList.toggle('active', i === idx % 8);
             d.style.setProperty('--tv-active-color', p.colors[2]);
@@ -206,17 +295,27 @@
         stopCycle();
         cycleTimer = setInterval(() => {
             if (!tvOn) return;
-            tvNoiseCanvas.style.opacity = 0.35;
-            setTimeout(() => {
-                palIdx = (palIdx + 1) % PALETTES.length;
-                applyPalette(palIdx, true);
-                tvNoiseCanvas.style.opacity = 0.08;
-            }, 200);
+            _switchChannel((palIdx + 1) % PALETTES.length);
         }, 5000);
     }
 
     function stopCycle() {
         if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
+    }
+
+    /* ── Shared channel switch logic (used by cycle + tap + dots) ── */
+    function _switchChannel(targetIdx) {
+        stopCycle();
+        // Quick noise flash
+        tvNoiseCanvas.style.opacity = '0.28';
+        tvPaletteDisplay.style.opacity = '0';
+        setTimeout(() => {
+            palIdx = targetIdx;
+            applyPalette(palIdx);
+            tvPaletteDisplay.style.opacity = '1';
+            tvNoiseCanvas.style.opacity    = '0.07';
+            startCycle();
+        }, 180);
     }
 
     /* ── BIOS LINES ── */
@@ -274,7 +373,7 @@
                 tvLoading.appendChild(biosEl);
             }
             biosEl.textContent = '';
-            tvLoadText.style.display = 'none';
+            if (tvLoadText) tvLoadText.style.display = 'none';
             const barWrap = document.querySelector('.tv-load-bar-wrap');
             if (barWrap) barWrap.style.display = 'none';
 
@@ -294,68 +393,31 @@
         tvLoading.innerHTML = '';
 
         const winEl = document.createElement('div');
-        winEl.style.cssText = [
-            'display:flex','flex-direction:column',
-            'align-items:center','justify-content:center',
-            'width:100%','height:100%','gap:18px',
-        ].join(';');
+        winEl.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:18px;';
 
         const title = document.createElement('div');
-        title.style.cssText = [
-            'font-family:"Share Tech Mono",monospace',
-            'font-size:15px','letter-spacing:0.12em',
-            'color:rgba(200,200,220,0.9)',
-            'text-shadow:0 0 12px rgba(160,160,220,0.6)',
-            'text-transform:uppercase',
-        ].join(';');
+        title.style.cssText = 'font-family:"Share Tech Mono",monospace;font-size:15px;letter-spacing:0.12em;color:rgba(200,200,220,0.9);text-shadow:0 0 12px rgba(160,160,220,0.6);text-transform:uppercase;';
         title.textContent = 'PETRICHOR OS';
 
         const sub = document.createElement('div');
-        sub.style.cssText = [
-            'font-family:"Share Tech Mono",monospace',
-            'font-size:8px','letter-spacing:0.2em',
-            'color:rgba(140,140,180,0.6)',
-            'text-transform:uppercase',
-            'margin-top:-12px',
-        ].join(';');
+        sub.style.cssText = 'font-family:"Share Tech Mono",monospace;font-size:8px;letter-spacing:0.2em;color:rgba(140,140,180,0.6);text-transform:uppercase;margin-top:-12px;';
         sub.textContent = 'Professional Edition';
 
         const trackWrap = document.createElement('div');
-        trackWrap.style.cssText = [
-            'width:55%','height:14px',
-            'background:rgba(20,20,30,0.8)',
-            'border:1px solid rgba(100,100,160,0.4)',
-            'border-radius:2px','overflow:hidden',
-            'display:flex','gap:2px','padding:2px',
-        ].join(';');
+        trackWrap.style.cssText = 'width:55%;height:14px;background:rgba(20,20,30,0.8);border:1px solid rgba(100,100,160,0.4);border-radius:2px;overflow:hidden;display:flex;gap:2px;padding:2px;';
 
-        const SEGS = 12;
-        const segs = [];
+        const SEGS = 12, segs = [];
         for (let i = 0; i < SEGS; i++) {
             const s = document.createElement('div');
-            s.style.cssText = [
-                'flex:1','height:100%',
-                'border-radius:1px',
-                'background:rgba(60,80,180,0.15)',
-                'transition:background 0.15s ease',
-            ].join(';');
-            trackWrap.appendChild(s);
-            segs.push(s);
+            s.style.cssText = 'flex:1;height:100%;border-radius:1px;background:rgba(60,80,180,0.15);transition:background 0.15s ease;';
+            trackWrap.appendChild(s); segs.push(s);
         }
 
         const statusTxt = document.createElement('div');
-        statusTxt.style.cssText = [
-            'font-family:"Share Tech Mono",monospace',
-            'font-size:8px','letter-spacing:0.14em',
-            'color:rgba(120,120,180,0.7)',
-            'text-transform:uppercase',
-        ].join(';');
+        statusTxt.style.cssText = 'font-family:"Share Tech Mono",monospace;font-size:8px;letter-spacing:0.14em;color:rgba(120,120,180,0.7);text-transform:uppercase;';
         statusTxt.textContent = 'Starting up...';
 
-        winEl.appendChild(title);
-        winEl.appendChild(sub);
-        winEl.appendChild(trackWrap);
-        winEl.appendChild(statusTxt);
+        winEl.appendChild(title); winEl.appendChild(sub); winEl.appendChild(trackWrap); winEl.appendChild(statusTxt);
         tvLoading.appendChild(winEl);
 
         const statusMsgs = ['Loading palettes...','Calibrating colours...','Almost ready...','Done.'];
@@ -365,9 +427,7 @@
                 segs[seg].style.background = 'linear-gradient(to bottom,rgba(100,130,255,0.9),rgba(60,80,200,0.8))';
                 segs[seg].style.boxShadow  = '0 0 6px rgba(100,130,255,0.5)';
                 seg++;
-                if (seg % Math.ceil(SEGS / statusMsgs.length) === 0 && msgI < statusMsgs.length) {
-                    statusTxt.textContent = statusMsgs[msgI++];
-                }
+                if (seg % Math.ceil(SEGS / statusMsgs.length) === 0 && msgI < statusMsgs.length) statusTxt.textContent = statusMsgs[msgI++];
             } else {
                 clearInterval(segTimer);
                 setTimeout(launchPalette, 400);
@@ -381,104 +441,68 @@
             tvLoading.innerHTML = '';
             if (tvLoadText) tvLoadText.style.display = '';
 
-            tvNoiseCanvas.style.opacity = '0.07';
+            tvNoiseCanvas.style.opacity    = '0.07';
             tvPaletteDisplay.style.opacity = '1';
-            tvChannelTag.style.color = 'rgba(255,255,255,0.45)';
-            tvStatusBar.querySelectorAll('span').forEach(s => {
-                s.style.color = 'rgba(255,255,255,0.4)';
-            });
+            if (tvChannelTag) tvChannelTag.style.color = 'rgba(255,255,255,0.45)';
+            tvStatusBar && tvStatusBar.querySelectorAll('span').forEach(s => { s.style.color = 'rgba(255,255,255,0.4)'; });
 
-            tvOnAir.style.color         = 'rgba(200,80,80,0.9)';
-            tvOnAirDot.style.background = '#c85050';
-            tvOnAirDot.style.boxShadow  = '0 0 6px #c85050';
+            if (tvOnAir)    tvOnAir.style.color         = 'rgba(200,80,80,0.9)';
+            if (tvOnAirDot) { tvOnAirDot.style.background = '#c85050'; tvOnAirDot.style.boxShadow = '0 0 6px #c85050'; }
 
-            applyPalette(palIdx, false);
-            tvOn    = true;
-            booting = false;
+            applyPalette(palIdx);
+            tvOn = true; booting = false;
             startCycle();
         }, 300);
     }
 
-    /* ── NEXT CHANNEL ── */
+    /* ── NEXT CHANNEL (tap) ── */
     function nextChannel() {
-        stopCycle();
-        tvNoiseCanvas.style.opacity = '0.3';
-        tvPaletteDisplay.style.opacity = '0';
-        setTimeout(() => {
-            palIdx = (palIdx + 1) % PALETTES.length;
-            applyPalette(palIdx, false);
-            tvPaletteDisplay.style.opacity = '1';
-            tvNoiseCanvas.style.opacity    = '0.07';
-            startCycle();
-        }, 250);
+        _switchChannel((palIdx + 1) % PALETTES.length);
     }
 
     /* ── CHANNEL DOTS ── */
-    tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((dot, i) => {
+    tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((dot, i) => {
         function switchTo() {
             if (!tvOn) return;
-            stopCycle();
-            const target = i < PALETTES.length ? i : i % PALETTES.length;
-            tvNoiseCanvas.style.opacity    = '0.3';
-            tvPaletteDisplay.style.opacity = '0';
-            setTimeout(() => {
-                palIdx = target;
-                applyPalette(palIdx, false);
-                tvPaletteDisplay.style.opacity = '1';
-                tvNoiseCanvas.style.opacity    = '0.07';
-                startCycle();
-            }, 200);
+            _switchChannel(i < PALETTES.length ? i : i % PALETTES.length);
         }
-        // Suppress highlight on channel dots too
         dot.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
         dot.addEventListener('touchend',   e => { e.preventDefault(); e.stopPropagation(); switchTo(); }, { passive: false });
         dot.addEventListener('click',      e => { e.stopPropagation(); switchTo(); });
     });
 
     /* ── REVEAL text side ── */
-    const observer = new IntersectionObserver(entries => {
+    const revObserver = new IntersectionObserver(entries => {
         entries.forEach(e => {
-            if (e.isIntersecting) {
-                tvTextSide.classList.add('revealed');
-                observer.unobserve(e.target);
-            }
+            if (e.isIntersecting) { tvTextSide && tvTextSide.classList.add('revealed'); revObserver.unobserve(e.target); }
         });
     }, { threshold: 0.15 });
     const sec = document.getElementById('tvPaletteSection');
-    if (sec) observer.observe(sec);
+    if (sec) revObserver.observe(sec);
 
-    /* ── Resize noise canvas ── */
+    /* ── RESIZE ── */
     window.addEventListener('resize', () => {
         if (tvNoiseCanvas && noiseCtx) {
             const { w, h } = getScreenSize();
-            tvNoiseCanvas.width  = w;
-            tvNoiseCanvas.height = h;
+            tvNoiseCanvas.width = w; tvNoiseCanvas.height = h;
         }
     }, { passive: true });
 
-    /* ── Inject the touch overlay and suppress all native touch on tvWrap ── */
+    /* ── INIT ── */
+    _injectTvTransitionCSS();
 
-    // Belt-and-suspenders: also suppress touchstart on tvWrap itself
+    // Belt-and-suspenders: kill touchstart on tvWrap itself too
     tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
     tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
 
-    // Create the overlay (does the real tap handling)
+    // Create the overlay (appended INSIDE tvWrap)
     _createTouchOverlay();
 
-    // Desktop click on tvWrap (overlay handles mobile)
-    tvWrap.addEventListener('click', e => {
-        // Only fire on direct tvWrap clicks that weren't caught by overlay
-        // (shouldn't normally reach here on mobile)
-        if (e.target === tvWrap || e.target.closest('#tvWrap') === tvWrap) {
-            _handleTap();
-        }
-    });
+    // Desktop fallback click on tvWrap
+    tvWrap.addEventListener('click', () => _handleTap());
 
     tvWrap.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            _handleTap();
-        }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
     });
 
 })();
