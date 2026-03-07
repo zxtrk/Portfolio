@@ -300,21 +300,9 @@
                     0 2px 4px rgba(255,180,80,0.06);
             }
 
-            /* ═══════════════════════════════════════════════════════
-               iOS SAFARI FIX — .tv-screen
-               Safari ignores aspect-ratio on elements inside a
-               transform-style: preserve-3d ancestor, so the screen
-               renders at height: 0 (invisible/black).
-
-               Fix: use the padding-bottom trick instead.
-                 height: 0  +  padding-bottom: 75%  =  4:3 ratio
-               All child elements (canvas, overlays) use
-               position: absolute so they still fill the box.
-            ═══════════════════════════════════════════════════════ */
             .tv-screen {
                 width: 100%;
-                height: 0;
-                padding-bottom: 75%; /* 4 ÷ 3 = 75% — enforces 4:3 on all browsers */
+                aspect-ratio: 4/3;
                 border-radius: 6px;
                 background: #050302;
                 position: relative;

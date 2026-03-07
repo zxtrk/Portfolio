@@ -5,8 +5,6 @@
    - glow ring is purely decorative behind TV (blurred, very faint)
    - tap highlight fully suppressed via touchstart preventDefault
    - yellow overlay fix: anonymous stage inner div now blocks tap highlight
-   - iOS Safari screen fix: getScreenSize() derives height from offsetWidth*0.75
-     because aspect-ratio inside preserve-3d returns height=0 on Safari
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -73,14 +71,12 @@
     }
 
     /* ── NOISE CANVAS ── */
-    /* iOS Safari fix: when .tv-screen uses padding-bottom:75% (the aspect-ratio
-       workaround for preserve-3d parents), offsetHeight returns the correct
-       rendered height. However getBoundingClientRect().height may still return
-       0 during the first paint. We use offsetWidth * 0.75 as a safe fallback. */
     function getScreenSize() {
-        const w = tvScreen.offsetWidth  || 360;
-        const h = tvScreen.offsetHeight || Math.round(w * 0.75);
-        return { w, h };
+        const rect = tvScreen.getBoundingClientRect();
+        return {
+            w: Math.round(rect.width)  || tvScreen.offsetWidth  || 360,
+            h: Math.round(rect.height) || tvScreen.offsetHeight || 270,
+        };
     }
 
     function startNoise(opacity) {
