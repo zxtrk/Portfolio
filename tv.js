@@ -1,10 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   RETRO TV COLOUR PALETTE — tv.js
-   Fixes applied:
-   - channel tag no longer overlaps palette name (smaller font, lower z)
-   - glow ring is purely decorative behind TV (blurred, very faint)
-   - tap highlight fully suppressed via touchstart preventDefault
-   - yellow overlay fix: anonymous stage inner div now blocks tap highlight
+   RETRO TV COLOUR PALETTE — tv.js  v3
+   Fix: yellow tap highlight fully eliminated on iOS/Android by
+   routing ALL touch events through a transparent overlay div
+   that sits on top and calls preventDefault before the browser
+   can paint any highlight colour.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -54,6 +53,7 @@
     const tvNowShowing     = document.getElementById('tvNowShowing');
     const tvNowName        = document.getElementById('tvNowName');
     const tvTextSide       = document.getElementById('tvTextSide');
+    const tvStage          = document.getElementById('tvStage');
 
     const previewSwatches = [
         document.getElementById('tvPs0'),
@@ -63,11 +63,67 @@
         document.getElementById('tvPs4'),
     ];
 
-    /* ── FIX: suppress tap highlight on the anonymous inner wrapper ── */
-    const tvStageInner = document.getElementById('tvStageInner');
-    if (tvStageInner) {
-        tvStageInner.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
-        tvStageInner.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
+    /* ══════════════════════════════════════════════════════════
+       YELLOW HIGHLIGHT FIX
+       Create a transparent overlay that sits above the entire
+       TV and intercepts every touch event with preventDefault()
+       before the browser has a chance to paint any highlight.
+       The overlay is invisible and pointer-events:all so it
+       catches touches but passes the logical action via JS.
+    ══════════════════════════════════════════════════════════ */
+    function _createTouchOverlay() {
+        const overlay = document.createElement('div');
+        overlay.id = 'tvTouchOverlay';
+        overlay.style.cssText = [
+            'position:absolute',
+            'inset:0',
+            'z-index:99999',
+            'background:transparent',
+            '-webkit-tap-highlight-color:rgba(0,0,0,0)',
+            'tap-highlight-color:rgba(0,0,0,0)',
+            'touch-action:manipulation',
+            'user-select:none',
+            '-webkit-user-select:none',
+            'cursor:pointer',
+        ].join(';');
+
+        // The overlay must be inside a positioned ancestor — use tvStage
+        // which already has position:relative equivalent via flex
+        const stageInner = document.getElementById('tvStageInner') || tvStage;
+        // Make sure the container is positioned so the overlay can be absolute
+        if (stageInner) {
+            stageInner.style.position = 'relative';
+            stageInner.appendChild(overlay);
+        }
+
+        // All touch events preventDefault on the overlay itself
+        overlay.addEventListener('touchstart', e => {
+            e.preventDefault();
+            e.stopPropagation();
+        }, { passive: false });
+
+        overlay.addEventListener('touchend', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            _handleTap();
+        }, { passive: false });
+
+        overlay.addEventListener('touchcancel', e => {
+            e.preventDefault();
+        }, { passive: false });
+
+        // Mouse click passthrough for desktop
+        overlay.addEventListener('click', e => {
+            e.preventDefault();
+            _handleTap();
+        });
+
+        return overlay;
+    }
+
+    function _handleTap() {
+        if (!tvOn && !booting) bootTV();
+        else if (tvOn) nextChannel();
     }
 
     /* ── NOISE CANVAS ── */
@@ -121,7 +177,6 @@
         });
 
         tvPaletteName.textContent = p.name;
-        /* Channel tag: short form only, e.g. "CH 01" */
         tvChannelTag.textContent  = 'CH ' + String(idx + 1).padStart(2, '0');
         tvStatusName.textContent  = p.name;
         tvStatusHex.textContent   = p.colors[0];
@@ -133,8 +188,6 @@
         tvNowName.textContent = p.name;
         tvNowShowing.classList.add('active');
 
-        /* Glow ring: very subtle, only visible as ambient light behind TV body.
-           Use a low-opacity radial gradient — never a solid fill. */
         const glowCol = p.colors[2] || p.colors[0];
         if (tvGlowRing) {
             tvGlowRing.style.background =
@@ -197,7 +250,7 @@
             stopNoise();
             tvScreen.style.background = '#050302';
 
-            tvLoading.style.opacity     = '1';
+            tvLoading.style.opacity        = '1';
             tvLoading.style.flexDirection  = 'column';
             tvLoading.style.alignItems     = 'flex-start';
             tvLoading.style.padding        = '14px 18px';
@@ -330,7 +383,6 @@
 
             tvNoiseCanvas.style.opacity = '0.07';
             tvPaletteDisplay.style.opacity = '1';
-            /* Show the channel tag & status bar */
             tvChannelTag.style.color = 'rgba(255,255,255,0.45)';
             tvStatusBar.querySelectorAll('span').forEach(s => {
                 s.style.color = 'rgba(255,255,255,0.4)';
@@ -361,26 +413,6 @@
         }, 250);
     }
 
-    /* ── CLICK / TOUCH — no yellow flash ── */
-    tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
-    tvWrap.addEventListener('touchend',   e => {
-        e.preventDefault();
-        if (!tvOn && !booting) bootTV();
-        else if (tvOn) nextChannel();
-    }, { passive: false });
-    tvWrap.addEventListener('click', e => {
-        e.preventDefault();
-        if (!tvOn && !booting) bootTV();
-        else if (tvOn) nextChannel();
-    });
-    tvWrap.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            if (!tvOn && !booting) bootTV();
-            else if (tvOn) nextChannel();
-        }
-    });
-
     /* ── CHANNEL DOTS ── */
     tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((dot, i) => {
         function switchTo() {
@@ -397,6 +429,7 @@
                 startCycle();
             }, 200);
         }
+        // Suppress highlight on channel dots too
         dot.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
         dot.addEventListener('touchend',   e => { e.preventDefault(); e.stopPropagation(); switchTo(); }, { passive: false });
         dot.addEventListener('click',      e => { e.stopPropagation(); switchTo(); });
@@ -422,5 +455,30 @@
             tvNoiseCanvas.height = h;
         }
     }, { passive: true });
+
+    /* ── Inject the touch overlay and suppress all native touch on tvWrap ── */
+
+    // Belt-and-suspenders: also suppress touchstart on tvWrap itself
+    tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
+    tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
+
+    // Create the overlay (does the real tap handling)
+    _createTouchOverlay();
+
+    // Desktop click on tvWrap (overlay handles mobile)
+    tvWrap.addEventListener('click', e => {
+        // Only fire on direct tvWrap clicks that weren't caught by overlay
+        // (shouldn't normally reach here on mobile)
+        if (e.target === tvWrap || e.target.closest('#tvWrap') === tvWrap) {
+            _handleTap();
+        }
+    });
+
+    tvWrap.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            _handleTap();
+        }
+    });
 
 })();

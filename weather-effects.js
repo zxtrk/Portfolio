@@ -1,15 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════
-   WEATHER & THEME EFFECTS SYSTEM — weather-effects.js  v2
-   Drop-in extension for the existing portfolio admin panel.
-
-   NEW IN v2:
-   • Particle density slider per effect (admin panel)
-   • Rich SVG corner decorations:
-       snow   → Snowman (bottom-right) + icicles (top edge)
-       autumn → Pumpkin (bottom-left) + spiderweb (corner)
-       rain   → Umbrella (bottom-right) + puddle ripples
-       spring → Butterfly (bottom-left) + rainbow arc
-       summer → Sun with rays (top-right) + beach scene
+   WEATHER & THEME EFFECTS SYSTEM — weather-effects.js  v3
+   Fixes:
+   • Canvas z-index raised so effects are visible on desktop
+   • Canvas pointer-events kept none so it never blocks interaction
    ═══════════════════════════════════════════════════════════════ */
 
 "use strict";
@@ -29,7 +22,7 @@ const WeatherEffects = (() => {
     let _currentEffect = "none";
     let _decorations   = {};
     let _wxPollTimer   = null;
-    let _density       = 1.0;   // 0.1 – 2.0 multiplier, set by slider
+    let _density       = 1.0;
 
     /* ══════════════════════════════════════════════════════════
        PARTICLE DEFINITIONS
@@ -216,6 +209,9 @@ const WeatherEffects = (() => {
 
     /* ══════════════════════════════════════════════════════════
        CANVAS SETUP & RENDER LOOP
+       FIX: z-index raised to 9990 so canvas renders above all
+       background layers on desktop (grain, shapes, dots, etc.)
+       pointer-events:none ensures it never blocks clicks.
     ══════════════════════════════════════════════════════════ */
 
     function _initCanvas() {
@@ -223,10 +219,16 @@ const WeatherEffects = (() => {
         _canvas = document.createElement("canvas");
         _canvas.id = "wx-canvas";
         _canvas.style.cssText = [
-            "position:fixed","inset:0","width:100%","height:100%",
-            "pointer-events:none","z-index:0","will-change:transform","opacity:1",
+            "position:fixed",
+            "inset:0",
+            "width:100%",
+            "height:100%",
+            "pointer-events:none",
+            "z-index:9990",          // high enough to sit above background, below nav/admin
+            "will-change:transform",
+            "opacity:1",
         ].join(";");
-        document.body.insertBefore(_canvas, document.body.firstChild);
+        document.body.appendChild(_canvas);   // append to body end so stacking context is clear
         _ctx = _canvas.getContext("2d");
         _resizeCanvas();
         window.addEventListener("resize", _debounce(_resizeCanvas, 250), { passive: true });
@@ -329,46 +331,30 @@ const WeatherEffects = (() => {
             .wx-man-g { animation: wxManBob 4s ease-in-out infinite; transform-origin: 55px 170px; }
           </style>
           <g class="wx-man-g">
-            <!-- ground snow drift -->
             <ellipse cx="55" cy="162" rx="48" ry="10" fill="rgba(255,255,255,0.55)"/>
-            <!-- lower body -->
             <ellipse cx="55" cy="122" rx="34" ry="36" fill="rgba(245,252,255,0.95)" stroke="rgba(180,220,255,0.5)" stroke-width="1.5"/>
-            <!-- upper body -->
             <ellipse cx="55" cy="72" rx="25" ry="26" fill="rgba(248,254,255,0.97)" stroke="rgba(180,220,255,0.5)" stroke-width="1.5"/>
-            <!-- head -->
             <ellipse cx="55" cy="34" rx="20" ry="20" fill="rgba(255,255,255,1)" stroke="rgba(180,220,255,0.5)" stroke-width="1.5"/>
-            <!-- hat brim -->
             <rect x="36" y="17" width="38" height="4" rx="2" fill="#2a2a3a"/>
-            <!-- hat body -->
             <rect x="41" y="0" width="28" height="18" rx="2" fill="#2a2a3a"/>
-            <!-- hat band -->
             <rect x="41" y="14" width="28" height="4" fill="var(--color-accent)" opacity="0.8"/>
-            <!-- eyes -->
             <circle cx="48" cy="29" r="2.5" fill="#2a2a3a"/>
             <circle cx="62" cy="29" r="2.5" fill="#2a2a3a"/>
-            <!-- eyebrow lines -->
             <line x1="45" y1="25" x2="51" y2="24" stroke="#2a2a3a" stroke-width="1.2" stroke-linecap="round"/>
             <line x1="59" y1="24" x2="65" y2="25" stroke="#2a2a3a" stroke-width="1.2" stroke-linecap="round"/>
-            <!-- carrot nose -->
             <polygon points="55,34 70,37 55,40" fill="#e8834a"/>
-            <!-- smile -->
             <path d="M46 44 Q55 50 64 44" stroke="#2a2a3a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <!-- scarf -->
             <path d="M31 58 Q55 52 79 58 Q78 68 55 65 Q32 68 31 58Z" fill="var(--color-accent)" opacity="0.8"/>
             <ellipse cx="33" cy="62" rx="6" ry="9" fill="var(--color-accent)" opacity="0.65"/>
-            <!-- buttons body -->
             <circle cx="55" cy="98"  r="3" fill="#2a2a3a" opacity="0.45"/>
             <circle cx="55" cy="112" r="3" fill="#2a2a3a" opacity="0.45"/>
             <circle cx="55" cy="126" r="3" fill="#2a2a3a" opacity="0.45"/>
-            <!-- buttons chest -->
             <circle cx="55" cy="76"  r="2.5" fill="#2a2a3a" opacity="0.3"/>
             <circle cx="55" cy="86"  r="2.5" fill="#2a2a3a" opacity="0.3"/>
-            <!-- left arm (twig) -->
             <line x1="22" y1="88"  x2="2"  y2="68" stroke="#7a5c2a" stroke-width="3.5" stroke-linecap="round"/>
             <line x1="2"  y1="68"  x2="-6" y2="56" stroke="#7a5c2a" stroke-width="2.5" stroke-linecap="round"/>
             <line x1="2"  y1="68"  x2="-2" y2="60" stroke="#7a5c2a" stroke-width="2"   stroke-linecap="round"/>
             <line x1="2"  y1="68"  x2="4"  y2="58" stroke="#7a5c2a" stroke-width="1.8" stroke-linecap="round"/>
-            <!-- right arm (twig) -->
             <line x1="88" y1="88"  x2="108" y2="68" stroke="#7a5c2a" stroke-width="3.5" stroke-linecap="round"/>
             <line x1="108" y1="68" x2="116" y2="56" stroke="#7a5c2a" stroke-width="2.5" stroke-linecap="round"/>
             <line x1="108" y1="68" x2="112" y2="60" stroke="#7a5c2a" stroke-width="2"   stroke-linecap="round"/>
@@ -420,39 +406,26 @@ const WeatherEffects = (() => {
         <svg width="130" height="150" viewBox="0 0 130 150" fill="none" xmlns="http://www.w3.org/2000/svg"
              style="filter:drop-shadow(0 4px 20px rgba(200,80,20,0.2))">
           <style>
-            @keyframes wxPumpkinGlow {
-              0%,100%{opacity:0.7} 50%{opacity:1}
-            }
+            @keyframes wxPumpkinGlow { 0%,100%{opacity:0.7} 50%{opacity:1} }
             @keyframes wxPumpBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
             .wx-pump-g { animation: wxPumpBob 5s ease-in-out infinite; transform-origin: 65px 150px; }
           </style>
           <g class="wx-pump-g">
-            <!-- stem -->
             <path d="M65 32 Q68 18 78 12 Q72 20 70 32" fill="#4a7a2a" stroke="#3a6020" stroke-width="1"/>
-            <!-- leaf -->
             <path d="M70 28 Q88 10 92 22 Q80 20 70 28Z" fill="#5a8a30" opacity="0.8"/>
-            <!-- pumpkin segments -->
             <ellipse cx="35" cy="82" rx="18" ry="48" fill="#d4611a" transform="rotate(-8,35,82)"/>
             <ellipse cx="52" cy="80" rx="22" ry="52" fill="#e07020"/>
             <ellipse cx="65" cy="78" rx="23" ry="54" fill="#e8801a"/>
             <ellipse cx="78" cy="80" rx="22" ry="52" fill="#e07020"/>
             <ellipse cx="95" cy="82" rx="18" ry="48" fill="#d4611a" transform="rotate(8,95,82)"/>
-            <!-- segment lines (dark curves) -->
             <path d="M52 30 Q48 78 52 128" stroke="#c05010" stroke-width="2" fill="none" opacity="0.5"/>
             <path d="M78 30 Q82 78 78 128" stroke="#c05010" stroke-width="2" fill="none" opacity="0.5"/>
-            <!-- face glow behind -->
             <ellipse cx="65" cy="88" rx="30" ry="35" fill="#ff9933" style="animation:wxPumpkinGlow 2s ease-in-out infinite" opacity="0.18"/>
-            <!-- left eye triangle -->
             <polygon points="48,72 56,72 52,62" fill="#1a0a00" opacity="0.85"/>
-            <!-- right eye triangle -->
             <polygon points="74,72 82,72 78,62" fill="#1a0a00" opacity="0.85"/>
-            <!-- nose diamond -->
             <polygon points="65,78 69,83 65,88 61,83" fill="#1a0a00" opacity="0.85"/>
-            <!-- mouth -->
             <path d="M46 98 L53 92 L58 98 L65 93 L72 98 L77 92 L84 98" stroke="#1a0a00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85"/>
-            <!-- candle inner glow -->
             <ellipse cx="65" cy="88" rx="22" ry="26" fill="#ffcc44" style="animation:wxPumpkinGlow 1.8s ease-in-out infinite" opacity="0.08"/>
-            <!-- ground -->
             <ellipse cx="65" cy="145" rx="44" ry="8" fill="rgba(100,60,20,0.3)"/>
           </g>
         </svg>`;
@@ -470,34 +443,27 @@ const WeatherEffects = (() => {
             @keyframes wxSpiderSwing { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(8px) rotate(3deg)} }
             .wx-spider { animation:wxSpiderSwing 3s ease-in-out infinite; transform-origin:90px 0; }
           </style>
-          <!-- web radial lines from top-right corner -->
           <line x1="160" y1="0" x2="0"   y2="160" stroke="rgba(200,200,200,0.6)" stroke-width="0.8"/>
           <line x1="160" y1="0" x2="60"  y2="160" stroke="rgba(200,200,200,0.6)" stroke-width="0.8"/>
           <line x1="160" y1="0" x2="120" y2="160" stroke="rgba(200,200,200,0.6)" stroke-width="0.8"/>
           <line x1="160" y1="0" x2="160" y2="100" stroke="rgba(200,200,200,0.6)" stroke-width="0.8"/>
           <line x1="160" y1="0" x2="0"   y2="80"  stroke="rgba(200,200,200,0.6)" stroke-width="0.8"/>
           <line x1="160" y1="0" x2="0"   y2="40"  stroke="rgba(200,200,200,0.6)" stroke-width="0.8"/>
-          <!-- web concentric arcs -->
           <path d="M160,22 Q120,22 110,60" stroke="rgba(200,200,200,0.5)" stroke-width="0.7" fill="none"/>
           <path d="M160,45 Q108,42 90,100" stroke="rgba(200,200,200,0.5)" stroke-width="0.7" fill="none"/>
           <path d="M160,70 Q96,64 70,138" stroke="rgba(200,200,200,0.5)" stroke-width="0.7" fill="none"/>
           <path d="M155,95 Q84,85 50,160" stroke="rgba(200,200,200,0.5)" stroke-width="0.7" fill="none"/>
           <path d="M145,118 Q68,108 30,160" stroke="rgba(200,200,200,0.5)" stroke-width="0.7" fill="none"/>
-          <!-- spider thread -->
           <line x1="90" y1="0" x2="90" y2="52" stroke="rgba(180,180,180,0.7)" stroke-width="0.8"/>
-          <!-- spider body -->
           <g class="wx-spider">
             <ellipse cx="90" cy="58" rx="5" ry="7" fill="#1a1a1a" opacity="0.8"/>
             <ellipse cx="90" cy="52" rx="4" ry="4" fill="#1a1a1a" opacity="0.8"/>
-            <!-- eyes -->
             <circle cx="88" cy="51" r="1" fill="rgba(255,80,80,0.9)"/>
             <circle cx="92" cy="51" r="1" fill="rgba(255,80,80,0.9)"/>
-            <!-- legs left -->
             <line x1="85" y1="54" x2="76" y2="48" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
             <line x1="85" y1="57" x2="75" y2="55" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
             <line x1="85" y1="60" x2="76" y2="62" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
             <line x1="85" y1="63" x2="77" y2="68" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
-            <!-- legs right -->
             <line x1="95" y1="54" x2="104" y2="48" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
             <line x1="95" y1="57" x2="105" y2="55" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
             <line x1="95" y1="60" x2="104" y2="62" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
@@ -521,28 +487,20 @@ const WeatherEffects = (() => {
             .wx-umb-g { animation:wxUmbBob 4s ease-in-out infinite; transform-origin:60px 180px; }
           </style>
           <g class="wx-umb-g">
-            <!-- canopy -->
             <path d="M10 70 Q60 10 110 70" fill="var(--color-accent)" opacity="0.85"/>
-            <!-- canopy segments -->
             <path d="M10 70 Q35 30 60 25 Q60 50 10 70Z" fill="rgba(255,255,255,0.12)"/>
             <path d="M110 70 Q85 30 60 25 Q60 50 110 70Z" fill="rgba(0,0,0,0.08)"/>
-            <!-- canopy ribs -->
             <line x1="60" y1="24" x2="10"  y2="70" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
             <line x1="60" y1="24" x2="35"  y2="64" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
             <line x1="60" y1="24" x2="60"  y2="70" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
             <line x1="60" y1="24" x2="85"  y2="64" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
             <line x1="60" y1="24" x2="110" y2="70" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
-            <!-- canopy edge scallops -->
             <path d="M10 70 Q20 78 30 70 Q40 78 50 70 Q60 78 70 70 Q80 78 90 70 Q100 78 110 70"
                   stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
-            <!-- handle shaft -->
             <line x1="60" y1="24" x2="60" y2="152" stroke="#5a4a3a" stroke-width="4" stroke-linecap="round"/>
-            <!-- handle curve -->
             <path d="M60 152 Q60 168 48 172 Q36 176 36 166" stroke="#5a4a3a" stroke-width="4" stroke-linecap="round" fill="none"/>
-            <!-- person silhouette -->
             <circle cx="60" cy="86" r="10" fill="#3a3a4a" opacity="0.5"/>
             <path d="M52 96 Q60 130 68 96" fill="#3a3a4a" opacity="0.4"/>
-            <!-- rain drops hitting umbrella -->
             <line x1="25" y1="10" x2="22" y2="22" stroke="rgba(180,210,240,0.6)" stroke-width="1.2" stroke-linecap="round"/>
             <line x1="45" y1="5"  x2="42" y2="17" stroke="rgba(180,210,240,0.6)" stroke-width="1.2" stroke-linecap="round"/>
             <line x1="80" y1="8"  x2="77" y2="20" stroke="rgba(180,210,240,0.6)" stroke-width="1.2" stroke-linecap="round"/>
@@ -587,9 +545,7 @@ const WeatherEffects = (() => {
         el.innerHTML = `
         <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <style>
-            @keyframes wxBflyFlap {
-              0%,100%{transform:scaleX(1)} 50%{transform:scaleX(0.5)}
-            }
+            @keyframes wxBflyFlap { 0%,100%{transform:scaleX(1)} 50%{transform:scaleX(0.5)} }
             @keyframes wxBflyFloat {
               0%{transform:translate(0,0) rotate(-3deg)}
               25%{transform:translate(8px,-12px) rotate(2deg)}
@@ -602,35 +558,24 @@ const WeatherEffects = (() => {
             .wx-wing-r { animation:wxBflyFlap 0.35s ease-in-out infinite reverse; transform-origin:70px 60px; }
           </style>
           <g class="wx-bfly">
-            <!-- top-left wing -->
             <g class="wx-wing-l">
-              <path d="M68 58 Q30 20 18 48 Q10 68 68 72Z"
-                    fill="rgba(255,160,200,0.75)" stroke="rgba(220,100,160,0.4)" stroke-width="0.8"/>
+              <path d="M68 58 Q30 20 18 48 Q10 68 68 72Z" fill="rgba(255,160,200,0.75)" stroke="rgba(220,100,160,0.4)" stroke-width="0.8"/>
               <path d="M68 58 Q40 30 28 50" stroke="rgba(220,100,160,0.3)" stroke-width="0.6" fill="none"/>
               <circle cx="38" cy="46" r="5" fill="rgba(255,200,100,0.4)"/>
             </g>
-            <!-- top-right wing -->
             <g class="wx-wing-r">
-              <path d="M72 58 Q110 20 122 48 Q130 68 72 72Z"
-                    fill="rgba(180,130,255,0.75)" stroke="rgba(140,80,220,0.4)" stroke-width="0.8"/>
+              <path d="M72 58 Q110 20 122 48 Q130 68 72 72Z" fill="rgba(180,130,255,0.75)" stroke="rgba(140,80,220,0.4)" stroke-width="0.8"/>
               <path d="M72 58 Q100 30 112 50" stroke="rgba(140,80,220,0.3)" stroke-width="0.6" fill="none"/>
               <circle cx="102" cy="46" r="5" fill="rgba(255,200,100,0.4)"/>
             </g>
-            <!-- bottom-left wing -->
             <g class="wx-wing-l">
-              <path d="M68 64 Q24 78 26 100 Q30 118 68 92Z"
-                    fill="rgba(255,180,100,0.7)" stroke="rgba(220,130,50,0.4)" stroke-width="0.8"/>
+              <path d="M68 64 Q24 78 26 100 Q30 118 68 92Z" fill="rgba(255,180,100,0.7)" stroke="rgba(220,130,50,0.4)" stroke-width="0.8"/>
             </g>
-            <!-- bottom-right wing -->
             <g class="wx-wing-r">
-              <path d="M72 64 Q116 78 114 100 Q110 118 72 92Z"
-                    fill="rgba(100,210,180,0.7)" stroke="rgba(50,170,140,0.4)" stroke-width="0.8"/>
+              <path d="M72 64 Q116 78 114 100 Q110 118 72 92Z" fill="rgba(100,210,180,0.7)" stroke="rgba(50,170,140,0.4)" stroke-width="0.8"/>
             </g>
-            <!-- body -->
             <ellipse cx="70" cy="72" rx="3.5" ry="18" fill="#3a2a1a" opacity="0.7"/>
-            <!-- head -->
             <circle cx="70" cy="53" r="4.5" fill="#3a2a1a" opacity="0.7"/>
-            <!-- antennae -->
             <path d="M68 50 Q58 36 54 28" stroke="#3a2a1a" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.6"/>
             <circle cx="54" cy="28" r="2.5" fill="rgba(255,160,200,0.8)"/>
             <path d="M72 50 Q82 36 86 28" stroke="#3a2a1a" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.6"/>
@@ -668,13 +613,10 @@ const WeatherEffects = (() => {
         <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <style>
             @keyframes wxSunSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-            @keyframes wxSunPulse { 0%,100%{r:26} 50%{r:29} }
             .wx-sun-rays { animation:wxSunSpin 18s linear infinite; transform-origin:60px 60px; }
           </style>
-          <!-- outer glow -->
           <circle cx="60" cy="60" r="42" fill="rgba(255,220,60,0.08)"/>
           <circle cx="60" cy="60" r="34" fill="rgba(255,210,40,0.1)"/>
-          <!-- rays -->
           <g class="wx-sun-rays">
             ${Array.from({length:12},(_,i)=>{
               const a = (i/12)*Math.PI*2;
@@ -684,11 +626,8 @@ const WeatherEffects = (() => {
                            stroke="rgba(255,200,30,0.7)" stroke-width="${i%3===0?2.5:1.5}" stroke-linecap="round"/>`;
             }).join("")}
           </g>
-          <!-- sun disc -->
           <circle cx="60" cy="60" r="26" fill="rgba(255,215,40,0.92)" stroke="rgba(255,180,20,0.5)" stroke-width="1.5"/>
-          <!-- shine glint -->
           <circle cx="50" cy="50" r="7" fill="rgba(255,255,255,0.2)"/>
-          <!-- face -->
           <circle cx="53" cy="57" r="3" fill="rgba(180,100,20,0.6)"/>
           <circle cx="67" cy="57" r="3" fill="rgba(180,100,20,0.6)"/>
           <path d="M51 66 Q60 73 69 66" stroke="rgba(180,100,20,0.6)" stroke-width="2" stroke-linecap="round" fill="none"/>
@@ -704,19 +643,11 @@ const WeatherEffects = (() => {
         el.innerHTML = `
         <svg width="${vw}" height="70" viewBox="0 0 ${vw} 70" xmlns="http://www.w3.org/2000/svg"
              preserveAspectRatio="none">
-          <style>
-            @keyframes wxWave { 0%{d:path("M0,30 Q${vw*0.25},10 ${vw*0.5},30 Q${vw*0.75},50 ${vw},30 L${vw},70 L0,70Z")} 50%{d:path("M0,30 Q${vw*0.25},50 ${vw*0.5},30 Q${vw*0.75},10 ${vw},30 L${vw},70 L0,70Z")} 100%{d:path("M0,30 Q${vw*0.25},10 ${vw*0.5},30 Q${vw*0.75},50 ${vw},30 L${vw},70 L0,70Z")} }
-          </style>
-          <!-- sand -->
           <rect x="0" y="42" width="${vw}" height="28" fill="rgba(240,210,140,0.35)"/>
-          <!-- water -->
           <path d="M0,30 Q${vw*0.25},10 ${vw*0.5},30 Q${vw*0.75},50 ${vw},30 L${vw},70 L0,70Z"
-                fill="rgba(64,164,223,0.22)"
-                style="animation:wxWave 5s ease-in-out infinite"/>
+                fill="rgba(64,164,223,0.22)"/>
           <path d="M0,38 Q${vw*0.25},22 ${vw*0.5},38 Q${vw*0.75},54 ${vw},38 L${vw},70 L0,70Z"
-                fill="rgba(64,164,223,0.14)"
-                style="animation:wxWave 5s 0.8s ease-in-out infinite reverse"/>
-          <!-- foam dots -->
+                fill="rgba(64,164,223,0.14)"/>
           <circle cx="${vw*0.15}" cy="34" r="3" fill="rgba(255,255,255,0.5)"/>
           <circle cx="${vw*0.35}" cy="28" r="2" fill="rgba(255,255,255,0.5)"/>
           <circle cx="${vw*0.6}"  cy="32" r="3" fill="rgba(255,255,255,0.5)"/>
@@ -725,7 +656,7 @@ const WeatherEffects = (() => {
         document.body.appendChild(el);
     }
 
-    /* ── Original decorations kept ────────────────────────── */
+    /* ── Original decorations ─────────────────────────────── */
 
     function _spawnLights() {
         const el = document.createElement("div");
@@ -1002,7 +933,6 @@ const WeatherEffects = (() => {
         { key:"summer", icon:"☀️",  label:"Summer" },
     ];
 
-    // Decorations per effect — key, label
     const DEC_DEFS = {
         snow:   [
             { key:"frostedBorders",  label:"Frosted Borders" },
@@ -1119,7 +1049,6 @@ const WeatherEffects = (() => {
 
         wrap.style.display = "block";
 
-        // Density slider (shown for all non-none effects)
         const densityHtml = fx !== "none" ? `
             <div class="adm-fx-decs" style="margin-bottom:10px">
                 <div class="adm-fx-decs-title">Particle Density</div>
@@ -1154,7 +1083,6 @@ const WeatherEffects = (() => {
 
         wrap.innerHTML = densityHtml + decorHtml;
 
-        // Density slider events
         const slider   = document.getElementById("admDensitySlider");
         const valLabel = document.getElementById("admDensityVal");
         let densityTimer = null;
@@ -1163,7 +1091,6 @@ const WeatherEffects = (() => {
                 const pct = parseInt(e.target.value, 10);
                 if (valLabel) valLabel.textContent = `${pct}%`;
                 _density = pct / 100;
-                // Re-spawn particles live
                 if (_currentEffect !== "none") {
                     _stopLoop();
                     _spawnParticles(_currentEffect);
@@ -1174,7 +1101,6 @@ const WeatherEffects = (() => {
             });
         }
 
-        // Decoration toggle events
         wrap.querySelectorAll("input[data-dec]").forEach(el => {
             el.addEventListener("change", () => {
                 const cfg  = getConfig();
@@ -1224,7 +1150,6 @@ const WeatherEffects = (() => {
             childList: true, subtree: true, attributes: true, attributeFilter: ["class"],
         });
 
-        // Apply persisted effect on page load
         const cfg = _localGet();
         const fx  = cfg.weatherEffect      || "none";
         const dec = cfg.weatherDecorations || {};
@@ -1239,7 +1164,6 @@ const WeatherEffects = (() => {
             });
         }
 
-        // Hook Firebase once ready
         const _tryFb = setInterval(() => {
             if (typeof firebase === "undefined" || !window.FIREBASE_ENABLED) return;
             try {
