@@ -4,6 +4,7 @@
    - channel tag no longer overlaps palette name (smaller font, lower z)
    - glow ring is purely decorative behind TV (blurred, very faint)
    - tap highlight fully suppressed via touchstart preventDefault
+   - yellow overlay fix: anonymous stage inner div now blocks tap highlight
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -61,6 +62,13 @@
         document.getElementById('tvPs3'),
         document.getElementById('tvPs4'),
     ];
+
+    /* ── FIX: suppress tap highlight on the anonymous inner wrapper ── */
+    const tvStageInner = document.getElementById('tvStageInner');
+    if (tvStageInner) {
+        tvStageInner.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
+        tvStageInner.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
+    }
 
     /* ── NOISE CANVAS ── */
     function getScreenSize() {

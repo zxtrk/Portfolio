@@ -185,6 +185,29 @@
                 position: relative;
             }
 
+            /* ══════════════════════════════════════════════════════
+               YELLOW OVERLAY FIX — nuclear tap-highlight suppression
+               Covers the tv-stage, the anonymous inner wrapper,
+               tv-wrap and every descendant. Uses rgba(0,0,0,0)
+               instead of "transparent" because some WebKit builds
+               treat the keyword differently.
+            ══════════════════════════════════════════════════════ */
+            .tv-stage,
+            #tvStageInner,
+            .tv-wrap,
+            .tv-wrap *,
+            .tv-wrap *::before,
+            .tv-wrap *::after,
+            .tv-body,
+            .tv-body *,
+            .tv-bezel,
+            .tv-screen,
+            .tv-ch-dot {
+                -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+                tap-highlight-color: rgba(0,0,0,0) !important;
+                -webkit-touch-callout: none !important;
+            }
+
             /* ── FIX: kill the yellow mobile tap highlight on tv-wrap and ALL descendants ── */
             .tv-wrap,
             .tv-wrap *,
@@ -559,7 +582,7 @@
                 border: 1px solid #3a2a1a;
                 transition: background 0.3s ease, box-shadow 0.3s ease;
                 cursor: pointer;
-                -webkit-tap-highlight-color: transparent !important;
+                -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
                 touch-action: manipulation;
             }
 
@@ -907,7 +930,7 @@
                 <h2 class="section-title" data-reveal>About Me</h2>
                 <div class="about-main">
                     <div class="about-text-block" data-reveal>
-                        <p class="intro-paragraph">I enjoy working with technology and finding solutions to technical problems that help systems run more effectively. I\'m naturally curious and like learning how different systems fit together, which allows me to approach issues carefully and logically. I pay close attention to detail and take pride in doing my work properly and reliably.</p>
+                        <p class="intro-paragraph">I enjoy working with technology and finding solutions to technical problems that help systems run more effectively. I'm naturally curious and like learning how different systems fit together, which allows me to approach issues carefully and logically. I pay close attention to detail and take pride in doing my work properly and reliably.</p>
                         <p class="intro-paragraph">I also enjoy working through more challenging technical problems and taking the time to understand new technologies as they come up. I see learning as an ongoing process and aim to continually improve my skills by thinking problems through and building practical experience.</p>
                     </div>
                     <div class="about-features" data-reveal>
@@ -958,7 +981,8 @@
         <section class="tv-palette-section" id="tvPaletteSection">
             <div class="tv-palette-inner">
                 <div class="tv-stage" id="tvStage">
-                    <div>
+                    <!-- id="tvStageInner" added to fix yellow tap highlight on mobile -->
+                    <div id="tvStageInner">
                         <div class="tv-wrap" id="tvWrap" role="button" tabindex="0" aria-label="Click to power on the TV">
                             <div class="tv-glow-ring" id="tvGlowRing"></div>
                             <div class="tv-body">
