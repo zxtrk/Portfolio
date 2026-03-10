@@ -1413,21 +1413,20 @@ body.dark-mode .main-footer { background-color: #111111; }
         padding: 1.5rem 0 !important;
     }
     .tv-body {
-        width: 100% !important;
-        max-width: 360px !important;
-        margin: 0 auto !important;
-    }
-    .tv-bezel {
-        padding: 12px !important;
-        margin-bottom: 12px !important;
-    }
-    .tv-screen {
-        aspect-ratio: 4/3 !important;
-        background: #050302 !important;
+        width: 320px !important;
     }
     .tv-text-side {
         width: 100% !important;
         text-align: center !important;
+    }
+    .tv-grain {
+        display: none !important;
+    }
+    .tv-screen::after {
+        background: transparent !important;
+    }
+    .tv-scanlines {
+        opacity: 0.05 !important;
     }
     .section-title { font-size: clamp(2rem, 8vw, 2.8rem) !important; margin-bottom: 0.875rem !important; }
     .about-main { gap: 1rem !important; margin-bottom: 1rem !important; }
