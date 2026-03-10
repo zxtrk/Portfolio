@@ -840,19 +840,9 @@
                 animation: tvHintPulse 1.5s ease-in-out infinite;
             }
 
-            /* Remove mobile-specific TV styling to use desktop version */
+            /* Hide TV section completely on mobile devices */
             @media (max-width: 900px) {
-                .tv-palette-inner { grid-template-columns: 1fr; gap: 2.5rem; }
-                .tv-stage { min-height: 380px; }
-                /* Use desktop TV styling - remove mobile-specific transforms and sizing */
-                .tv-body { width: 440px; }
-                .tv-wrap { transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg); }
-                .tv-text-side { text-align: center; }
-                .tv-eyebrow { justify-content: center; }
-                .tv-body-text { max-width: 100%; margin: 0 auto 2rem; }
-                .tv-features { align-items: flex-start; max-width: 400px; margin: 0 auto 2rem; }
-                .tv-preview-strip { max-width: 400px; margin: 0 auto; }
-                .tv-now-showing { justify-content: center; }
+                .tv-palette-section { display: none !important; }
             }
 
             @media (max-width: 600px) {
@@ -1071,102 +1061,6 @@
                     <p class="lock-sub">New projects are being prepared.<br>Check back soon.</p>
                     <div class="lock-divider"></div>
                     <p class="lock-status"><span class="lock-dot-indicator"></span>Currently Updating</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- TV PALETTE SECTION -->
-        <section class="tv-palette-section" id="tvPaletteSection">
-            <div class="tv-palette-inner">
-                <div class="tv-stage" id="tvStage">
-                    <div id="tvStageInner">
-                        <div class="tv-wrap" id="tvWrap" role="button" tabindex="0" aria-label="Click to power on the TV">
-                            <div class="tv-glow-ring" id="tvGlowRing"></div>
-                            <div class="tv-body">
-                                <div class="tv-grain"></div>
-                                <div class="tv-bezel">
-                                    <div class="tv-screen" id="tvScreen">
-                                        <canvas class="tv-noise-canvas" id="tvNoiseCanvas"></canvas>
-                                        <div class="tv-scanlines"></div>
-                                        <div class="tv-boot-line" id="tvBootLine"></div>
-                                        <div class="tv-screen-content" id="tvOffState">
-                                            <div class="tv-off-dot" id="tvOffDot"></div>
-                                        </div>
-                                        <div class="tv-loading" id="tvLoading">
-                                            <div class="tv-load-text" id="tvLoadText">INITIALIZING...</div>
-                                            <div class="tv-load-bar-wrap">
-                                                <div class="tv-load-bar" id="tvLoadBar"></div>
-                                            </div>
-                                        </div>
-                                        <div class="tv-palette-display" id="tvPaletteDisplay">
-                                            <div class="tv-palette-name" id="tvPaletteName">PALETTE NAME</div>
-                                            <div class="tv-swatches" id="tvSwatches">
-                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
-                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
-                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
-                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
-                                                <div class="tv-swatch"><span class="tv-swatch-hex"></span></div>
-                                            </div>
-                                        </div>
-                                        <div class="tv-channel-tag" id="tvChannelTag">CH 01</div>
-                                        <div class="tv-status-bar" id="tvStatusBar">
-                                            <span id="tvStatusName">PETRICHOR</span>
-                                            <span id="tvStatusHex">#1A1814</span>
-                                        </div>
-                                        <div class="tv-screen-glow" id="tvScreenGlow"></div>
-                                    </div>
-                                </div>
-                                <div class="tv-controls">
-                                    <div class="tv-brand">PETRICHOR</div>
-                                    <div class="tv-ctrl-right">
-                                        <div class="tv-on-air" id="tvOnAir">
-                                            <div class="tv-on-air-dot" id="tvOnAirDot"></div>
-                                            ON AIR
-                                        </div>
-                                        <div class="tv-knob"></div>
-                                        <div class="tv-knob"></div>
-                                    </div>
-                                </div>
-                                <div class="tv-channels" id="tvChannelDots">
-                                    <div class="tv-ch-dot active" data-ch="0"></div>
-                                    <div class="tv-ch-dot" data-ch="1"></div>
-                                    <div class="tv-ch-dot" data-ch="2"></div>
-                                    <div class="tv-ch-dot" data-ch="3"></div>
-                                    <div class="tv-ch-dot" data-ch="4"></div>
-                                    <div class="tv-ch-dot" data-ch="5"></div>
-                                    <div class="tv-ch-dot" data-ch="6"></div>
-                                    <div class="tv-ch-dot" data-ch="7"></div>
-                                </div>
-                            </div>
-                            <div class="tv-legs">
-                                <div class="tv-leg"></div>
-                                <div class="tv-leg"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tv-text-side" id="tvTextSide">
-                    <div class="tv-eyebrow">Colour Explorer</div>
-                    <h2 class="tv-heading">Your next palette,<br><em>broadcast live.</em></h2>
-                    <p class="tv-body-text">This old set doesn't just sit there collecting dust — power it on and it tunes into a rotating signal of handcrafted colour palettes, each with a name and a mood. Every channel is a different world.</p>
-                    <div class="tv-features">
-                        <div class="tv-feature"><div class="tv-feature-icon">&#x25C8;</div><span>Each palette is named — <em>Petrichor, Dusk Wire, Ember Static</em> and more. Real colour stories, not random noise.</span></div>
-                        <div class="tv-feature"><div class="tv-feature-icon">&#x21BB;</div><span>The TV cycles through palettes automatically. Or click it again to skip to the next one.</span></div>
-                        <div class="tv-feature"><div class="tv-feature-icon">&#x25A6;</div><span>Five swatches per palette with HEX codes &#x2014; ready to use in your next project.</span></div>
-                    </div>
-                    <div class="tv-preview-strip" id="tvPreviewStrip">
-                        <span class="tv-preview-label">Live</span>
-                        <div class="tv-preview-swatch" id="tvPs0"></div>
-                        <div class="tv-preview-swatch" id="tvPs1"></div>
-                        <div class="tv-preview-swatch" id="tvPs2"></div>
-                        <div class="tv-preview-swatch" id="tvPs3"></div>
-                        <div class="tv-preview-swatch" id="tvPs4"></div>
-                    </div>
-                    <div class="tv-now-showing" id="tvNowShowing">
-                        <div class="tv-now-dot"></div>
-                        <span id="tvNowName">&#x2014; power off &#x2014;</span>
-                    </div>
                 </div>
             </div>
         </section>
