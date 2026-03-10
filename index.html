@@ -21,7 +21,11 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js"></script>
 
+        <!-- Desktop styles -->
         <link rel="stylesheet" href="style.css" />
+        <!-- Mobile / responsive overrides — edit mobile.css to change phone layout -->
+        <link rel="stylesheet" href="mobile.css" />
+
         <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 
@@ -60,17 +64,6 @@
             @keyframes statusPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.7); } }
             .hero-meta-item { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); opacity: 0.45; }
 
-            @media (max-width: 768px) {
-                .hero { padding: 1.5rem 1.25rem; padding-top: 110px !important; min-height: auto !important; }
-                .hero-layout { align-items: center; text-align: center; }
-                .hero-label { text-align: center; margin-bottom: 0.875rem; font-size: 10px; }
-                .hero-name-block { width: 100%; text-align: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; }
-                .hero-title { font-size: clamp(2.4rem, 11vw, 3.4rem) !important; text-align: center !important; line-height: 1.05 !important; }
-                .hero-info-row { flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
-                .hero-info-left { align-items: center; gap: 0.3rem; }
-                .hero-info-right { align-items: center; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 0.875rem; }
-            }
-
             .loader-screen { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--color-bg); }
             body.dark-mode .loader-screen { background: #111111; }
             .loader-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(193,122,90,0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 60% at 70% 60%, rgba(122,142,126,0.05) 0%, transparent 70%); }
@@ -105,15 +98,6 @@
             @keyframes loaderFadeIn { to { opacity: 1; } }
             .loader-exit { animation: loaderExit 0.85s cubic-bezier(0.77,0,0.175,1) forwards !important; pointer-events: none; }
             @keyframes loaderExit { 0% { opacity:1; } 100% { opacity:0; } }
-            @media (max-width: 480px) {
-                .loader-corner--tl, .loader-corner--tr { top: 20px; }
-                .loader-corner--bl, .loader-corner--br { bottom: 20px; }
-                .loader-corner--tl, .loader-corner--bl { left: 20px; }
-                .loader-corner--tr, .loader-corner--br { right: 20px; }
-                .loader-bottom { padding: 0 38px; bottom: 36px; }
-                .loader-monogram-wrap { width: 88px; height: 88px; margin-bottom: 1.4rem; }
-                .loader-monogram { font-size: 1.6rem; }
-            }
 
             .section-lock-overlay { display: none; }
             #about.is-locked, #projects.is-locked, #contact.is-locked { overflow: hidden; }
@@ -152,7 +136,6 @@
             .quote-author { font-size: 18px; color: var(--color-accent); font-weight: 600; margin-bottom: var(--spacing-sm); letter-spacing: 0.05em; }
             .quote-tag { display: inline-block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-secondary); padding: 6px 16px; border: 1px solid var(--color-border); border-radius: 20px; margin-top: var(--spacing-md); background: rgba(255,255,255,0.3); }
             body.dark-mode .quote-tag { background: rgba(255,255,255,0.04); }
-            @media (max-width: 768px) { .quote-section { padding: 1.5rem 1.25rem; } .quote-content { padding: 1.25rem; } .quote-icon { font-size: 80px; margin-bottom: -30px; } .quote-text { font-size: clamp(1.3rem,5vw,1.9rem); padding: 0; } .quote-author { font-size: 16px; } }
 
             @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
             @keyframes revealText { to { opacity: 1; transform: translateY(0); } }
@@ -838,27 +821,6 @@
                 animation: tvHintPulse 1.5s ease-in-out infinite;
             }
 
-            @media (max-width: 900px) {
-                .tv-palette-inner { grid-template-columns: 1fr; gap: 2.5rem; }
-                .tv-stage { min-height: 300px; }
-                .tv-body { width: 320px; }
-                .tv-wrap { transform: rotateY(-10deg) rotateX(4deg) rotateZ(2deg); }
-                .tv-text-side { text-align: center; }
-                .tv-eyebrow { justify-content: center; }
-                .tv-body-text { max-width: 100%; margin: 0 auto 2rem; }
-                .tv-features { align-items: flex-start; max-width: 400px; margin: 0 auto 2rem; }
-                .tv-preview-strip { max-width: 400px; margin: 0 auto; }
-                .tv-now-showing { justify-content: center; }
-            }
-
-            @media (max-width: 600px) {
-                .tv-body { width: 270px; }
-                .tv-stage { perspective: 600px; }
-                .tv-swatch { height: 50px; margin-bottom: 22px; }
-                .tv-swatch-hex { font-size: 8px; }
-                .tv-palette-name { font-size: 13px; }
-            }
-
             .tv-noise-canvas {
                 position: absolute;
                 top: 0; left: 0;
@@ -882,7 +844,6 @@
                 z-index: -2;
                 filter: blur(20px);
             }
-
         </style>
 
         <script>
@@ -1223,10 +1184,10 @@
             </div>
         </footer>
 
-        <script src="config.js"></script>
-        <script src="script.js"></script>
-        <script src="weather-effects.js"></script>
-        <script src="tv.js"></script>
+        <script src="j-scripts/config.js"></script>
+        <script src="j-scripts/script.js"></script>
+        <script src="j-scripts/weather-effects.js"></script>
+        <script src="j-scripts/tv.js"></script>
 
         <!-- Desktop nav light-switch physics -->
         <script>
