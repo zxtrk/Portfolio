@@ -58,72 +58,44 @@
     const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i + 'Mobile'));
 
     /* ══════════════════════════════════════════════════════════
-       TOUCH HIGHLIGHT FIX v4
+       TOUCH HIGHLIGHT FIX v5
 
-       Root cause: the previous overlay was appended to
-       tvStage/tvStageInner which is a flex-row containing BOTH
-       the TV card AND the text side. The overlay therefore
-       covered the text side too, causing layout/interaction
-       issues — but worse, it wasn't sized correctly over the TV.
-
-       Correct approach:
-       - Append overlay directly inside tvWrap.
-       - Set tvWrap { position:relative } so the overlay's
-         position:absolute covers exactly tvWrap's bounding box.
-       - tvWrap already wraps only the TV card, nothing else.
-       - preventDefault on every touchstart/touchend kills the
-         yellow highlight at the earliest possible moment.
+       Fixed yellow overlay issue:
+       - Remove the transparent overlay that was causing visual artifacts
+       - Apply touch prevention directly to TV elements
+       - Use CSS properties to prevent highlights
+       - Keep JavaScript touch handling for functionality
     ══════════════════════════════════════════════════════════ */
 
     function _createTouchOverlay() {
-        // Ensure tvWrap is a positioning context
-        tvWrap.style.position = 'relative';
+        // Apply touch prevention directly to TV elements instead of overlay
+        tvWrap.style.webkitTapHighlightColor = 'transparent';
+        tvWrap.style.tapHighlightColor = 'transparent';
+        tvWrap.style.touchAction = 'manipulation';
+        tvWrap.style.userSelect = 'none';
+        tvWrap.style.webkitUserSelect = 'none';
 
-        const overlay = document.createElement('div');
-        overlay.id = 'tvTouchOverlayMobile';
-        overlay.style.cssText = [
-            'position:absolute',
-            'inset:0',
-            'z-index:99999',
-            'background:transparent',
-            '-webkit-tap-highlight-color:transparent',
-            'tap-highlight-color:transparent',
-            'touch-action:manipulation',
-            'user-select:none',
-            '-webkit-user-select:none',
-            'cursor:pointer',
-            'pointer-events:auto',
-            'opacity:0',
-        ].join(';');
+        // Also apply to the TV screen to ensure no yellow highlight
+        if (tvScreen) {
+            tvScreen.style.webkitTapHighlightColor = 'transparent';
+            tvScreen.style.tapHighlightColor = 'transparent';
+            tvScreen.style.touchAction = 'manipulation';
+            tvScreen.style.userSelect = 'none';
+            tvScreen.style.webkitUserSelect = 'none';
+        }
 
-        // Append inside tvWrap — covers only the TV card
-        tvWrap.appendChild(overlay);
+        // Belt-and-suspenders: kill touchstart on tvWrap itself too
+        tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
+        tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
 
-        // preventDefault on touchstart is the critical step:
-        // it stops WebKit from painting the yellow highlight
-        // before JavaScript even runs.
-        overlay.addEventListener('touchstart', e => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, { passive: false });
+        // Desktop fallback click on tvWrap
+        tvWrap.addEventListener('click', () => _handleTap());
 
-        overlay.addEventListener('touchend', e => {
-            e.preventDefault();
-            e.stopPropagation();
-            _handleTap();
-        }, { passive: false });
-
-        overlay.addEventListener('touchcancel', e => {
-            e.preventDefault();
-        }, { passive: false });
-
-        // Desktop click
-        overlay.addEventListener('click', e => {
-            e.preventDefault();
-            _handleTap();
+        tvWrap.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
         });
 
-        return overlay;
+        return null; // No overlay needed
     }
 
     function _handleTap() {

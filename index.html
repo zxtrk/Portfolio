@@ -840,7 +840,10 @@
                 animation: tvHintPulse 1.5s ease-in-out infinite;
             }
 
-            /* Hide TV section completely on mobile devices */
+            /* Show TV section on desktop, hide on mobile */
+            @media (min-width: 901px) {
+                .tv-palette-section { display: block; }
+            }
             @media (max-width: 900px) {
                 .tv-palette-section { display: none !important; }
             }
