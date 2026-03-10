@@ -17,13 +17,16 @@
             --font-display: 'Playwrite NZ', cursive;
             --font-mono: 'IBM Plex Mono', monospace;
         }
-        body.dark-mode {
-            --color-bg: #111111;
-            --color-text: #ede9e3;
-            --color-accent: #d89077;
-            --color-secondary: #8fa092;
-            --color-light: #1a1a1a;
-            --color-border: rgba(237, 233, 227, 0.08);
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #111111;
+                --color-text: #ede9e3;
+                --color-accent: #d89077;
+                --color-secondary: #8fa092;
+                --color-light: #1a1a1a;
+                --color-border: rgba(237, 233, 227, 0.08);
+            }
         }
 
         *, *::before, *::after {
@@ -39,7 +42,6 @@
             font-family: var(--font-mono);
             color: var(--color-text);
             background-color: var(--color-bg);
-            transition: background-color 0.3s ease, color 0.3s ease;
             position: relative;
         }
 
@@ -49,12 +51,16 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             opacity: 0.025; pointer-events: none; z-index: 9999;
         }
-        body.dark-mode .grain { opacity: 0.04; }
+        @media (prefers-color-scheme: dark) {
+            .grain { opacity: 0.04; }
+        }
 
         /* ── SHAPES ── */
         .shapes { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
         .shape { position: absolute; opacity: 0.07; animation: shapeFloat 24s ease-in-out infinite; will-change: transform; }
-        body.dark-mode .shape { opacity: 0.035; }
+        @media (prefers-color-scheme: dark) {
+            .shape { opacity: 0.035; }
+        }
         .shape-1 {
             width: 320px; height: 320px;
             background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
@@ -89,50 +95,6 @@
         .corner--bl { bottom: 22px; left: 22px; border-width: 0 0 1.5px 1.5px; animation-delay: 0.3s; }
         .corner--br { bottom: 22px; right: 22px; border-width: 0 1.5px 1.5px 0; animation-delay: 0.38s; }
         @keyframes cornerFadeIn { to { opacity: 0.38; } }
-
-        /* ── NAV ── */
-        nav {
-            position: fixed; top: 0; left: 0; width: 100%;
-            padding: 1.4rem 2.5rem;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 100;
-            background: linear-gradient(180deg, var(--color-bg) 0%, transparent 100%);
-        }
-        .nav-logo {
-            font-family: var(--font-display); font-size: 22px; font-weight: 400;
-            color: var(--color-text); text-decoration: none; letter-spacing: -0.02em;
-            opacity: 0; animation: fadeInDown 0.55s ease 0.25s forwards;
-            transition: color 0.3s ease;
-        }
-        .nav-logo:hover { color: var(--color-accent); }
-
-        /* ── LIGHT SWITCH ── */
-        .nav-ls-outer { opacity: 0; animation: fadeInDown 0.55s ease 0.35s forwards; display: flex; align-items: center; }
-        .nav-ls-container { position: relative; width: 116px; height: 54px; flex-shrink: 0; }
-        .nav-ls-rope-svg { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); pointer-events: none; overflow: visible; z-index: 5; }
-        .nav-ls-btn {
-            position: absolute; inset: 0;
-            background: color-mix(in srgb, var(--color-secondary) 22%, transparent);
-            border: 1.5px solid color-mix(in srgb, var(--color-secondary) 38%, transparent);
-            border-radius: 999px; padding: 6px; cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            transition: background 0.4s ease, border-color 0.4s ease;
-        }
-        .nav-ls-btn.ls-is-light {
-            background: color-mix(in srgb, var(--color-accent) 20%, transparent);
-            border-color: color-mix(in srgb, var(--color-accent) 42%, transparent);
-        }
-        .nav-ls-knob { width: 42px; height: 42px; position: relative; will-change: transform; border-radius: 999px; overflow: hidden; }
-        .nav-ls-top {
-            background-color: var(--color-secondary); border-radius: 999px;
-            position: absolute; inset: 0; transition: background-color 0.4s ease; opacity: 0.7;
-        }
-        .nav-ls-btn.ls-is-light .nav-ls-top { background-color: var(--color-accent); opacity: 1; }
-        .nav-ls-shine {
-            position: absolute; inset: 3px; border-radius: 999px;
-            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.28) 0%, transparent 65%);
-            pointer-events: none;
-        }
 
         /* ── MAIN ── */
         main {
@@ -249,11 +211,9 @@
         /* ── BASE ANIMATIONS ── */
         @keyframes fadeIn    { to { opacity: 1; } }
         @keyframes fadeInUp  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes fadeInDown{ from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
         /* ── MOBILE ── */
         @media (max-width: 600px) {
-            nav { padding: 1rem 1.25rem; }
             .corner--tl, .corner--tr { top: 14px; }
             .corner--bl, .corner--br { bottom: 14px; }
             .corner--tl, .corner--bl { left: 14px; }
@@ -261,8 +221,6 @@
             .error-desc { font-size: 12px; max-width: 290px; }
             .status-bar { padding: 0 1.25rem; bottom: 18px; font-size: 9px; }
             .btn { padding: 0.65rem 1.2rem; font-size: 10px; }
-            .nav-ls-container { width: 90px; height: 42px; }
-            .nav-ls-knob { width: 32px; height: 32px; }
         }
     </style>
 </head>
@@ -283,37 +241,6 @@
     <div class="corner corner--tr"></div>
     <div class="corner corner--bl"></div>
     <div class="corner corner--br"></div>
-
-    <nav>
-        <a href="/" class="nav-logo">AJ</a>
-
-        <div class="nav-ls-outer">
-            <div class="nav-ls-container">
-                <svg id="navLsRopeSvg" class="nav-ls-rope-svg"
-                     width="40" height="100" viewBox="0 0 40 100"
-                     fill="none" style="overflow:visible;"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <path id="ls-rope"
-                          d="M20 0 Q20 30 20 60"
-                          stroke="var(--color-secondary)"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          opacity="0.6"/>
-                    <g id="ls-rope-end">
-                        <path d="M-6 4 Q-6 0 0 0 Q6 0 6 4 L4 20 Q0 25 -4 20 Z"
-                              fill="var(--color-accent)" opacity="0.9"/>
-                    </g>
-                </svg>
-
-                <button class="nav-ls-btn" id="navLsBtn" type="button" aria-label="Toggle dark mode">
-                    <div class="nav-ls-knob" id="navLsKnob">
-                        <div class="nav-ls-top" id="navLsTop"></div>
-                        <div class="nav-ls-shine"></div>
-                    </div>
-                </button>
-            </div>
-        </div>
-    </nav>
 
     <main>
         <div class="eyebrow">Error</div>
@@ -350,131 +277,6 @@
     <script>
     (function() {
         'use strict';
-
-        // ── DARK MODE INIT ──
-        const body = document.body;
-        const saved = localStorage.getItem('darkMode');
-        if (saved === 'true' || (saved === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            body.classList.add('dark-mode');
-        }
-
-        // ── LIGHT SWITCH PHYSICS ──
-        const btn    = document.getElementById('navLsBtn');
-        const knob   = document.getElementById('navLsKnob');
-        const ropeEl = document.getElementById('ls-rope');
-        const tabEl  = document.getElementById('ls-rope-end');
-
-        const AX = 20, AY = 0, REST_LEN = 60, PULL_EXTRA = 26;
-        const V_STIFF = 240, V_DAMP = 11;
-        const P_OMEGA = 7.8, P_ZETA = 0.22;
-
-        const stretch = { pos: 0, vel: 0, target: 0 };
-        const pend    = { angle: 0, vel: 0 };
-
-        let isDown = false, toggled = false;
-        let rafId = null, lastTs = null;
-        let pendDir = 1;
-
-        function syncKnob() {
-            const isDark = body.classList.contains('dark-mode');
-            const targetX = isDark ? 0 : 62;
-            btn.classList.toggle('ls-is-light', !isDark);
-            knob.style.transform = 'translateX(' + targetX + 'px)';
-        }
-
-        function renderRope() {
-            const ropeLen = REST_LEN + stretch.pos * PULL_EXTRA;
-            const endX = AX + Math.sin(pend.angle) * ropeLen;
-            const endY = AY + Math.cos(pend.angle) * ropeLen;
-            const midX = (AX + endX) * 0.5;
-            const midY = (AY + endY) * 0.5;
-            const ctrlX = midX + (-pend.vel * 4.5);
-            const ctrlY = midY + (stretch.pos * 6);
-            if (ropeEl) ropeEl.setAttribute('d',
-                'M' + AX + ' ' + AY +
-                ' Q' + ctrlX.toFixed(2) + ' ' + ctrlY.toFixed(2) +
-                ' ' + endX.toFixed(2) + ' ' + endY.toFixed(2));
-            if (tabEl) {
-                const deg = (pend.angle * 180 / Math.PI).toFixed(2);
-                tabEl.setAttribute('transform',
-                    'translate(' + endX.toFixed(2) + ',' + endY.toFixed(2) + ')' +
-                    ' rotate(' + deg + ',0,0)');
-            }
-        }
-
-        function tick(ts) {
-            if (lastTs === null) lastTs = ts;
-            const dt = Math.min((ts - lastTs) / 1000, 0.048);
-            lastTs = ts;
-
-            const vF = -V_STIFF * (stretch.pos - stretch.target) - V_DAMP * stretch.vel;
-            stretch.vel += vF * dt;
-            stretch.pos += stretch.vel * dt;
-
-            const pA = -(P_OMEGA * P_OMEGA) * pend.angle - 2 * P_ZETA * P_OMEGA * pend.vel;
-            pend.vel += pA * dt;
-            pend.angle += pend.vel * dt;
-
-            renderRope();
-
-            const vS = Math.abs(stretch.pos - stretch.target) < 0.0015 && Math.abs(stretch.vel) < 0.015;
-            const pS = Math.abs(pend.angle) < 0.0008 && Math.abs(pend.vel) < 0.005;
-            if (vS && pS) {
-                stretch.pos = stretch.target; stretch.vel = 0;
-                pend.angle = 0; pend.vel = 0;
-                renderRope(); rafId = null; lastTs = null;
-            } else {
-                rafId = requestAnimationFrame(tick);
-            }
-        }
-
-        function startAnim() {
-            if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
-            lastTs = null;
-            rafId = requestAnimationFrame(tick);
-        }
-
-        function onDown() {
-            if (isDown) return;
-            isDown = true; toggled = false;
-            stretch.target = 1.0;
-            startAnim();
-        }
-
-        function onUp() {
-            if (!isDown) return;
-            isDown = false;
-            stretch.target = 0;
-            stretch.vel -= 15;
-            pendDir = -pendDir;
-            pend.vel = pendDir * 3.6;
-            startAnim();
-            if (!toggled) {
-                toggled = true;
-                body.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', body.classList.contains('dark-mode').toString());
-                syncKnob();
-            }
-        }
-
-        function onCancel() {
-            if (!isDown) return;
-            isDown = false;
-            stretch.target = 0;
-            stretch.vel -= 5;
-            startAnim();
-        }
-
-        btn.addEventListener('mousedown',  onDown);
-        btn.addEventListener('mouseup',    onUp);
-        btn.addEventListener('mouseleave', onCancel);
-        btn.addEventListener('touchstart',  function(e) { e.preventDefault(); onDown(); },   { passive: false });
-        btn.addEventListener('touchend',    function(e) { e.preventDefault(); onUp(); },     { passive: false });
-        btn.addEventListener('touchcancel', function(e) { e.preventDefault(); onCancel(); }, { passive: false });
-
-        syncKnob();
-        renderRope();
-
         // ── PARALLAX SHAPES ──
         if (window.innerWidth > 768) {
             document.addEventListener('mousemove', function(e) {
