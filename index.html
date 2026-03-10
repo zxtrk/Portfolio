@@ -845,6 +845,675 @@
                 .tv-palette-section { display: none !important; }
             }
 
+            /* ═══════════════════════════════════════════════════════════════
+               MOBILE TV COLOUR PALETTE SECTION
+            ═══════════════════════════════════════════════════════════════ */
+
+            .tv-palette-section-mobile {
+                padding: var(--spacing-xl) var(--spacing-lg);
+                position: relative;
+                overflow: hidden;
+                display: none; /* Hidden by default, shown on mobile */
+            }
+
+            /* Show mobile TV section on mobile devices */
+            @media (max-width: 900px) {
+                .tv-palette-section-mobile { display: block; }
+                .tv-palette-section { display: none !important; }
+            }
+
+            .tv-palette-inner-mobile {
+                max-width: 100%;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+                align-items: center;
+            }
+
+            .tv-stage-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                perspective: 800px;
+                min-height: 320px;
+                position: relative;
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .tv-wrap-mobile {
+                transform: rotateY(-15deg) rotateX(8deg) rotateZ(2deg);
+                transform-style: preserve-3d;
+                filter: drop-shadow(30px 25px 50px rgba(0,0,0,0.45)) drop-shadow(6px 6px 16px rgba(0,0,0,0.3));
+                cursor: pointer;
+                transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+                outline: none;
+                width: 100%;
+                max-width: 360px;
+            }
+
+            .tv-wrap-mobile:active {
+                transform: rotateY(-15deg) rotateX(8deg) rotateZ(2deg) scale(0.98);
+            }
+
+            .tv-body-mobile {
+                width: 100%;
+                background: linear-gradient(160deg, #4a3a2a 0%, #2e2318 40%, #1e1610 70%, #2a1e14 100%);
+                border-radius: 18px 18px 24px 24px;
+                padding: 18px 18px 22px;
+                position: relative;
+                border: 2px solid #5a4530;
+                box-shadow:
+                    inset 0 2px 4px rgba(255,200,120,0.08),
+                    inset 0 -4px 12px rgba(0,0,0,0.5),
+                    4px 0 0 #1a1208,
+                    8px 4px 0 #110d07,
+                    0 6px 0 #1a1208,
+                    0 12px 6px #0d0908;
+                transform-style: preserve-3d;
+            }
+
+            .tv-body-mobile::before {
+                content: '';
+                position: absolute;
+                top: 2px; right: -8px;
+                width: 8px;
+                height: calc(100% - 4px);
+                background: linear-gradient(to bottom, #1a1208, #0d0908 50%, #1a1208);
+                border-radius: 0 6px 6px 0;
+                transform: rotateY(90deg) translateZ(-4px);
+                clip-path: polygon(0 0, 100% 8px, 100% calc(100% - 8px), 0 100%);
+            }
+
+            .tv-body-mobile::after {
+                content: '';
+                position: absolute;
+                bottom: -8px; left: 2px;
+                width: calc(100% - 4px);
+                height: 8px;
+                background: linear-gradient(to right, #1a1208, #0d0908 50%, #1a1208);
+                border-radius: 0 0 8px 8px;
+                clip-path: polygon(4px 0, calc(100% - 4px) 0, 100% 100%, 0 100%);
+            }
+
+            .tv-grain-mobile {
+                position: absolute;
+                inset: 0;
+                border-radius: 18px 18px 24px 24px;
+                background: repeating-linear-gradient(
+                    175deg,
+                    transparent 0px,
+                    transparent 4px,
+                    rgba(255,180,80,0.015) 4px,
+                    rgba(255,180,80,0.015) 5px
+                );
+                pointer-events: none;
+            }
+
+            .tv-bezel-mobile {
+                background: linear-gradient(145deg, #1a1410 0%, #0d0a08 60%, #1a1410 100%);
+                border-radius: 10px;
+                padding: 12px;
+                margin-bottom: 12px;
+                position: relative;
+                border: 1px solid rgba(100,70,40,0.3);
+                box-shadow:
+                    inset 0 0 30px rgba(0,0,0,0.8),
+                    inset 0 2px 4px rgba(0,0,0,0.6),
+                    0 2px 4px rgba(255,180,80,0.06);
+            }
+
+            .tv-screen-mobile {
+                width: 100%;
+                aspect-ratio: 4/3;
+                border-radius: 6px;
+                background: #050302;
+                position: relative;
+                overflow: hidden;
+                border: 1px solid #000;
+                box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+            }
+
+            .tv-screen-mobile::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(ellipse 90% 85% at 50% 50%, transparent 60%, rgba(0,0,0,0.65) 100%);
+                pointer-events: none;
+                z-index: 10;
+                border-radius: 6px;
+            }
+
+            .tv-scanlines-mobile {
+                position: absolute;
+                inset: 0;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.15) 2px,
+                    rgba(0,0,0,0.15) 4px
+                );
+                pointer-events: none;
+                z-index: 8;
+                border-radius: 6px;
+            }
+
+            .tv-screen-glow-mobile {
+                position: absolute;
+                inset: -20px;
+                border-radius: 50%;
+                background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(120,200,160,0.0), transparent 70%);
+                pointer-events: none;
+                z-index: -1;
+                transition: background 1.2s ease;
+            }
+
+            .tv-screen-content-mobile {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 5;
+            }
+
+            .tv-off-dot-mobile {
+                width: 2px;
+                height: 2px;
+                background: rgba(255,255,255,0.15);
+                border-radius: 50%;
+                box-shadow: 0 0 8px rgba(255,255,255,0.1);
+                transition: all 0.3s ease;
+            }
+
+            .tv-channel-tag-mobile {
+                position: absolute;
+                top: 8px; left: 10px;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 10px;
+                color: rgba(255,255,255,0.0);
+                letter-spacing: 0.10em;
+                z-index: 9;
+                transition: color 0.4s ease, opacity 0.3s ease;
+                text-shadow: 0 0 8px currentColor;
+                pointer-events: none;
+            }
+
+            .tv-status-bar-mobile {
+                position: absolute;
+                bottom: 10px; left: 12px; right: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 11px;
+                color: rgba(255,255,255,0.0);
+                letter-spacing: 0.1em;
+                z-index: 9;
+                transition: color 0.4s ease, opacity 0.3s ease;
+                text-shadow: 0 0 6px rgba(0,0,0,0.8);
+            }
+
+            .tv-palette-display-mobile {
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                z-index: 6;
+                opacity: 0;
+                transition: opacity 0.6s ease;
+                padding: 24px 16px 28px;
+            }
+
+            .tv-palette-name-mobile {
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 14px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: rgba(255,255,255,0.95);
+                text-shadow: 0 0 16px rgba(255,255,255,0.6), 0 0 32px rgba(255,255,255,0.2);
+                text-align: center;
+                margin-bottom: 6px;
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+
+            .tv-swatches-mobile {
+                display: flex;
+                gap: 6px;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .tv-swatch-mobile {
+                flex: 1;
+                max-width: 52px;
+                height: 52px;
+                border-radius: 4px;
+                position: relative;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+                transition: all 0.5s cubic-bezier(0.22,1,0.36,1);
+                margin-bottom: 20px;
+                min-width: 42px;
+            }
+
+            .tv-swatch-hex-mobile {
+                position: absolute;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 8px;
+                color: rgba(255,255,255,0.75);
+                white-space: nowrap;
+                letter-spacing: 0.04em;
+                text-shadow: 0 0 6px rgba(0,0,0,0.8);
+            }
+
+            .tv-loading-mobile {
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 10px;
+                z-index: 7;
+                opacity: 0;
+                pointer-events: none;
+                overflow: hidden;
+                transition: opacity 0.4s ease;
+            }
+
+            .tv-load-bar-wrap-mobile {
+                width: 60%;
+                height: 3px;
+                background: rgba(255,255,255,0.08);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .tv-load-bar-mobile {
+                height: 100%;
+                width: 0%;
+                background: rgba(255,255,255,0.7);
+                border-radius: 2px;
+                box-shadow: 0 0 8px rgba(255,255,255,0.5);
+            }
+
+            .tv-load-text-mobile {
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 9px;
+                color: rgba(255,255,255,0.6);
+                letter-spacing: 0.2em;
+                text-align: center;
+            }
+
+            .tv-static-mobile {
+                position: absolute;
+                inset: 0;
+                z-index: 6;
+                opacity: 0;
+                pointer-events: none;
+                border-radius: 6px;
+            }
+
+            .tv-boot-line-mobile {
+                position: absolute;
+                left: 0; right: 0;
+                height: 2px;
+                background: rgba(255,255,255,0.8);
+                box-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.3);
+                z-index: 7;
+                top: 50%;
+                transform: scaleY(0);
+                pointer-events: none;
+            }
+
+            .tv-controls-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 6px;
+            }
+
+            .tv-brand-mobile {
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 9px;
+                letter-spacing: 0.25em;
+                text-transform: uppercase;
+                color: rgba(180,140,90,0.6);
+            }
+
+            .tv-ctrl-right-mobile {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .tv-on-air-mobile {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 8px;
+                letter-spacing: 0.12em;
+                color: rgba(180,80,80,0.0);
+                transition: color 0.5s ease;
+            }
+
+            .tv-on-air-dot-mobile {
+                width: 4px; height: 4px;
+                border-radius: 50%;
+                background: rgba(200,80,80,0.0);
+                transition: background 0.5s ease, box-shadow 0.5s ease;
+            }
+
+            .tv-knob-mobile {
+                width: 18px; height: 18px;
+                border-radius: 50%;
+                background: radial-gradient(circle at 35% 35%, #5a4a38, #2a1e14);
+                border: 1.5px solid #3a2a1a;
+                box-shadow:
+                    inset 0 1px 3px rgba(255,180,80,0.12),
+                    0 2px 4px rgba(0,0,0,0.5);
+                position: relative;
+                cursor: default;
+            }
+
+            .tv-knob-mobile::after {
+                content: '';
+                position: absolute;
+                top: 3px; left: 50%;
+                transform: translateX(-50%);
+                width: 2px; height: 6px;
+                background: rgba(255,180,80,0.3);
+                border-radius: 1px;
+            }
+
+            .tv-channels-mobile {
+                display: flex;
+                gap: 4px;
+                margin-top: 6px;
+                justify-content: center;
+            }
+
+            .tv-ch-dot-mobile {
+                width: 7px; height: 7px;
+                border-radius: 50%;
+                background: #1a1208;
+                border: 1px solid #3a2a1a;
+                transition: background 0.3s ease, box-shadow 0.3s ease;
+                cursor: pointer;
+                -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+                touch-action: manipulation;
+            }
+
+            .tv-ch-dot-mobile.active {
+                background: var(--tv-active-color, #c17a5a);
+                box-shadow: 0 0 6px var(--tv-active-color, #c17a5a);
+            }
+
+            .tv-legs-mobile {
+                display: flex;
+                justify-content: space-between;
+                padding: 0 24px;
+                margin-top: 2px;
+            }
+
+            .tv-leg-mobile {
+                width: 14px; height: 18px;
+                background: linear-gradient(to bottom, #2a1e14, #1a1208);
+                border-radius: 0 0 6px 6px;
+                border: 1px solid #3a2a18;
+                border-top: none;
+            }
+
+            .tv-hint-mobile {
+                text-align: center;
+                margin-top: 12px;
+                font-family: 'Share Tech Mono', monospace;
+                font-size: 9px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                opacity: 0.5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                transition: opacity 0.3s ease;
+            }
+
+            .tv-hint-dot-mobile {
+                width: 4px; height: 4px;
+                border-radius: 50%;
+                background: var(--color-accent);
+                animation: tvHintPulse 2s ease-in-out infinite;
+            }
+
+            .tv-text-side-mobile {
+                opacity: 0;
+                transform: translateY(20px);
+                text-align: center;
+                max-width: 100%;
+            }
+
+            .tv-text-side-mobile.revealed {
+                animation: fadeInUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+            }
+
+            .tv-eyebrow-mobile {
+                font-family: var(--font-mono);
+                font-size: 9px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--color-accent);
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: center;
+            }
+
+            .tv-eyebrow-mobile::before {
+                content: '';
+                display: block;
+                width: 24px; height: 1px;
+                background: var(--color-accent);
+                opacity: 0.5;
+            }
+
+            .tv-heading-mobile {
+                font-family: var(--font-display);
+                font-size: clamp(1.8rem, 6vw, 2.6rem);
+                font-weight: 400;
+                line-height: 1.3;
+                letter-spacing: -0.02em;
+                color: var(--color-text);
+                margin-bottom: 1.2rem;
+                text-align: center;
+            }
+
+            .tv-heading-mobile em {
+                font-style: normal;
+                color: var(--color-accent);
+            }
+
+            .tv-body-text-mobile {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                line-height: 1.7;
+                color: var(--color-secondary);
+                margin-bottom: 1.5rem;
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .tv-features-mobile {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 1.5rem;
+                align-items: center;
+            }
+
+            .tv-feature-mobile {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--color-text);
+                line-height: 1.5;
+                max-width: 300px;
+            }
+
+            .tv-feature-icon-mobile {
+                width: 18px; height: 18px;
+                border: 1px solid var(--color-border);
+                border-radius: 3px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 9px;
+                color: var(--color-accent);
+                background: var(--color-light);
+                margin-top: 1px;
+            }
+
+            .tv-preview-strip-mobile {
+                display: flex;
+                gap: 4px;
+                align-items: center;
+                padding: 10px 14px;
+                background: var(--color-light);
+                border: 1px solid var(--color-border);
+                border-left: 3px solid var(--color-accent);
+                border-radius: 4px;
+                max-width: 100%;
+                overflow-x: auto;
+            }
+
+            .tv-preview-label-mobile {
+                font-family: var(--font-mono);
+                font-size: 9px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                margin-right: 4px;
+                white-space: nowrap;
+            }
+
+            .tv-preview-swatch-mobile {
+                flex: 1;
+                height: 20px;
+                border-radius: 2px;
+                background: var(--color-border);
+                transition: background 0.8s cubic-bezier(0.22,1,0.36,1);
+                box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+                min-width: 30px;
+            }
+
+            .tv-now-showing-mobile {
+                margin-top: 10px;
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--color-secondary);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                opacity: 0.5;
+                transition: opacity 0.4s ease;
+                justify-content: center;
+            }
+
+            .tv-now-showing-mobile.active {
+                opacity: 1;
+                color: var(--color-text);
+            }
+
+            .tv-now-dot-mobile {
+                width: 4px; height: 4px;
+                border-radius: 50%;
+                background: var(--color-accent);
+                flex-shrink: 0;
+                animation: tvHintPulse 1.5s ease-in-out infinite;
+            }
+
+            .tv-noise-canvas-mobile {
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                z-index: 6;
+                pointer-events: none;
+                border-radius: 6px;
+                mix-blend-mode: screen;
+                display: block;
+                transition: opacity 0.3s ease;
+            }
+
+            .tv-glow-ring-mobile {
+                position: absolute;
+                inset: -30px;
+                border-radius: 30px;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.6s ease, background 0.6s ease;
+                z-index: -2;
+                filter: blur(16px);
+            }
+
+            /* Smooth transitions for mobile TV */
+            .tv-swatch-mobile {
+                transition: background 0.55s cubic-bezier(0.22,1,0.36,1) !important;
+            }
+            .tv-palette-name-mobile {
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+            .tv-palette-name-mobile.tv-name-exit {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            .tv-palette-name-mobile.tv-name-enter {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            .tv-status-name-mobile, .tv-status-hex-mobile {
+                transition: opacity 0.25s ease;
+            }
+            .tv-status-name-mobile.tv-fade-out, .tv-status-hex-mobile.tv-fade-out {
+                opacity: 0;
+            }
+            .tv-channel-tag-mobile {
+                transition: opacity 0.2s ease;
+            }
+            .tv-ch-dot-mobile {
+                transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            }
+            .tv-palette-display-mobile {
+                transition: opacity 0.25s ease !important;
+            }
+            .tv-noise-canvas-mobile {
+                transition: opacity 0.18s ease !important;
+            }
+            .tv-now-showing-mobile {
+                transition: opacity 0.3s ease !important;
+            }
+
             @media (max-width: 600px) {
                 /* Use desktop TV styling - remove mobile-specific transforms and sizing */
                 .tv-body { width: 440px; }
@@ -1074,6 +1743,113 @@
             </div>
         </section>
 
+        <!-- Mobile TV Colour Palette Section -->
+        <section class="tv-palette-section-mobile" id="tvPaletteSectionMobile">
+            <div class="tv-palette-inner-mobile">
+                <!-- Mobile TV Stage -->
+                <div class="tv-stage-mobile">
+                    <div class="tv-wrap-mobile" id="tvWrapMobile">
+                        <div class="tv-body-mobile">
+                            <div class="tv-grain-mobile"></div>
+                            <div class="tv-bezel-mobile">
+                                <div class="tv-screen-mobile" id="tvScreenMobile">
+                                    <div class="tv-screen-mobile::after"></div>
+                                    <div class="tv-scanlines-mobile"></div>
+                                    <div class="tv-screen-glow-mobile" id="tvGlowRingMobile"></div>
+                                    <div class="tv-screen-content-mobile">
+                                        <div class="tv-off-dot-mobile"></div>
+                                    </div>
+                                    <canvas class="tv-noise-canvas-mobile" id="tvNoiseCanvasMobile"></canvas>
+                                    <div class="tv-static-mobile"></div>
+                                    <div class="tv-boot-line-mobile"></div>
+                                    <div class="tv-palette-display-mobile" id="tvPaletteDisplayMobile">
+                                        <div class="tv-palette-name-mobile" id="tvPaletteNameMobile">PETRICHOR</div>
+                                        <div class="tv-swatches-mobile" id="tvSwatchesMobile">
+                                            <div class="tv-swatch-mobile" style="background: #1A1814;"><div class="tv-swatch-hex-mobile">#1A1814</div></div>
+                                            <div class="tv-swatch-mobile" style="background: #3D3228;"><div class="tv-swatch-hex-mobile">#3D3228</div></div>
+                                            <div class="tv-swatch-mobile" style="background: #7A6248;"><div class="tv-swatch-hex-mobile">#7A6248</div></div>
+                                            <div class="tv-swatch-mobile" style="background: #C4A882;"><div class="tv-swatch-hex-mobile">#C4A882</div></div>
+                                            <div class="tv-swatch-mobile" style="background: #E8D5B0;"><div class="tv-swatch-hex-mobile">#E8D5B0</div></div>
+                                        </div>
+                                    </div>
+                                    <div class="tv-loading-mobile" id="tvLoadingMobile">
+                                        <div class="tv-load-bar-wrap-mobile"><div class="tv-load-bar-mobile"></div></div>
+                                        <div class="tv-load-text-mobile">Loading...</div>
+                                    </div>
+                                    <div class="tv-channel-tag-mobile" id="tvChannelTagMobile">CH 01</div>
+                                    <div class="tv-status-bar-mobile" id="tvStatusBarMobile">
+                                        <span class="tv-status-name-mobile" id="tvStatusNameMobile">PETRICHOR</span>
+                                        <span class="tv-status-hex-mobile" id="tvStatusHexMobile">#1A1814</span>
+                                    </div>
+                                    <div class="tv-on-air-mobile" id="tvOnAirMobile">
+                                        <div class="tv-on-air-dot-mobile" id="tvOnAirDotMobile"></div>
+                                        <span>ON AIR</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tv-controls-mobile">
+                                <div class="tv-brand-mobile">PETRICHOR</div>
+                                <div class="tv-ctrl-right-mobile">
+                                    <div class="tv-knob-mobile"></div>
+                                </div>
+                            </div>
+                            <div class="tv-channels-mobile" id="tvChannelDotsMobile">
+                                <div class="tv-ch-dot-mobile active" data-channel="0"></div>
+                                <div class="tv-ch-dot-mobile" data-channel="1"></div>
+                                <div class="tv-ch-dot-mobile" data-channel="2"></div>
+                                <div class="tv-ch-dot-mobile" data-channel="3"></div>
+                                <div class="tv-ch-dot-mobile" data-channel="4"></div>
+                                <div class="tv-ch-dot-mobile" data-channel="5"></div>
+                                <div class="tv-ch-dot-mobile" data-channel="6"></div>
+                                <div class="tv-ch-dot-mobile" data-channel="7"></div>
+                            </div>
+                            <div class="tv-legs-mobile">
+                                <div class="tv-leg-mobile"></div>
+                                <div class="tv-leg-mobile"></div>
+                            </div>
+                        </div>
+                        <div class="tv-hint-mobile">
+                            <div class="tv-hint-dot-mobile"></div>
+                            <span>Tap to power on</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Text Side -->
+                <div class="tv-text-side-mobile" id="tvTextSideMobile">
+                    <div class="tv-eyebrow-mobile">Colour Palette</div>
+                    <h2 class="tv-heading-mobile">Retro TV <em>Colour</em> Palette</h2>
+                    <p class="tv-body-text-mobile">A nostalgic display of carefully curated colour schemes, each channel offering a unique visual experience that blends retro aesthetics with modern design principles.</p>
+                    <div class="tv-features-mobile">
+                        <div class="tv-feature-mobile">
+                            <div class="tv-feature-icon-mobile">1</div>
+                            <div>Interactive palette switching with smooth transitions</div>
+                        </div>
+                        <div class="tv-feature-mobile">
+                            <div class="tv-feature-icon-mobile">2</div>
+                            <div>Realistic TV boot sequence and loading animations</div>
+                        </div>
+                        <div class="tv-feature-mobile">
+                            <div class="tv-feature-icon-mobile">3</div>
+                            <div>Responsive design that works on all devices</div>
+                        </div>
+                    </div>
+                    <div class="tv-preview-strip-mobile">
+                        <div class="tv-preview-label-mobile">Preview:</div>
+                        <div class="tv-preview-swatch-mobile" id="tvPs0Mobile"></div>
+                        <div class="tv-preview-swatch-mobile" id="tvPs1Mobile"></div>
+                        <div class="tv-preview-swatch-mobile" id="tvPs2Mobile"></div>
+                        <div class="tv-preview-swatch-mobile" id="tvPs3Mobile"></div>
+                        <div class="tv-preview-swatch-mobile" id="tvPs4Mobile"></div>
+                    </div>
+                    <div class="tv-now-showing-mobile" id="tvNowShowingMobile">
+                        <div class="tv-now-dot-mobile"></div>
+                        <span class="tv-now-name-mobile" id="tvNowNameMobile">PETRICHOR</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="contact" class="contact-section">
             <div class="contact-content">
                 <h2 class="section-title" data-reveal>Get In Touch</h2>
@@ -1128,6 +1904,7 @@
         <script src="script-files/script.js"></script>
         <script src="script-files/weather-effects.js"></script>
         <script src="script-files/tv.js"></script>
+        <script src="script-files/tv-mobile.js"></script>
 
         <!-- Desktop nav light-switch physics -->
         <script>
