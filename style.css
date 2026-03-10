@@ -1402,7 +1402,23 @@ body.dark-mode .main-footer { background-color: #111111; }
 
     section { padding: 1.5rem 1.25rem !important; }
     .tv-palette-section { padding: 1.5rem 0 !important; overflow: visible !important; }
-    .tv-stage { overflow: visible !important; }
+    .tv-palette-inner {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+        padding: 0 1.25rem !important;
+    }
+    .tv-stage {
+        overflow: visible !important;
+        min-height: 360px !important;
+        padding: 1.5rem 0 !important;
+    }
+    .tv-body {
+        width: 320px !important;
+    }
+    .tv-text-side {
+        width: 100% !important;
+        text-align: center !important;
+    }
     .section-title { font-size: clamp(2rem, 8vw, 2.8rem) !important; margin-bottom: 0.875rem !important; }
     .about-main { gap: 1rem !important; margin-bottom: 1rem !important; }
 
