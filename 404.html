@@ -5,46 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 — Page Not Found | Artjom Japins</title>
     <meta name="robots" content="noindex" />
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
     <style>
-        /* ── VARIABLES ── */
         :root {
             --color-bg: #faf8f5;
             --color-text: #1a1a1a;
             --color-accent: #c17a5a;
             --color-secondary: #7a8e7e;
-            --color-light: #e8e4df;
+            --color-light: #f0ede8;
             --color-border: rgba(26, 26, 26, 0.1);
             --font-display: 'Playwrite NZ', cursive;
             --font-mono: 'IBM Plex Mono', monospace;
         }
-
         body.dark-mode {
-            --color-bg: #1a1a1a;
-            --color-text: #faf8f5;
+            --color-bg: #111111;
+            --color-text: #ede9e3;
             --color-accent: #d89077;
             --color-secondary: #8fa092;
-            --color-light: #2a2a2a;
-            --color-border: rgba(250, 248, 245, 0.1);
+            --color-light: #1a1a1a;
+            --color-border: rgba(237, 233, 227, 0.08);
         }
 
-        /* ── RESET ── */
         *, *::before, *::after {
             margin: 0; padding: 0; box-sizing: border-box;
-            outline: none !important;
             -webkit-tap-highlight-color: transparent;
+            outline: none !important;
         }
         *::selection { background: rgba(193,122,90,0.2); color: inherit; }
 
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
+        html, body { height: 100%; overflow: hidden; }
 
         body {
             font-family: var(--font-mono);
-            font-size: 14px;
-            line-height: 1.6;
             color: var(--color-text);
             background-color: var(--color-bg);
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -55,433 +47,285 @@
         .grain {
             position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            opacity: 0.03;
-            pointer-events: none;
-            z-index: 9999;
+            opacity: 0.025; pointer-events: none; z-index: 9999;
         }
-        body.dark-mode .grain { opacity: 0.05; }
+        body.dark-mode .grain { opacity: 0.04; }
 
-        /* ── FLOATING SHAPES ── */
-        .shapes {
-            position: fixed; inset: 0;
-            pointer-events: none; z-index: 0; overflow: hidden;
-        }
-        .shape {
-            position: absolute; opacity: 0.1;
-            animation: shapeFloat 20s ease-in-out infinite;
-        }
-        body.dark-mode .shape { opacity: 0.07; }
+        /* ── SHAPES ── */
+        .shapes { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .shape { position: absolute; opacity: 0.07; animation: shapeFloat 24s ease-in-out infinite; will-change: transform; }
+        body.dark-mode .shape { opacity: 0.035; }
         .shape-1 {
-            width: 280px; height: 280px;
+            width: 320px; height: 320px;
             background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
             border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
-            top: -5%; right: -5%; animation-duration: 25s;
+            top: -8%; right: -4%; animation-duration: 26s;
         }
         .shape-2 {
-            width: 180px; height: 180px;
+            width: 200px; height: 200px;
             background: linear-gradient(225deg, var(--color-secondary), var(--color-accent));
             border-radius: 48% 52% 68% 32% / 42% 28% 72% 58%;
-            bottom: 10%; left: -5%; animation-delay: -8s; animation-duration: 30s;
+            bottom: 8%; left: -4%; animation-delay: -10s; animation-duration: 32s;
         }
         @keyframes shapeFloat {
             0%, 100% { transform: translate(0,0) rotate(0deg); }
-            33% { transform: translate(15px, -20px) rotate(120deg); }
-            66% { transform: translate(-10px, 15px) rotate(240deg); }
+            33% { transform: translate(14px, -18px) rotate(120deg); }
+            66% { transform: translate(-10px, 12px) rotate(240deg); }
         }
 
-        /* ── DECORATIVE DOTS ── */
+        /* ── DOTS ── */
         .dots { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-        .dot {
-            position: absolute; width: 3px; height: 3px;
-            background: var(--color-accent); border-radius: 50%; opacity: 0.2;
-            animation: dotPulse 4s ease-in-out infinite;
-        }
-        .dot:nth-child(1) { top: 15%; left: 8%; animation-delay: 0s; }
-        .dot:nth-child(2) { top: 72%; right: 12%; animation-delay: 1s; }
-        .dot:nth-child(3) { top: 40%; left: 5%; animation-delay: 2s; }
-        .dot:nth-child(4) { top: 85%; right: 30%; animation-delay: 0.5s; }
-        @keyframes dotPulse {
-            0%, 100% { transform: scale(1); opacity: 0.2; }
-            50% { transform: scale(1.4); opacity: 0.45; }
-        }
+        .dot { position: absolute; width: 3px; height: 3px; background: var(--color-accent); border-radius: 50%; opacity: 0.18; animation: dotPulse 4s ease-in-out infinite; }
+        .dot:nth-child(1) { top: 18%; left: 7%; animation-delay: 0s; }
+        .dot:nth-child(2) { top: 68%; right: 10%; animation-delay: 1.2s; }
+        .dot:nth-child(3) { top: 42%; left: 4%; animation-delay: 2.4s; }
+        .dot:nth-child(4) { bottom: 20%; right: 28%; animation-delay: 0.8s; }
+        @keyframes dotPulse { 0%,100% { transform:scale(1); opacity:.18; } 50% { transform:scale(1.5); opacity:.4; } }
 
         /* ── CORNER BRACKETS ── */
-        .corner {
-            position: fixed; width: 22px; height: 22px;
-            border-color: var(--color-accent); border-style: solid;
-            opacity: 0; pointer-events: none; z-index: 2;
-            animation: cornerFadeIn 0.6s ease forwards;
-        }
-        .corner--tl { top: 24px; left: 24px; border-width: 1.5px 0 0 1.5px; animation-delay: 0.2s; }
-        .corner--tr { top: 24px; right: 24px; border-width: 1.5px 1.5px 0 0; animation-delay: 0.3s; }
-        .corner--bl { bottom: 24px; left: 24px; border-width: 0 0 1.5px 1.5px; animation-delay: 0.4s; }
-        .corner--br { bottom: 24px; right: 24px; border-width: 0 1.5px 1.5px 0; animation-delay: 0.5s; }
-        @keyframes cornerFadeIn { to { opacity: 0.4; } }
+        .corner { position: fixed; width: 20px; height: 20px; border-color: var(--color-accent); border-style: solid; opacity: 0; pointer-events: none; z-index: 2; animation: cornerFadeIn 0.5s ease forwards; }
+        .corner--tl { top: 22px; left: 22px; border-width: 1.5px 0 0 1.5px; animation-delay: 0.15s; }
+        .corner--tr { top: 22px; right: 22px; border-width: 1.5px 1.5px 0 0; animation-delay: 0.22s; }
+        .corner--bl { bottom: 22px; left: 22px; border-width: 0 0 1.5px 1.5px; animation-delay: 0.3s; }
+        .corner--br { bottom: 22px; right: 22px; border-width: 0 1.5px 1.5px 0; animation-delay: 0.38s; }
+        @keyframes cornerFadeIn { to { opacity: 0.38; } }
 
         /* ── NAV ── */
         nav {
             position: fixed; top: 0; left: 0; width: 100%;
-            padding: 1.5rem 2.5rem;
+            padding: 1.4rem 2.5rem;
             display: flex; justify-content: space-between; align-items: center;
             z-index: 100;
-            border-bottom: 1px solid transparent;
             background: linear-gradient(180deg, var(--color-bg) 0%, transparent 100%);
         }
         .nav-logo {
-            font-family: var(--font-display);
-            font-size: 22px; font-weight: 400;
-            color: var(--color-text); text-decoration: none;
-            letter-spacing: -0.02em;
-            opacity: 0; animation: fadeInDown 0.6s ease 0.3s forwards;
+            font-family: var(--font-display); font-size: 22px; font-weight: 400;
+            color: var(--color-text); text-decoration: none; letter-spacing: -0.02em;
+            opacity: 0; animation: fadeInDown 0.55s ease 0.25s forwards;
             transition: color 0.3s ease;
         }
         .nav-logo:hover { color: var(--color-accent); }
 
-        .dark-toggle {
-            width: 38px; height: 38px; border-radius: 50%;
-            border: 1.5px solid var(--color-border);
-            background: var(--color-bg); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-            transition: border-color 0.3s ease, transform 0.4s ease;
-            opacity: 0; animation: fadeInDown 0.6s ease 0.4s forwards;
+        /* ── LIGHT SWITCH ── */
+        .nav-ls-outer { opacity: 0; animation: fadeInDown 0.55s ease 0.35s forwards; display: flex; align-items: center; }
+        .nav-ls-container { position: relative; width: 116px; height: 54px; flex-shrink: 0; }
+        .nav-ls-rope-svg { position: absolute; top: 100%; left: 20px; pointer-events: none; overflow: visible; z-index: 5; }
+        .nav-ls-btn {
+            position: absolute; inset: 0;
+            background: color-mix(in srgb, var(--color-secondary) 22%, transparent);
+            border: 1.5px solid color-mix(in srgb, var(--color-secondary) 38%, transparent);
+            border-radius: 999px; padding: 6px; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.4s ease, border-color 0.4s ease;
         }
-        .dark-toggle:hover { border-color: var(--color-accent); transform: scale(1.1) rotate(15deg); }
-        .dark-toggle svg {
-            position: absolute; width: 16px; height: 16px;
-            stroke: var(--color-text); transition: all 0.5s ease;
+        .nav-ls-btn.ls-is-light {
+            background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+            border-color: color-mix(in srgb, var(--color-accent) 42%, transparent);
         }
-        .dark-toggle .sun { opacity: 1; transform: scale(1) rotate(0); }
-        .dark-toggle .moon { opacity: 0; transform: scale(0) rotate(180deg); }
-        body.dark-mode .dark-toggle .sun { opacity: 0; transform: scale(0) rotate(-180deg); }
-        body.dark-mode .dark-toggle .moon { opacity: 1; transform: scale(1) rotate(0); }
+        .nav-ls-knob { width: 42px; height: 42px; position: relative; will-change: transform; border-radius: 999px; overflow: hidden; }
+        .nav-ls-top {
+            background-color: var(--color-secondary); border-radius: 999px;
+            position: absolute; inset: 0; transition: background-color 0.4s ease; opacity: 0.7;
+        }
+        .nav-ls-btn.ls-is-light .nav-ls-top { background-color: var(--color-accent); opacity: 1; }
+        .nav-ls-shine {
+            position: absolute; inset: 3px; border-radius: 999px;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.28) 0%, transparent 65%);
+            pointer-events: none;
+        }
 
-        /* ── MAIN LAYOUT ── */
+        /* ── MAIN ── */
         main {
             position: relative; z-index: 1;
             width: 100%; height: 100vh;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 2rem;
-            text-align: center;
+            padding: 2rem; text-align: center;
         }
 
-        /* ── 404 GIANT NUMBER ── */
+        /* ── EYEBROW ── */
+        .eyebrow {
+            font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em;
+            text-transform: uppercase; color: var(--color-accent);
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 2.2rem;
+            opacity: 0; animation: fadeInUp 0.55s ease 0.55s forwards;
+        }
+        .eyebrow::before, .eyebrow::after {
+            content: ''; display: block; width: 32px; height: 1px;
+            background: var(--color-accent); opacity: 0.45;
+        }
+
+        /* ── LARGE NUMBER ── */
         .error-number {
             font-family: var(--font-display);
-            font-size: clamp(7rem, 22vw, 16rem);
-            font-weight: 400;
-            line-height: 0.9;
-            letter-spacing: -0.04em;
-            color: var(--color-text);
-            position: relative;
-            /* Reveal once, then hand off to the lag-float loop */
-            animation: revealUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.5s forwards,
-                       lagFloat 6s ease-in-out 1.6s infinite;
-            user-select: none;
+            font-size: clamp(7rem, 20vw, 14rem);
+            font-weight: 400; line-height: 1; letter-spacing: -0.04em;
+            color: transparent;
+            -webkit-text-stroke: 1.5px var(--color-text);
+            position: relative; user-select: none;
+            opacity: 0; animation: numberReveal 1s cubic-bezier(0.22,1,0.36,1) 0.7s forwards;
+        }
+        .error-number:hover {
+            -webkit-text-stroke: 1.5px var(--color-accent);
+            transition: -webkit-text-stroke-color 0.4s ease;
+        }
+        @keyframes numberReveal {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Permanent lagging lag-float on the main number */
-        @keyframes lagFloat {
-            0%   { transform: translate(0, 0) skewX(0deg); }
-            8%   { transform: translate(-3px, 1px) skewX(-0.6deg); }
-            16%  { transform: translate(0, 0) skewX(0deg); }
-            /* lag stutter — number freezes then snaps */
-            38%  { transform: translate(0, 0) skewX(0deg); }
-            39%  { transform: translate(5px, -2px) skewX(1.2deg); }
-            40%  { transform: translate(-4px, 1px) skewX(-0.8deg); }
-            41%  { transform: translate(2px, 0px) skewX(0.4deg); }
-            42%  { transform: translate(0, 0) skewX(0deg); }
-            /* slow breathe */
-            60%  { transform: translate(0, -4px) skewX(0deg); }
-            80%  { transform: translate(0, 0) skewX(0deg); }
-            /* second stutter burst */
-            88%  { transform: translate(0, 0) skewX(0deg); }
-            89%  { transform: translate(-6px, 2px) skewX(-1deg); }
-            90%  { transform: translate(4px, -1px) skewX(0.7deg); }
-            91%  { transform: translate(-2px, 0) skewX(-0.3deg); }
-            92%  { transform: translate(0, 0) skewX(0deg); }
-            100% { transform: translate(0, 0) skewX(0deg); }
-        }
-
-        /* Glitch ghost layers — always visible with their own staggered loops */
-        .error-number::before,
-        .error-number::after {
-            content: '404';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            font-family: inherit; font-size: inherit; font-weight: inherit;
-            line-height: inherit; letter-spacing: inherit;
-            pointer-events: none;
-        }
-
-        /* Accent ghost — top slice, lags behind the main number */
-        .error-number::before {
-            color: var(--color-accent);
-            clip-path: polygon(0 0%, 100% 0%, 100% 45%, 0 45%);
-            animation: ghostLag 6s ease-in-out 1.85s infinite;
-            opacity: 0;
-        }
-
-        /* Secondary ghost — bottom slice, slightly different timing */
-        .error-number::after {
-            color: var(--color-secondary);
-            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-            animation: ghostLag2 6s ease-in-out 2.1s infinite;
-            opacity: 0;
-        }
-
-        /* Ghost lags visibly behind then snaps back */
-        @keyframes ghostLag {
-            0%, 35%, 100% { transform: translate(0,0); opacity: 0; }
-            /* stutter window — ghost appears offset */
-            38%  { transform: translate(-10px, 3px); opacity: 0.35; }
-            39%  { transform: translate(8px, -2px); opacity: 0.35; }
-            40%  { transform: translate(-5px, 1px); opacity: 0.28; }
-            41%  { transform: translate(3px, 0); opacity: 0.2; }
-            43%  { transform: translate(0, 0); opacity: 0; }
-            /* second burst */
-            87%, 95% { transform: translate(0,0); opacity: 0; }
-            88%  { transform: translate(-8px, 2px); opacity: 0.3; }
-            89%  { transform: translate(6px, -3px); opacity: 0.3; }
-            90%  { transform: translate(-3px, 1px); opacity: 0.2; }
-            92%  { transform: translate(0, 0); opacity: 0; }
-        }
-
-        @keyframes ghostLag2 {
-            0%, 35%, 100% { transform: translate(0,0); opacity: 0; }
-            38%  { transform: translate(12px, -2px); opacity: 0.28; }
-            39%  { transform: translate(-7px, 3px); opacity: 0.28; }
-            40%  { transform: translate(4px, -1px); opacity: 0.2; }
-            42%  { transform: translate(0, 0); opacity: 0; }
-            /* second burst offset slightly from ::before */
-            89%, 96% { transform: translate(0,0); opacity: 0; }
-            90%  { transform: translate(10px, -2px); opacity: 0.25; }
-            91%  { transform: translate(-5px, 2px); opacity: 0.25; }
-            93%  { transform: translate(0, 0); opacity: 0; }
-        }
-
-        /* ── HOVER BURST (class toggled by JS, doesn't cancel base animation) ── */
-        .error-number.glitch-burst {
-            filter: drop-shadow(4px 0 0 var(--color-accent)) drop-shadow(-4px 0 0 var(--color-secondary));
-            transition: filter 0.05s ease;
-        }
-
-        /* ── DIVIDER LINE ── */
+        /* ── DIVIDER ── */
         .divider {
             width: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
-            margin: 1.5rem auto;
-            animation: lineGrow 0.8s cubic-bezier(0.77,0,0.175,1) 1.1s forwards;
+            background: linear-gradient(90deg, transparent, var(--color-accent) 40%, var(--color-secondary) 60%, transparent);
+            margin: 1.75rem auto;
+            animation: lineGrow 0.75s cubic-bezier(0.77,0,0.175,1) 1.25s forwards;
         }
-        @keyframes lineGrow { to { width: clamp(80px, 20vw, 160px); } }
+        @keyframes lineGrow { to { width: clamp(90px, 18vw, 180px); } }
 
-        /* ── MESSAGE BLOCK ── */
+        /* ── TITLE & DESC ── */
         .error-label {
-            font-family: var(--font-mono);
-            font-size: 10px; letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--color-accent);
-            margin-bottom: 0.875rem;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease 1s forwards;
+            font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+            text-transform: uppercase; color: var(--color-accent); margin-bottom: 0.85rem;
+            opacity: 0; animation: fadeInUp 0.55s ease 1.1s forwards;
         }
-
         .error-title {
             font-family: var(--font-display);
-            font-size: clamp(1.4rem, 4vw, 2.2rem);
-            font-weight: 400; line-height: 1.3;
-            letter-spacing: -0.02em;
-            color: var(--color-text);
-            margin-bottom: 0.75rem;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease 1.1s forwards;
+            font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+            font-weight: 400; line-height: 1.25; letter-spacing: -0.02em;
+            color: var(--color-text); margin-bottom: 0.75rem;
+            opacity: 0; animation: fadeInUp 0.55s ease 1.18s forwards;
         }
-
         .error-desc {
-            font-size: 13px; line-height: 1.75;
-            color: var(--color-secondary);
-            max-width: 380px;
-            margin: 0 auto 2rem;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease 1.2s forwards;
+            font-size: 13px; line-height: 1.8; color: var(--color-secondary);
+            max-width: 360px; margin: 0 auto 2.5rem;
+            opacity: 0; animation: fadeInUp 0.55s ease 1.28s forwards;
         }
 
         /* ── BUTTONS ── */
         .btn-group {
-            display: flex; gap: 1rem; flex-wrap: wrap;
-            justify-content: center;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease 1.35s forwards;
+            display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+            opacity: 0; animation: fadeInUp 0.55s ease 1.4s forwards;
         }
-
         .btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            font-family: var(--font-mono);
+            padding: 0.8rem 1.6rem; font-family: var(--font-mono);
             font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
             text-decoration: none; cursor: pointer; border: none;
             position: relative; overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
-                        box-shadow 0.3s ease,
-                        border-color 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
         }
+        .btn-primary { background: var(--color-accent); color: #fff; }
+        .btn-primary::before {
+            content: ''; position: absolute; inset: 0; background: var(--color-secondary);
+            transform: translateX(-101%); transition: transform 0.4s cubic-bezier(0.77,0,0.175,1); z-index: 0;
+        }
+        .btn-primary:hover::before { transform: translateX(0); }
+        .btn-primary > * { position: relative; z-index: 1; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(193,122,90,0.3); }
+        .btn-secondary { background: transparent; color: var(--color-text); border: 1px solid var(--color-border); }
+        .btn-secondary:hover { border-color: var(--color-accent); color: var(--color-accent); transform: translateY(-2px); }
         .btn-arrow { transition: transform 0.25s ease; display: inline-block; }
         .btn:hover .btn-arrow { transform: translateX(4px); }
 
-        .btn-primary {
-            background: var(--color-accent); color: #fff;
-        }
-        .btn-primary::before {
-            content: ''; position: absolute; inset: 0;
-            background: var(--color-secondary);
-            transform: translateX(-101%);
-            transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
-            z-index: 0;
-        }
-        .btn-primary:hover::before { transform: translateX(0); }
-        .btn-primary span { position: relative; z-index: 1; }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(193,122,90,0.35); }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--color-text);
-            border: 1px solid var(--color-border);
-        }
-        .btn-secondary:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
-            transform: translateY(-3px);
-        }
-
         /* ── STATUS BAR ── */
         .status-bar {
-            position: fixed; bottom: 28px; left: 0; right: 0;
+            position: fixed; bottom: 26px; left: 0; right: 0;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 2.5rem;
-            font-family: var(--font-mono);
-            font-size: 10px; letter-spacing: 0.1em;
-            text-transform: uppercase;
+            padding: 0 2.5rem; font-family: var(--font-mono);
+            font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
             color: var(--color-secondary);
-            opacity: 0;
-            animation: fadeIn 0.6s ease 1.5s forwards;
-            pointer-events: none;
-            z-index: 2;
+            opacity: 0; animation: fadeIn 0.6s ease 1.6s forwards;
+            pointer-events: none; z-index: 2;
         }
-        .status-pulse {
-            display: flex; align-items: center; gap: 7px;
-        }
+        .status-pulse { display: flex; align-items: center; gap: 7px; }
         .pulse-dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: var(--color-accent);
-            animation: pulseDot 2s ease-in-out infinite;
+            width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent);
+            animation: pulseDot 2.2s ease-in-out infinite;
         }
-        @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.65); }
-        }
+        @keyframes pulseDot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.3; transform:scale(0.6); } }
 
-        /* ── SCAN LINE ── */
-        .scanline {
-            position: fixed; inset: 0; pointer-events: none; z-index: 5;
-            background: repeating-linear-gradient(
-                to bottom,
-                transparent 0px,
-                transparent 3px,
-                rgba(0,0,0,0.015) 3px,
-                rgba(0,0,0,0.015) 4px
-            );
-        }
-        body.dark-mode .scanline {
-            background: repeating-linear-gradient(
-                to bottom,
-                transparent 0px,
-                transparent 3px,
-                rgba(255,255,255,0.012) 3px,
-                rgba(255,255,255,0.012) 4px
-            );
-        }
-
-        /* ── ANIMATIONS ── */
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(18px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes revealUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* ── BASE ANIMATIONS ── */
+        @keyframes fadeIn    { to { opacity: 1; } }
+        @keyframes fadeInUp  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeInDown{ from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
         /* ── MOBILE ── */
         @media (max-width: 600px) {
             nav { padding: 1rem 1.25rem; }
-            .corner--tl { top: 16px; left: 16px; }
-            .corner--tr { top: 16px; right: 16px; }
-            .corner--bl { bottom: 16px; left: 16px; }
-            .corner--br { bottom: 16px; right: 16px; }
+            .corner--tl, .corner--tr { top: 14px; }
+            .corner--bl, .corner--br { bottom: 14px; }
+            .corner--tl, .corner--bl { left: 14px; }
+            .corner--tr, .corner--br { right: 14px; }
             .error-desc { font-size: 12px; max-width: 290px; }
-            .status-bar { padding: 0 1.25rem; bottom: 20px; font-size: 9px; }
-            .btn { padding: 0.625rem 1.125rem; font-size: 10px; }
-            .btn-group { gap: 0.625rem; }
+            .status-bar { padding: 0 1.25rem; bottom: 18px; font-size: 9px; }
+            .btn { padding: 0.65rem 1.2rem; font-size: 10px; }
+            .nav-ls-container { width: 90px; height: 42px; }
+            .nav-ls-knob { width: 32px; height: 32px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Decorative layers -->
     <div class="grain"></div>
-    <div class="scanline"></div>
+
     <div class="shapes">
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
     </div>
     <div class="dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div>
     </div>
 
-    <!-- Corner brackets -->
     <div class="corner corner--tl"></div>
     <div class="corner corner--tr"></div>
     <div class="corner corner--bl"></div>
     <div class="corner corner--br"></div>
 
-    <!-- Nav -->
     <nav>
         <a href="/" class="nav-logo">AJ</a>
-        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
-            <!-- Sun -->
-            <svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-            <!-- Moon -->
-            <svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-        </button>
+
+        <div class="nav-ls-outer">
+            <div class="nav-ls-container">
+                <svg id="navLsRopeSvg" class="nav-ls-rope-svg"
+                     width="40" height="100" viewBox="0 0 40 100"
+                     fill="none" style="overflow:visible;"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path id="ls-rope"
+                          d="M20 0 Q20 30 20 60"
+                          stroke="var(--color-secondary)"
+                          stroke-width="2.5"
+                          stroke-linecap="round"
+                          opacity="0.6"/>
+                    <g id="ls-rope-end">
+                        <path d="M-6 4 Q-6 0 0 0 Q6 0 6 4 L4 20 Q0 25 -4 20 Z"
+                              fill="var(--color-accent)" opacity="0.9"/>
+                    </g>
+                </svg>
+
+                <button class="nav-ls-btn" id="navLsBtn" type="button" aria-label="Toggle dark mode">
+                    <div class="nav-ls-knob" id="navLsKnob">
+                        <div class="nav-ls-top" id="navLsTop"></div>
+                        <div class="nav-ls-shine"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
     </nav>
 
-    <!-- Main content -->
     <main>
+        <div class="eyebrow">Error</div>
+
         <div class="error-number">404</div>
 
         <div class="divider"></div>
 
-        <p class="error-label">Error — Page Not Found</p>
+        <p class="error-label">Page Not Found</p>
         <h1 class="error-title">This page doesn't exist</h1>
         <p class="error-desc">
-            The page you're looking for has either been moved, deleted,
+            The page you're looking for has been moved, deleted,
             or perhaps never existed in the first place.
         </p>
 
@@ -495,7 +339,6 @@
         </div>
     </main>
 
-    <!-- Status bar -->
     <div class="status-bar">
         <span>Artjom Japins / Portfolio</span>
         <span class="status-pulse">
@@ -505,47 +348,145 @@
     </div>
 
     <script>
-        // ── DARK MODE ──
-        const body = document.body;
-        const toggle = document.getElementById('darkToggle');
+    (function() {
+        'use strict';
 
-        // Default to dark on 404 page; respect saved preference if set
+        // ── DARK MODE INIT ──
+        const body = document.body;
         const saved = localStorage.getItem('darkMode');
-        if (saved === 'false') {
-            // User explicitly chose light on main site — honour it
-            body.classList.remove('dark-mode');
-        } else {
-            // Default: dark (including first visit or dark preference)
+        if (saved === 'true' || (saved === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             body.classList.add('dark-mode');
         }
 
-        toggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-        });
+        // ── LIGHT SWITCH PHYSICS ──
+        const btn    = document.getElementById('navLsBtn');
+        const knob   = document.getElementById('navLsKnob');
+        const ropeEl = document.getElementById('ls-rope');
+        const tabEl  = document.getElementById('ls-rope-end');
 
-        // ── PARALLAX SHAPES on mousemove (desktop only) ──
+        const AX = 20, AY = 0, REST_LEN = 60, PULL_EXTRA = 26;
+        const V_STIFF = 240, V_DAMP = 11;
+        const P_OMEGA = 7.8, P_ZETA = 0.22;
+
+        const stretch = { pos: 0, vel: 0, target: 0 };
+        const pend    = { angle: 0, vel: 0 };
+
+        let isDown = false, toggled = false;
+        let rafId = null, lastTs = null;
+        let pendDir = 1;
+
+        function syncKnob() {
+            const isDark = body.classList.contains('dark-mode');
+            const targetX = isDark ? 0 : 62;
+            btn.classList.toggle('ls-is-light', !isDark);
+            knob.style.transform = 'translateX(' + targetX + 'px)';
+        }
+
+        function renderRope() {
+            const ropeLen = REST_LEN + stretch.pos * PULL_EXTRA;
+            const endX = AX + Math.sin(pend.angle) * ropeLen;
+            const endY = AY + Math.cos(pend.angle) * ropeLen;
+            const midX = (AX + endX) * 0.5;
+            const midY = (AY + endY) * 0.5;
+            const ctrlX = midX + (-pend.vel * 4.5);
+            const ctrlY = midY + (stretch.pos * 6);
+            if (ropeEl) ropeEl.setAttribute('d',
+                'M' + AX + ' ' + AY +
+                ' Q' + ctrlX.toFixed(2) + ' ' + ctrlY.toFixed(2) +
+                ' ' + endX.toFixed(2) + ' ' + endY.toFixed(2));
+            if (tabEl) {
+                const deg = (pend.angle * 180 / Math.PI).toFixed(2);
+                tabEl.setAttribute('transform',
+                    'translate(' + endX.toFixed(2) + ',' + endY.toFixed(2) + ')' +
+                    ' rotate(' + deg + ',0,0)');
+            }
+        }
+
+        function tick(ts) {
+            if (lastTs === null) lastTs = ts;
+            const dt = Math.min((ts - lastTs) / 1000, 0.048);
+            lastTs = ts;
+
+            const vF = -V_STIFF * (stretch.pos - stretch.target) - V_DAMP * stretch.vel;
+            stretch.vel += vF * dt;
+            stretch.pos += stretch.vel * dt;
+
+            const pA = -(P_OMEGA * P_OMEGA) * pend.angle - 2 * P_ZETA * P_OMEGA * pend.vel;
+            pend.vel += pA * dt;
+            pend.angle += pend.vel * dt;
+
+            renderRope();
+
+            const vS = Math.abs(stretch.pos - stretch.target) < 0.0015 && Math.abs(stretch.vel) < 0.015;
+            const pS = Math.abs(pend.angle) < 0.0008 && Math.abs(pend.vel) < 0.005;
+            if (vS && pS) {
+                stretch.pos = stretch.target; stretch.vel = 0;
+                pend.angle = 0; pend.vel = 0;
+                renderRope(); rafId = null; lastTs = null;
+            } else {
+                rafId = requestAnimationFrame(tick);
+            }
+        }
+
+        function startAnim() {
+            if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+            lastTs = null;
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function onDown() {
+            if (isDown) return;
+            isDown = true; toggled = false;
+            stretch.target = 1.0;
+            startAnim();
+        }
+
+        function onUp() {
+            if (!isDown) return;
+            isDown = false;
+            stretch.target = 0;
+            stretch.vel -= 15;
+            pendDir = -pendDir;
+            pend.vel = pendDir * 3.6;
+            startAnim();
+            if (!toggled) {
+                toggled = true;
+                body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', body.classList.contains('dark-mode').toString());
+                syncKnob();
+            }
+        }
+
+        function onCancel() {
+            if (!isDown) return;
+            isDown = false;
+            stretch.target = 0;
+            stretch.vel -= 5;
+            startAnim();
+        }
+
+        btn.addEventListener('mousedown',  onDown);
+        btn.addEventListener('mouseup',    onUp);
+        btn.addEventListener('mouseleave', onCancel);
+        btn.addEventListener('touchstart',  function(e) { e.preventDefault(); onDown(); },   { passive: false });
+        btn.addEventListener('touchend',    function(e) { e.preventDefault(); onUp(); },     { passive: false });
+        btn.addEventListener('touchcancel', function(e) { e.preventDefault(); onCancel(); }, { passive: false });
+
+        syncKnob();
+        renderRope();
+
+        // ── PARALLAX SHAPES ──
         if (window.innerWidth > 768) {
-            document.addEventListener('mousemove', (e) => {
+            document.addEventListener('mousemove', function(e) {
                 const x = (e.clientX / window.innerWidth - 0.5) * 2;
                 const y = (e.clientY / window.innerHeight - 0.5) * 2;
-                const shapes = document.querySelectorAll('.shape');
-                shapes.forEach((s, i) => {
-                    const depth = (i + 1) * 12;
-                    s.style.transform = `translate(${x * depth}px, ${y * depth}px)`;
+                document.querySelectorAll('.shape').forEach(function(s, i) {
+                    const d = (i + 1) * 10;
+                    s.style.transform = 'translate(' + (x * d) + 'px, ' + (y * d) + 'px)';
                 });
             });
         }
-
-        // ── EXTRA GLITCH BURST on hover (without cancelling the running animation) ──
-        const num = document.querySelector('.error-number');
-        if (num) {
-            num.addEventListener('mouseenter', () => {
-                // Add a class that applies a quick extra skew — doesn't touch the base animation
-                num.classList.add('glitch-burst');
-                setTimeout(() => num.classList.remove('glitch-burst'), 300);
-            });
-        }
+    })();
     </script>
 </body>
 </html>

@@ -157,9 +157,75 @@
             @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
             @keyframes revealText { to { opacity: 1; transform: translateY(0); } }
 
-            /* ═══════════════════════════════════════════
+            /* ── DESKTOP LIGHT SWITCH (nav) ── */
+            .nav-ls-wrap-desktop {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+            /* Hide on mobile — mobile uses the burger menu switch */
+            @media (max-width: 768px) {
+                .nav-ls-wrap-desktop { display: none; }
+            }
+            .nav-ls-container-desktop {
+                position: relative;
+                width: 116px;
+                height: 54px;
+            }
+            .nav-ls-rope-svg-desktop {
+                position: absolute;
+                top: 100%;
+                left: 20px;
+                pointer-events: none;
+                overflow: visible;
+                z-index: 5;
+            }
+            .nav-ls-btn-desktop {
+                position: absolute;
+                inset: 0;
+                background: color-mix(in srgb, var(--color-secondary) 25%, transparent);
+                border: 1.5px solid color-mix(in srgb, var(--color-secondary) 40%, transparent);
+                border-radius: 999px;
+                padding: 6px;
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+                transition: background 0.4s ease, border-color 0.4s ease;
+            }
+            .nav-ls-btn-desktop.ls-is-light {
+                background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+                border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+            }
+            .nav-ls-knob-desktop {
+                width: 42px;
+                height: 42px;
+                position: relative;
+                will-change: transform;
+                border-radius: 999px;
+                overflow: hidden;
+            }
+            .nav-ls-top-desktop {
+                background-color: var(--color-secondary);
+                border-radius: 999px;
+                position: absolute;
+                inset: 0;
+                transition: background-color 0.4s ease;
+                opacity: 0.75;
+            }
+            .nav-ls-btn-desktop.ls-is-light .nav-ls-top-desktop {
+                background-color: var(--color-accent);
+                opacity: 1;
+            }
+            .nav-ls-shine-desktop {
+                position: absolute;
+                inset: 3px;
+                border-radius: 999px;
+                background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.28) 0%, transparent 65%);
+                pointer-events: none;
+            }
+
+            /* ═══════════════════════════════════════════════════════════════
                RETRO TV COLOUR PALETTE SECTION
-            ═══════════════════════════════════════════ */
+            ═══════════════════════════════════════════════════════════════ */
 
             .tv-palette-section {
                 padding: var(--spacing-xl) var(--spacing-lg);
@@ -185,13 +251,6 @@
                 position: relative;
             }
 
-            /* ══════════════════════════════════════════════════════
-               YELLOW OVERLAY FIX — nuclear tap-highlight suppression
-               Covers the tv-stage, the anonymous inner wrapper,
-               tv-wrap and every descendant. Uses rgba(0,0,0,0)
-               instead of "transparent" because some WebKit builds
-               treat the keyword differently.
-            ══════════════════════════════════════════════════════ */
             .tv-stage,
             #tvStageInner,
             .tv-wrap,
@@ -208,7 +267,6 @@
                 -webkit-touch-callout: none !important;
             }
 
-            /* ── FIX: kill the yellow mobile tap highlight on tv-wrap and ALL descendants ── */
             .tv-wrap,
             .tv-wrap *,
             .tv-wrap *::before,
@@ -886,10 +944,36 @@
                     <a href="#projects" data-nav>Projects</a>
                     <a href="#contact" data-nav>Contact</a>
                 </div>
-                <button class="dark-mode-toggle desktop-only" id="darkModeToggleDesktop" type="button" aria-label="Toggle dark mode">
-                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
+
+                <!-- Desktop light switch (replaces old sun/moon button) -->
+                <div class="nav-ls-wrap-desktop">
+                    <div class="nav-ls-container-desktop" id="navLsContainerDesktop">
+                        <svg id="navLsRopeSvgDesktop" class="nav-ls-rope-svg-desktop"
+                             width="40" height="100"
+                             viewBox="0 0 40 100"
+                             fill="none"
+                             style="overflow:visible;"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path id="ls-rope-desktop"
+                                  d="M20 0 Q20 30 20 60"
+                                  stroke="var(--color-secondary)"
+                                  stroke-width="2.5"
+                                  stroke-linecap="round"
+                                  opacity="0.65"/>
+                            <g id="ls-rope-end-desktop">
+                                <path d="M-6 4 Q-6 0 0 0 Q6 0 6 4 L4 20 Q0 25 -4 20 Z"
+                                      fill="var(--color-accent)" opacity="0.92"/>
+                            </g>
+                        </svg>
+                        <button class="nav-ls-btn-desktop" id="navLsBtnDesktop" type="button" aria-label="Toggle dark mode">
+                            <div class="nav-ls-knob-desktop" id="navLsKnobDesktop">
+                                <div class="nav-ls-top-desktop" id="navLsTopDesktop"></div>
+                                <div class="nav-ls-shine-desktop"></div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </nav>
         <div class="nav-overlay" id="navOverlay"></div>
@@ -981,7 +1065,6 @@
         <section class="tv-palette-section" id="tvPaletteSection">
             <div class="tv-palette-inner">
                 <div class="tv-stage" id="tvStage">
-                    <!-- id="tvStageInner" added to fix yellow tap highlight on mobile -->
                     <div id="tvStageInner">
                         <div class="tv-wrap" id="tvWrap" role="button" tabindex="0" aria-label="Click to power on the TV">
                             <div class="tv-glow-ring" id="tvGlowRing"></div>
