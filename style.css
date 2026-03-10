@@ -1401,6 +1401,8 @@ body.dark-mode .main-footer { background-color: #111111; }
     .quote-section.section-above, .contact-section.section-above { opacity: 0; transform: translateY(-16px); }
 
     section { padding: 1.5rem 1.25rem !important; }
+
+    
     .tv-palette-section { padding: 1.5rem 0 !important; overflow: visible !important; }
     .tv-palette-inner {
         grid-template-columns: 1fr !important;
@@ -1409,25 +1411,22 @@ body.dark-mode .main-footer { background-color: #111111; }
     }
     .tv-stage {
         overflow: visible !important;
-        min-height: 360px !important;
-        padding: 1.5rem 0 !important;
+        min-height: 400px !important;
+        padding: 2rem 0 !important;
+        perspective: 900px !important;
+    }
+    .tv-wrap {
+        transform: rotateY(-12deg) rotateX(5deg) rotateZ(2deg) !important;
     }
     .tv-body {
-        width: 320px !important;
+        width: 300px !important;
     }
     .tv-text-side {
         width: 100% !important;
         text-align: center !important;
     }
-    .tv-grain {
-        display: none !important;
-    }
-    .tv-screen::after {
-        background: transparent !important;
-    }
-    .tv-scanlines {
-        opacity: 0.05 !important;
-    }
+
+    
     .section-title { font-size: clamp(2rem, 8vw, 2.8rem) !important; margin-bottom: 0.875rem !important; }
     .about-main { gap: 1rem !important; margin-bottom: 1rem !important; }
 
