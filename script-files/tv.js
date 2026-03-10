@@ -9,7 +9,7 @@
       All touch events on the overlay call preventDefault()
       before the browser can render any highlight colour.
 
-   2. Smoother palette transitions — CSS transitions on swatches,
+   2. Smoother palette transitions — CSS trans4itions on swatches,
       palette name, status bar text. Channel dot active state
       also transitions. The noise flash between channels is
       shorter and the palette crossfade uses opacity smoothly.
