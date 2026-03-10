@@ -437,7 +437,7 @@
                 color: rgba(255,255,255,0.0);
                 letter-spacing: 0.10em;
                 z-index: 9;
-                transition: color 0.4s ease;
+                transition: color 0.4s ease, opacity 0.3s ease;
                 text-shadow: 0 0 8px currentColor;
                 pointer-events: none;
             }
@@ -453,7 +453,7 @@
                 color: rgba(255,255,255,0.0);
                 letter-spacing: 0.1em;
                 z-index: 9;
-                transition: color 0.4s ease;
+                transition: color 0.4s ease, opacity 0.3s ease;
                 text-shadow: 0 0 6px rgba(0,0,0,0.8);
             }
 
@@ -480,6 +480,7 @@
                 text-shadow: 0 0 16px rgba(255,255,255,0.6), 0 0 32px rgba(255,255,255,0.2);
                 text-align: center;
                 margin-bottom: 8px;
+                transition: opacity 0.3s ease, transform 0.3s ease;
             }
 
             .tv-swatches {
@@ -525,6 +526,7 @@
                 opacity: 0;
                 pointer-events: none;
                 overflow: hidden;
+                transition: opacity 0.4s ease;
             }
 
             .tv-load-bar-wrap {
@@ -871,6 +873,7 @@
                 border-radius: 6px;
                 mix-blend-mode: screen;
                 display: block;
+                transition: opacity 0.3s ease;
             }
 
             .tv-glow-ring {
@@ -879,7 +882,7 @@
                 border-radius: 40px;
                 pointer-events: none;
                 opacity: 0;
-                transition: opacity 2s ease, background 2s ease;
+                transition: opacity 0.6s ease, background 0.6s ease;
                 z-index: -2;
                 filter: blur(20px);
             }

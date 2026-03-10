@@ -97,12 +97,14 @@
             'inset:0',
             'z-index:99999',
             'background:transparent',
-            '-webkit-tap-highlight-color:rgba(0,0,0,0)',
-            'tap-highlight-color:rgba(0,0,0,0)',
+            '-webkit-tap-highlight-color:transparent',
+            'tap-highlight-color:transparent',
             'touch-action:manipulation',
             'user-select:none',
             '-webkit-user-select:none',
             'cursor:pointer',
+            'pointer-events:auto',
+            'opacity:0',
         ].join(';');
 
         // Append inside tvWrap — covers only the TV card
@@ -200,6 +202,31 @@
             w: Math.round(rect.width)  || tvScreen.offsetWidth  || 360,
             h: Math.round(rect.height) || tvScreen.offsetHeight || 270,
         };
+    }
+
+    /* ── MOBILE OPTIMIZATION ── */
+    function isMobile() {
+        return window.innerWidth <= 900;
+    }
+
+    function adjustForMobile() {
+        if (!isMobile()) return;
+
+        // Ensure TV is properly sized for mobile
+        const tvBody = document.querySelector('.tv-body');
+        if (tvBody) {
+            tvBody.style.width = '320px';
+        }
+
+        // Ensure loading animation is visible
+        if (tvLoading) {
+            tvLoading.style.opacity = tvOn ? '0' : '1';
+        }
+
+        // Ensure palette display is visible
+        if (tvPaletteDisplay) {
+            tvPaletteDisplay.style.opacity = tvOn ? '1' : '0';
+        }
     }
 
     function startNoise(opacity) {
@@ -452,6 +479,9 @@
             applyPalette(palIdx);
             tvOn = true; booting = false;
             startCycle();
+
+            // Mobile optimization
+            adjustForMobile();
         }, 300);
     }
 
@@ -491,6 +521,22 @@
     /* ── INIT ── */
     _injectTvTransitionCSS();
 
+    // Apply touch highlight prevention directly to TV elements
+    tvWrap.style.webkitTapHighlightColor = 'transparent';
+    tvWrap.style.tapHighlightColor = 'transparent';
+    tvWrap.style.touchAction = 'manipulation';
+    tvWrap.style.userSelect = 'none';
+    tvWrap.style.webkitUserSelect = 'none';
+
+    // Also apply to the TV screen to ensure no yellow highlight
+    if (tvScreen) {
+        tvScreen.style.webkitTapHighlightColor = 'transparent';
+        tvScreen.style.tapHighlightColor = 'transparent';
+        tvScreen.style.touchAction = 'manipulation';
+        tvScreen.style.userSelect = 'none';
+        tvScreen.style.webkitUserSelect = 'none';
+    }
+
     // Belt-and-suspenders: kill touchstart on tvWrap itself too
     tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
     tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
@@ -504,5 +550,9 @@
     tvWrap.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
     });
+
+    // Mobile optimization on resize
+    window.addEventListener('resize', adjustForMobile, { passive: true });
+    adjustForMobile();
 
 })();
