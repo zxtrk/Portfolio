@@ -269,17 +269,12 @@
             .tv-bezel,
             .tv-screen,
             .tv-ch-dot {
-                -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
-                tap-highlight-color: rgba(0,0,0,0) !important;
-                -webkit-touch-callout: none !important;
-            }
-
-            .tv-wrap,
-            .tv-wrap *,
-            .tv-wrap *::before,
-            .tv-wrap *::after {
                 -webkit-tap-highlight-color: transparent !important;
-                tap-highlight-color: transparent;
+                tap-highlight-color: transparent !important;
+                -webkit-touch-callout: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                touch-action: manipulation !important;
             }
 
             .tv-wrap {
@@ -1743,6 +1738,113 @@
                 <blockquote class="quote-text" id="quoteText">Loading quote...</blockquote>
                 <p class="quote-author" id="quoteAuthor">&#x2014; Author</p>
                 <div class="quote-tag">Quote of the Day</div>
+            </div>
+        </section>
+
+        <!-- Desktop TV Colour Palette Section -->
+        <section class="tv-palette-section" id="tvPaletteSection">
+            <div class="tv-palette-inner">
+                <!-- Desktop TV Stage -->
+                <div class="tv-stage">
+                    <div class="tv-wrap" id="tvWrap">
+                        <div class="tv-body">
+                            <div class="tv-grain"></div>
+                            <div class="tv-bezel">
+                                <div class="tv-screen" id="tvScreen">
+                                    <div class="tv-screen::after"></div>
+                                    <div class="tv-scanlines"></div>
+                                    <div class="tv-screen-glow" id="tvGlowRing"></div>
+                                    <div class="tv-screen-content">
+                                        <div class="tv-off-dot"></div>
+                                    </div>
+                                    <canvas class="tv-noise-canvas" id="tvNoiseCanvas"></canvas>
+                                    <div class="tv-static"></div>
+                                    <div class="tv-boot-line"></div>
+                                    <div class="tv-palette-display" id="tvPaletteDisplay">
+                                        <div class="tv-palette-name" id="tvPaletteName">PETRICHOR</div>
+                                        <div class="tv-swatches" id="tvSwatches">
+                                            <div class="tv-swatch" style="background: #1A1814;"><div class="tv-swatch-hex">#1A1814</div></div>
+                                            <div class="tv-swatch" style="background: #3D3228;"><div class="tv-swatch-hex">#3D3228</div></div>
+                                            <div class="tv-swatch" style="background: #7A6248;"><div class="tv-swatch-hex">#7A6248</div></div>
+                                            <div class="tv-swatch" style="background: #C4A882;"><div class="tv-swatch-hex">#C4A882</div></div>
+                                            <div class="tv-swatch" style="background: #E8D5B0;"><div class="tv-swatch-hex">#E8D5B0</div></div>
+                                        </div>
+                                    </div>
+                                    <div class="tv-loading" id="tvLoading">
+                                        <div class="tv-load-bar-wrap"><div class="tv-load-bar"></div></div>
+                                        <div class="tv-load-text">Loading...</div>
+                                    </div>
+                                    <div class="tv-channel-tag" id="tvChannelTag">CH 01</div>
+                                    <div class="tv-status-bar" id="tvStatusBar">
+                                        <span class="tv-status-name" id="tvStatusName">PETRICHOR</span>
+                                        <span class="tv-status-hex" id="tvStatusHex">#1A1814</span>
+                                    </div>
+                                    <div class="tv-on-air" id="tvOnAir">
+                                        <div class="tv-on-air-dot" id="tvOnAirDot"></div>
+                                        <span>ON AIR</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tv-controls">
+                                <div class="tv-brand">PETRICHOR</div>
+                                <div class="tv-ctrl-right">
+                                    <div class="tv-knob"></div>
+                                </div>
+                            </div>
+                            <div class="tv-channels" id="tvChannelDots">
+                                <div class="tv-ch-dot active" data-channel="0"></div>
+                                <div class="tv-ch-dot" data-channel="1"></div>
+                                <div class="tv-ch-dot" data-channel="2"></div>
+                                <div class="tv-ch-dot" data-channel="3"></div>
+                                <div class="tv-ch-dot" data-channel="4"></div>
+                                <div class="tv-ch-dot" data-channel="5"></div>
+                                <div class="tv-ch-dot" data-channel="6"></div>
+                                <div class="tv-ch-dot" data-channel="7"></div>
+                            </div>
+                            <div class="tv-legs">
+                                <div class="tv-leg"></div>
+                                <div class="tv-leg"></div>
+                            </div>
+                        </div>
+                        <div class="tv-hint">
+                            <div class="tv-hint-dot"></div>
+                            <span>Click to power on</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Text Side -->
+                <div class="tv-text-side" id="tvTextSide">
+                    <div class="tv-eyebrow">Colour Palette</div>
+                    <h2 class="tv-heading">Retro TV <em>Colour</em> Palette</h2>
+                    <p class="tv-body-text">A nostalgic display of carefully curated colour schemes, each channel offering a unique visual experience that blends retro aesthetics with modern design principles.</p>
+                    <div class="tv-features">
+                        <div class="tv-feature">
+                            <div class="tv-feature-icon">1</div>
+                            <div>Interactive palette switching with smooth transitions</div>
+                        </div>
+                        <div class="tv-feature">
+                            <div class="tv-feature-icon">2</div>
+                            <div>Realistic TV boot sequence and loading animations</div>
+                        </div>
+                        <div class="tv-feature">
+                            <div class="tv-feature-icon">3</div>
+                            <div>Responsive design that works on all devices</div>
+                        </div>
+                    </div>
+                    <div class="tv-preview-strip">
+                        <div class="tv-preview-label">Preview:</div>
+                        <div class="tv-preview-swatch" id="tvPs0"></div>
+                        <div class="tv-preview-swatch" id="tvPs1"></div>
+                        <div class="tv-preview-swatch" id="tvPs2"></div>
+                        <div class="tv-preview-swatch" id="tvPs3"></div>
+                        <div class="tv-preview-swatch" id="tvPs4"></div>
+                    </div>
+                    <div class="tv-now-showing" id="tvNowShowing">
+                        <div class="tv-now-dot"></div>
+                        <span class="tv-now-name" id="tvNowName">PETRICHOR</span>
+                    </div>
+                </div>
             </div>
         </section>
 
