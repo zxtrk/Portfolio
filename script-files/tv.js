@@ -204,30 +204,6 @@
         };
     }
 
-    /* ── MOBILE OPTIMIZATION ── */
-    function isMobile() {
-        return window.innerWidth <= 900;
-    }
-
-    function adjustForMobile() {
-        if (!isMobile()) return;
-
-        // Ensure TV is properly sized for mobile
-        const tvBody = document.querySelector('.tv-body');
-        if (tvBody) {
-            tvBody.style.width = '320px';
-        }
-
-        // Ensure loading animation is visible
-        if (tvLoading) {
-            tvLoading.style.opacity = tvOn ? '0' : '1';
-        }
-
-        // Ensure palette display is visible
-        if (tvPaletteDisplay) {
-            tvPaletteDisplay.style.opacity = tvOn ? '1' : '0';
-        }
-    }
 
     function startNoise(opacity) {
         const { w, h } = getScreenSize();
@@ -479,9 +455,6 @@
             applyPalette(palIdx);
             tvOn = true; booting = false;
             startCycle();
-
-            // Mobile optimization
-            adjustForMobile();
         }, 300);
     }
 
@@ -551,8 +524,5 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
     });
 
-    // Mobile optimization on resize
-    window.addEventListener('resize', adjustForMobile, { passive: true });
-    adjustForMobile();
 
 })();

@@ -840,11 +840,13 @@
                 animation: tvHintPulse 1.5s ease-in-out infinite;
             }
 
+            /* Remove mobile-specific TV styling to use desktop version */
             @media (max-width: 900px) {
                 .tv-palette-inner { grid-template-columns: 1fr; gap: 2.5rem; }
                 .tv-stage { min-height: 380px; }
-                .tv-body { width: 360px; }
-                .tv-wrap { transform: rotateY(-10deg) rotateX(4deg) rotateZ(2deg); }
+                /* Use desktop TV styling - remove mobile-specific transforms and sizing */
+                .tv-body { width: 440px; }
+                .tv-wrap { transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg); }
                 .tv-text-side { text-align: center; }
                 .tv-eyebrow { justify-content: center; }
                 .tv-body-text { max-width: 100%; margin: 0 auto 2rem; }
@@ -854,12 +856,13 @@
             }
 
             @media (max-width: 600px) {
-                .tv-body { width: 320px; }
-                .tv-stage { perspective: 800px; }
-                .tv-wrap { transform: rotateY(-8deg) rotateX(3deg) rotateZ(1.5deg); }
-                .tv-swatch { height: 50px; margin-bottom: 22px; }
-                .tv-swatch-hex { font-size: 8px; }
-                .tv-palette-name { font-size: 13px; }
+                /* Use desktop TV styling - remove mobile-specific transforms and sizing */
+                .tv-body { width: 440px; }
+                .tv-stage { perspective: 900px; }
+                .tv-wrap { transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg); }
+                .tv-swatch { height: 64px; margin-bottom: 26px; }
+                .tv-swatch-hex { font-size: 9px; }
+                .tv-palette-name { font-size: 16px; }
             }
 
             .tv-noise-canvas {
