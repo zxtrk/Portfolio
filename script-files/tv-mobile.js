@@ -1,20 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   RETRO TV COLOUR PALETTE — tv.js  v4
+   MOBILE RETRO TV COLOUR PALETTE — tv-mobile.js
 
-   FIXES:
-   1. Yellow tap highlight — overlay now appends INSIDE tvWrap
-      (not tvStage/tvStageInner) so it only covers the TV body.
-      tvWrap gets position:relative so the overlay's
-      position:absolute covers exactly the TV card area.
-      All touch events on the overlay call preventDefault()
-      before the browser can render any highlight colour.
-
-   2. Smoother palette transitions — CSS trans4itions on swatches,
-      palette name, status bar text. Channel dot active state
-      also transitions. The noise flash between channels is
-      shorter and the palette crossfade uses opacity smoothly.
-
-   3. Status bar animates — name and hex fade in on each change.
+   This script provides the same functionality as the desktop TV
+   but optimized for mobile devices with touch interactions and
+   responsive animations.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -44,97 +33,69 @@
     let noiseCtx   = null;
 
     /* ── DOM refs ── */
-    const tvWrap           = document.getElementById('tvWrap');
-    const tvScreen         = document.getElementById('tvScreen');
-    const tvNoiseCanvas    = document.getElementById('tvNoiseCanvas');
-    const tvOffState       = document.getElementById('tvOffState');
-    const tvLoading        = document.getElementById('tvLoading');
-    const tvLoadText       = document.getElementById('tvLoadText');
-    const tvPaletteDisplay = document.getElementById('tvPaletteDisplay');
-    const tvPaletteName    = document.getElementById('tvPaletteName');
-    const tvSwatches       = document.getElementById('tvSwatches');
-    const tvChannelTag     = document.getElementById('tvChannelTag');
-    const tvStatusBar      = document.getElementById('tvStatusBar');
-    const tvStatusName     = document.getElementById('tvStatusName');
-    const tvStatusHex      = document.getElementById('tvStatusHex');
-    const tvOnAir          = document.getElementById('tvOnAir');
-    const tvOnAirDot       = document.getElementById('tvOnAirDot');
-    const tvGlowRing       = document.getElementById('tvGlowRing');
-    const tvChannelDots    = document.getElementById('tvChannelDots');
-    const tvNowShowing     = document.getElementById('tvNowShowing');
-    const tvNowName        = document.getElementById('tvNowName');
-    const tvTextSide       = document.getElementById('tvTextSide');
-    const tvStage          = document.getElementById('tvStage');
+    const tvWrap           = document.getElementById('tvWrapMobile');
+    const tvScreen         = document.getElementById('tvScreenMobile');
+    const tvNoiseCanvas    = document.getElementById('tvNoiseCanvasMobile');
+    const tvOffState       = document.getElementById('tvOffStateMobile');
+    const tvLoading        = document.getElementById('tvLoadingMobile');
+    const tvLoadText       = document.getElementById('tvLoadTextMobile');
+    const tvPaletteDisplay = document.getElementById('tvPaletteDisplayMobile');
+    const tvPaletteName    = document.getElementById('tvPaletteNameMobile');
+    const tvSwatches       = document.getElementById('tvSwatchesMobile');
+    const tvChannelTag     = document.getElementById('tvChannelTagMobile');
+    const tvStatusBar      = document.getElementById('tvStatusBarMobile');
+    const tvStatusName     = document.getElementById('tvStatusNameMobile');
+    const tvStatusHex      = document.getElementById('tvStatusHexMobile');
+    const tvOnAir          = document.getElementById('tvOnAirMobile');
+    const tvOnAirDot       = document.getElementById('tvOnAirDotMobile');
+    const tvGlowRing       = document.getElementById('tvGlowRingMobile');
+    const tvChannelDots    = document.getElementById('tvChannelDotsMobile');
+    const tvNowShowing     = document.getElementById('tvNowShowingMobile');
+    const tvNowName        = document.getElementById('tvNowNameMobile');
+    const tvTextSide       = document.getElementById('tvTextSideMobile');
+    const tvStage          = document.getElementById('tvStageMobile');
 
-    const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i));
+    const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i + 'Mobile'));
 
     /* ══════════════════════════════════════════════════════════
-       YELLOW HIGHLIGHT FIX v4
+       TOUCH HIGHLIGHT FIX v5
 
-       Root cause: the previous overlay was appended to
-       tvStage/tvStageInner which is a flex-row containing BOTH
-       the TV card AND the text side. The overlay therefore
-       covered the text side too, causing layout/interaction
-       issues — but worse, it wasn't sized correctly over the TV.
-
-       Correct approach:
-       - Append overlay directly inside tvWrap.
-       - Set tvWrap { position:relative } so the overlay's
-         position:absolute covers exactly tvWrap's bounding box.
-       - tvWrap already wraps only the TV card, nothing else.
-       - preventDefault on every touchstart/touchend kills the
-         yellow highlight at the earliest possible moment.
+       Fixed yellow overlay issue:
+       - Remove the transparent overlay that was causing visual artifacts
+       - Apply touch prevention directly to TV elements
+       - Use CSS properties to prevent highlights
+       - Keep JavaScript touch handling for functionality
     ══════════════════════════════════════════════════════════ */
 
     function _createTouchOverlay() {
-        // Ensure tvWrap is a positioning context
-        tvWrap.style.position = 'relative';
+        // Apply touch prevention directly to TV elements instead of overlay
+        tvWrap.style.webkitTapHighlightColor = 'transparent';
+        tvWrap.style.tapHighlightColor = 'transparent';
+        tvWrap.style.touchAction = 'manipulation';
+        tvWrap.style.userSelect = 'none';
+        tvWrap.style.webkitUserSelect = 'none';
 
-        const overlay = document.createElement('div');
-        overlay.id = 'tvTouchOverlay';
-        overlay.style.cssText = [
-            'position:absolute',
-            'inset:0',
-            'z-index:99999',
-            'background:transparent',
-            '-webkit-tap-highlight-color:transparent',
-            'tap-highlight-color:transparent',
-            'touch-action:manipulation',
-            'user-select:none',
-            '-webkit-user-select:none',
-            'cursor:pointer',
-            'pointer-events:auto',
-            'opacity:0',
-        ].join(';');
+        // Also apply to the TV screen to ensure no yellow highlight
+        if (tvScreen) {
+            tvScreen.style.webkitTapHighlightColor = 'transparent';
+            tvScreen.style.tapHighlightColor = 'transparent';
+            tvScreen.style.touchAction = 'manipulation';
+            tvScreen.style.userSelect = 'none';
+            tvScreen.style.webkitUserSelect = 'none';
+        }
 
-        // Append inside tvWrap — covers only the TV card
-        tvWrap.appendChild(overlay);
+        // Belt-and-suspenders: kill touchstart on tvWrap itself too
+        tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
+        tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
 
-        // preventDefault on touchstart is the critical step:
-        // it stops WebKit from painting the yellow highlight
-        // before JavaScript even runs.
-        overlay.addEventListener('touchstart', e => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, { passive: false });
+        // Desktop fallback click on tvWrap
+        tvWrap.addEventListener('click', () => _handleTap());
 
-        overlay.addEventListener('touchend', e => {
-            e.preventDefault();
-            e.stopPropagation();
-            _handleTap();
-        }, { passive: false });
-
-        overlay.addEventListener('touchcancel', e => {
-            e.preventDefault();
-        }, { passive: false });
-
-        // Desktop click
-        overlay.addEventListener('click', e => {
-            e.preventDefault();
-            _handleTap();
+        tvWrap.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
         });
 
-        return overlay;
+        return null; // No overlay needed
     }
 
     function _handleTap() {
@@ -144,51 +105,51 @@
 
     /* ── inject smooth-transition CSS ── */
     function _injectTvTransitionCSS() {
-        if (document.getElementById('tv-transition-styles')) return;
+        if (document.getElementById('tv-transition-styles-mobile')) return;
         const s = document.createElement('style');
-        s.id = 'tv-transition-styles';
+        s.id = 'tv-transition-styles-mobile';
         s.textContent = `
             /* Swatch colour crossfade */
-            .tv-swatch {
+            .tv-swatch-mobile {
                 transition: background 0.55s cubic-bezier(0.22,1,0.36,1) !important;
             }
             /* Palette name fade */
-            #tvPaletteName {
+            #tvPaletteNameMobile {
                 transition: opacity 0.3s ease, transform 0.3s ease;
             }
-            #tvPaletteName.tv-name-exit {
+            #tvPaletteNameMobile.tv-name-exit {
                 opacity: 0;
                 transform: translateY(-4px);
             }
-            #tvPaletteName.tv-name-enter {
+            #tvPaletteNameMobile.tv-name-enter {
                 opacity: 0;
                 transform: translateY(4px);
             }
             /* Status bar */
-            #tvStatusName, #tvStatusHex {
+            #tvStatusNameMobile, #tvStatusHexMobile {
                 transition: opacity 0.25s ease;
             }
-            #tvStatusName.tv-fade-out, #tvStatusHex.tv-fade-out {
+            #tvStatusNameMobile.tv-fade-out, #tvStatusHexMobile.tv-fade-out {
                 opacity: 0;
             }
             /* Channel tag */
-            #tvChannelTag {
+            #tvChannelTagMobile {
                 transition: opacity 0.2s ease;
             }
             /* Channel dots */
-            .tv-ch-dot {
+            .tv-ch-dot-mobile {
                 transition: transform 0.2s ease, box-shadow 0.2s ease !important;
             }
             /* Palette display crossfade */
-            #tvPaletteDisplay {
+            #tvPaletteDisplayMobile {
                 transition: opacity 0.25s ease !important;
             }
             /* Noise canvas */
-            #tvNoiseCanvas {
+            #tvNoiseCanvasMobile {
                 transition: opacity 0.18s ease !important;
             }
             /* Now-showing badge */
-            #tvNowShowing {
+            #tvNowShowingMobile {
                 transition: opacity 0.3s ease !important;
             }
         `;
@@ -235,11 +196,11 @@
         const p = PALETTES[idx];
 
         // Swatches: CSS transition handles the colour fade
-        tvSwatches.querySelectorAll('.tv-swatch').forEach((el, i) => {
+        tvSwatches.querySelectorAll('.tv-swatch-mobile').forEach((el, i) => {
             // Stagger via transition-delay so it feels like a wipe
             el.style.transitionDelay = `${i * 0.07}s`;
             el.style.background = p.colors[i] || '#000';
-            const hexEl = el.querySelector('.tv-swatch-hex');
+            const hexEl = el.querySelector('.tv-swatch-hex-mobile');
             if (hexEl) hexEl.textContent = p.colors[i] || '';
         });
 
@@ -287,7 +248,7 @@
         }
 
         // Channel dots
-        tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((d, i) => {
+        tvChannelDots.querySelectorAll('.tv-ch-dot-mobile').forEach((d, i) => {
             d.classList.toggle('active', i === idx % 8);
             d.style.setProperty('--tv-active-color', p.colors[2]);
         });
@@ -344,7 +305,8 @@
         if (booting) return;
         booting = true;
 
-        tvOffState.style.opacity = '0';
+        // Hide off state
+        if (tvOffState) tvOffState.style.opacity = '0';
         tvScreen.style.background = '#111';
         startNoise(0.6);
 
@@ -359,10 +321,10 @@
             tvLoading.style.justifyContent = 'flex-start';
             tvLoading.style.gap            = '0px';
 
-            let biosEl = document.getElementById('tvBiosText');
+            let biosEl = document.getElementById('tvBiosTextMobile');
             if (!biosEl) {
                 biosEl = document.createElement('div');
-                biosEl.id = 'tvBiosText';
+                biosEl.id = 'tvBiosTextMobile';
                 biosEl.style.cssText = [
                     'font-family:"Share Tech Mono",monospace',
                     'font-size:9px',
@@ -377,7 +339,7 @@
             }
             biosEl.textContent = '';
             if (tvLoadText) tvLoadText.style.display = 'none';
-            const barWrap = document.querySelector('.tv-load-bar-wrap');
+            const barWrap = document.querySelector('.tv-load-bar-wrap-mobile');
             if (barWrap) barWrap.style.display = 'none';
 
             let lineI = 0;
@@ -464,7 +426,7 @@
     }
 
     /* ── CHANNEL DOTS ── */
-    tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((dot, i) => {
+    tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot-mobile').forEach((dot, i) => {
         function switchTo() {
             if (!tvOn) return;
             _switchChannel(i < PALETTES.length ? i : i % PALETTES.length);
@@ -480,7 +442,7 @@
             if (e.isIntersecting) { tvTextSide && tvTextSide.classList.add('revealed'); revObserver.unobserve(e.target); }
         });
     }, { threshold: 0.15 });
-    const sec = document.getElementById('tvPaletteSection');
+    const sec = document.getElementById('tvPaletteSectionMobile');
     if (sec) revObserver.observe(sec);
 
     /* ── RESIZE ── */
