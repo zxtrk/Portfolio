@@ -157,6 +157,12 @@
             @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
             @keyframes revealText { to { opacity: 1; transform: translateY(0); } }
 
+            /* ── DESKTOP NAV SIZE OVERRIDES ── */
+            @media (min-width: 769px) {
+                .logo { font-size: 1.6rem !important; }
+                .nav-links a { font-size: 0.9rem !important; letter-spacing: 0.14em !important; }
+            }
+
             /* ── DESKTOP LIGHT SWITCH (nav) ── */
             .nav-ls-wrap-desktop {
                 position: relative;
@@ -175,8 +181,8 @@
             .nav-ls-rope-svg-desktop {
                 position: absolute;
                 top: 100%;
-                left: 50%;
-                transform: translateX(-50%);
+                left: 21px;
+                transform: none;
                 pointer-events: none;
                 overflow: visible;
                 z-index: 5;
@@ -956,7 +962,7 @@
                              style="overflow:visible;"
                              xmlns="http://www.w3.org/2000/svg">
                             <path id="ls-rope-desktop"
-                                  d="M20 0 Q20 30 20 60"
+                                  d="M6 0 Q6 30 6 60"
                                   stroke="var(--color-secondary)"
                                   stroke-width="2.5"
                                   stroke-linecap="round"
@@ -1235,7 +1241,7 @@
             if (!btn || !knob) return;
 
             /* Rope geometry — anchor fixed at (AX, AY) in SVG space */
-            var AX = 20, AY = 0, REST_LEN = 60, PULL_EXTRA = 26;
+            var AX = 6, AY = 0, REST_LEN = 60, PULL_EXTRA = 26;
 
             /* Spring (vertical pull) */
             var V_STIFF = 240, V_DAMP = 11;
@@ -1351,9 +1357,8 @@
             btn.addEventListener('touchend',    function(e) { e.preventDefault(); onUp(); },     { passive: false });
             btn.addEventListener('touchcancel', function(e) { e.preventDefault(); onCancel(); }, { passive: false });
 
-            /* Initial state */
-            syncKnob();
-            renderRope();
+            /* Initial state — defer so script.js initDarkMode() runs first */
+            setTimeout(function() { syncKnob(); renderRope(); }, 0);
         })();
         </script>
 
