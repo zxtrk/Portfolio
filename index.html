@@ -26,7 +26,6 @@
         <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 
-
         <script>
             (function() {
                 var saved = localStorage.getItem("darkMode");
@@ -93,25 +92,12 @@
                     <a href="#projects" data-nav>Projects</a>
                     <a href="#contact" data-nav>Contact</a>
                 </div>
-
-                <!-- Desktop light switch (replaces old sun/moon button) -->
                 <div class="nav-ls-wrap-desktop">
                     <div class="nav-ls-container-desktop" id="navLsContainerDesktop">
-                        <svg id="navLsRopeSvgDesktop" class="nav-ls-rope-svg-desktop"
-                             width="40" height="100"
-                             viewBox="0 0 40 100"
-                             fill="none"
-                             style="overflow:visible;"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path id="ls-rope-desktop"
-                                  d="M6 0 Q6 30 6 60"
-                                  stroke="var(--color-secondary)"
-                                  stroke-width="2.5"
-                                  stroke-linecap="round"
-                                  opacity="0.65"/>
+                        <svg id="navLsRopeSvgDesktop" class="nav-ls-rope-svg-desktop" width="40" height="100" viewBox="0 0 40 100" fill="none" style="overflow:visible;" xmlns="http://www.w3.org/2000/svg">
+                            <path id="ls-rope-desktop" d="M6 0 Q6 30 6 60" stroke="var(--color-secondary)" stroke-width="2.5" stroke-linecap="round" opacity="0.65"/>
                             <g id="ls-rope-end-desktop">
-                                <path d="M-6 4 Q-6 0 0 0 Q6 0 6 4 L4 20 Q0 25 -4 20 Z"
-                                      fill="var(--color-accent)" opacity="0.92"/>
+                                <path d="M-6 4 Q-6 0 0 0 Q6 0 6 4 L4 20 Q0 25 -4 20 Z" fill="var(--color-accent)" opacity="0.92"/>
                             </g>
                         </svg>
                         <button class="nav-ls-btn-desktop" id="navLsBtnDesktop" type="button" aria-label="Toggle dark mode">
@@ -122,7 +108,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </nav>
         <div class="nav-overlay" id="navOverlay"></div>
@@ -142,10 +127,7 @@
                             <span class="hero-desc">Focused on solving technical problems and building efficient, well-crafted systems.</span>
                         </div>
                         <div class="hero-info-right">
-                            <span class="hero-status">
-                                <span class="hero-status-dot"></span>
-                                Online
-                            </span>
+                            <span class="hero-status"><span class="hero-status-dot"></span>Online</span>
                             <span class="hero-meta-item">Currently, working on project</span>
                         </div>
                     </div>
@@ -219,37 +201,138 @@
             </div>
         </section>
 
-
-        
         <!-- Desktop TV Colour Palette Section -->
         <section class="tv-palette-section" id="tvPaletteSection">
             <div class="tv-palette-inner">
-                <!-- Desktop TV Stage -->
                 <div class="tv-stage">
-                    <!-- Power button (left), wire comes out of TV's left, curves down to button -->
+
+                    <!--
+                        Layout (flex row, left→right):
+                          [tv-power-unit: 110px wide]
+                          [tv-power-wire-svg: 200px wide, overflow:visible]
+                          [tv-wrap: TV body]
+
+                        Wire coordinate system:
+                          x=0  = left edge of SVG = right edge of power-unit box
+                          x=200= right edge of SVG = TV left wall entry
+                          Power button center is 55px LEFT of SVG left → x = -55
+                          TV entry point → x ≈ 200, y ≈ 100 (top-left of tv-body area)
+
+                        Curvy headphone-style drooping path with two lazy S-bends
+                    -->
+
+                    <!-- Power unit — button first, hint BELOW -->
                     <div class="tv-power-unit" id="tvPowerUnit">
                         <div class="tv-power-col">
-                            <div class="tv-hint tv-hint-desktop" id="tvHintDesktop">
-                                <div class="tv-hint-dot"></div>
-                                <span>Click to power on</span>
-                            </div>
                             <div class="tv-power-box">
                                 <div class="tv-power-btn" id="tvPowerBtn">
                                     <div class="tv-power-btn-face"></div>
                                 </div>
                             </div>
+                            <div class="tv-hint tv-hint-desktop" id="tvHintDesktop">
+                                <div class="tv-hint-dot"></div>
+                                <span>Click to power on</span>
+                            </div>
                         </div>
                     </div>
-                    <svg class="tv-power-wire-svg" viewBox="0 0 480 200" preserveAspectRatio="none" aria-hidden="true">
-                        <!-- Long wire: emerges from TV's left, curves down in broad sweep, ends at power button -->
-                        <path class="tv-power-wire-path" d="M 478 36 C 410 36 385 178 305 172 C 225 166 185 48 145 85 C 105 122 75 180 2 108"/>
+
+                    <!--
+                        Wire SVG — realistic three-layer drooping cable.
+                        Layout: [power-unit 110px][this SVG 200px][tv-wrap]
+                        TV body left wall = x=200 in SVG coords.
+                        TV body renders at margin-top:80px. Body is ~310px tall (padding+bezel+controls).
+                        Mid-left of TV body ≈ margin-top(80) + body-height/2(155) = y≈235 in stage space.
+                        Power btn centre: x=-55 (power-unit 110px, btn centred = 55px, offset = -55),
+                                          y=565 (margin-top:520 + box:90/2).
+                    -->
+                    <!--
+                        Wire geometry (all in SVG user units = px at 1:1):
+                        - SVG is 200px wide, overflow:visible so path can go past x=200
+                        - TV body left visual edge (after 3D rotateY): roughly x=222 in stage coords
+                          → in SVG that's x=222 (SVG origin aligns with flex item left)
+                        - Wire entry: x=222, y=265 (tv margin-top:100 + body-pad:22 + bezel:14 + screen-mid:~130)
+                        - Power btn centre: x=-55, y=565
+                        - Short horizontal stub at entry so wire arrives flush into the TV side
+                    -->
+                    <svg class="tv-power-wire-svg"
+                         viewBox="0 0 200 640"
+                         width="200" height="640"
+                         style="overflow:visible; flex-shrink:0; align-self:flex-start;"
+                         aria-hidden="true">
+
+                        <!-- Drop shadow -->
+                        <path
+                            d="M 222 265
+                               L 205 265
+                               C 150 265  90 280   55 335
+                               C  20 390   38 432   8 482
+                               C -16 530  -40 548  -55 565"
+                            fill="none"
+                            stroke="rgba(0,0,0,0.45)"
+                            stroke-width="12"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            transform="translate(4,7)"
+                        />
+
+                        <!-- Outer dark rubber jacket -->
+                        <path class="tv-power-wire-path"
+                              d="M 222 265
+                                 L 205 265
+                                 C 150 265  90 280   55 335
+                                 C  20 390   38 432   8 482
+                                 C -16 530  -40 548  -55 565"/>
+
+                        <!-- Mid-tone sheen -->
+                        <path class="tv-power-wire-path-mid"
+                              d="M 222 265
+                                 L 205 265
+                                 C 150 265  90 280   55 335
+                                 C  20 390   38 432   8 482
+                                 C -16 530  -40 548  -55 565"/>
+
+                        <!-- Specular highlight glint -->
+                        <path class="tv-power-wire-path-hi"
+                              d="M 222 265
+                                 L 205 265
+                                 C 150 265  90 280   55 335
+                                 C  20 390   38 432   8 482
+                                 C -16 530  -40 548  -55 565"/>
+
+                        <!-- Entry ferrule — flush against TV left face -->
+                        <rect x="215" y="255" width="12" height="20" rx="3"
+                              fill="#3a2a1a" stroke="#7a6248" stroke-width="1.3"/>
+
+                        <!-- Exit ferrule at power button -->
+                        <g transform="rotate(-20,-55,565)">
+                            <rect x="-61" y="555" width="12" height="20" rx="3"
+                                  fill="#3a2a1a" stroke="#7a6248" stroke-width="1.3"/>
+                        </g>
                     </svg>
+
                     <div class="tv-wrap" id="tvWrap">
+
                         <div class="tv-body">
-                            <div class="tv-grain"></div>
+                            <!-- ── ANTENNA — inside tv-body, protrudes from top ── -->
+                            <div class="tv-antenna-wrap">
+                                <svg class="tv-antenna-svg" viewBox="0 0 160 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Base mount on TV top -->
+                                    <rect class="tv-antenna-base" x="68" y="74" width="24" height="16" rx="4"/>
+                                    <!-- Left rod -->
+                                    <line class="tv-antenna-rod" x1="80" y1="72" x2="18" y2="10"/>
+                                    <line class="tv-antenna-rod-inner" x1="80" y1="72" x2="18" y2="10"/>
+                                    <circle class="tv-antenna-ball" cx="18" cy="9" r="4.5"/>
+                                    <!-- Right rod (slightly shorter) -->
+                                    <line class="tv-antenna-rod" x1="80" y1="72" x2="136" y2="14"/>
+                                    <line class="tv-antenna-rod-inner" x1="80" y1="72" x2="136" y2="14"/>
+                                    <circle class="tv-antenna-ball" cx="136" cy="13" r="4"/>
+                                    <!-- Pivot joint -->
+                                    <circle class="tv-antenna-pivot" cx="80" cy="72" r="7"/>
+                                    <circle fill="#c4a882" opacity="0.6" cx="80" cy="72" r="3"/>
+                                </svg>
+                            </div>
                             <div class="tv-bezel">
                                 <div class="tv-screen" id="tvScreen">
-                                    <div class="tv-screen::after"></div>
                                     <div class="tv-scanlines"></div>
                                     <div class="tv-screen-glow" id="tvGlowRing"></div>
                                     <div class="tv-screen-content">
@@ -261,11 +344,11 @@
                                     <div class="tv-palette-display" id="tvPaletteDisplay">
                                         <div class="tv-palette-name" id="tvPaletteName">PETRICHOR</div>
                                         <div class="tv-swatches" id="tvSwatches">
-                                            <div class="tv-swatch" style="background: #1A1814;"><div class="tv-swatch-hex">#1A1814</div></div>
-                                            <div class="tv-swatch" style="background: #3D3228;"><div class="tv-swatch-hex">#3D3228</div></div>
-                                            <div class="tv-swatch" style="background: #7A6248;"><div class="tv-swatch-hex">#7A6248</div></div>
-                                            <div class="tv-swatch" style="background: #C4A882;"><div class="tv-swatch-hex">#C4A882</div></div>
-                                            <div class="tv-swatch" style="background: #E8D5B0;"><div class="tv-swatch-hex">#E8D5B0</div></div>
+                                            <div class="tv-swatch" style="background:#1A1814"><div class="tv-swatch-hex">#1A1814</div></div>
+                                            <div class="tv-swatch" style="background:#3D3228"><div class="tv-swatch-hex">#3D3228</div></div>
+                                            <div class="tv-swatch" style="background:#7A6248"><div class="tv-swatch-hex">#7A6248</div></div>
+                                            <div class="tv-swatch" style="background:#C4A882"><div class="tv-swatch-hex">#C4A882</div></div>
+                                            <div class="tv-swatch" style="background:#E8D5B0"><div class="tv-swatch-hex">#E8D5B0</div></div>
                                         </div>
                                     </div>
                                     <div class="tv-loading" id="tvLoading">
@@ -307,24 +390,51 @@
                     </div>
                 </div>
 
-                <!-- Desktop Text Side -->
+                <!-- Desktop Text Side — wider + moved up -->
                 <div class="tv-text-side" id="tvTextSide">
                     <div class="tv-eyebrow">Colour Palette</div>
                     <h2 class="tv-heading">Retro TV <em>Colour</em> Palette</h2>
                     <p class="tv-body-text">A nostalgic display of carefully curated colour schemes, each channel offering a unique visual experience that blends retro aesthetics with modern design principles.</p>
                     <div class="tv-features">
+
+                        <!-- Colour fact 1 — palette count -->
                         <div class="tv-feature">
-                            <div class="tv-feature-icon">1</div>
-                            <div>Interactive palette switching with smooth transitions</div>
+                            <div class="tv-feature-icon">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="4" cy="4" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                    <circle cx="10" cy="4" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                    <circle cx="4" cy="10" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                    <circle cx="10" cy="10" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                </svg>
+                            </div>
+                            <div>8 hand-picked palettes — each named after a mood or moment</div>
                         </div>
+
+                        <!-- Colour fact 2 — 5 shades -->
                         <div class="tv-feature">
-                            <div class="tv-feature-icon">2</div>
-                            <div>Realistic TV boot sequence and loading animations</div>
+                            <div class="tv-feature-icon">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="1"   y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.35"/>
+                                    <rect x="3.9" y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.55"/>
+                                    <rect x="6.8" y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.72"/>
+                                    <rect x="9.7" y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.88"/>
+                                    <rect x="12"  y="3" width="1"   height="8" rx="0.6" fill="currentColor" opacity="1"/>
+                                </svg>
+                            </div>
+                            <div>5 tones per palette — from deep shadow to soft highlight</div>
                         </div>
+
+                        <!-- Colour fact 3 — dark-first design -->
                         <div class="tv-feature">
-                            <div class="tv-feature-icon">3</div>
-                            <div>Responsive design that works on all devices</div>
+                            <div class="tv-feature-icon">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 2a5 5 0 1 0 5 5A5 5 0 0 0 9.5 3 3.8 3.8 0 0 1 7 2z"
+                                          stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div>Dark-first colour theory — built for atmosphere, not just aesthetics</div>
                         </div>
+
                     </div>
                     <div class="tv-preview-strip">
                         <div class="tv-preview-label">Preview:</div>
@@ -345,14 +455,34 @@
         <!-- Mobile TV Colour Palette Section -->
         <section class="tv-palette-section-mobile" id="tvPaletteSectionMobile">
             <div class="tv-palette-inner-mobile">
-                <!-- Mobile TV Stage -->
                 <div class="tv-stage-mobile">
                     <div class="tv-wrap-mobile" id="tvWrapMobile">
                         <div class="tv-body-mobile">
+                            <!-- ── ANTENNA — inside tv-body-mobile, protrudes from top ── -->
+                            <div class="tv-antenna-wrap-mobile">
+                                <svg viewBox="0 0 140 80" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                     style="width:100%;height:100%;overflow:visible;">
+                                    <rect x="58" y="64" width="24" height="14" rx="4"
+                                          fill="#2e2318" stroke="#5a4530" stroke-width="1.5"/>
+                                    <line x1="70" y1="62" x2="16" y2="8"
+                                          stroke="#7a6248" stroke-width="3" stroke-linecap="round"/>
+                                    <line x1="70" y1="62" x2="16" y2="8"
+                                          stroke="#c4a882" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                                    <circle cx="16" cy="7" r="4" fill="#c4a882"
+                                            style="filter:drop-shadow(0 0 3px rgba(196,168,130,0.4))"/>
+                                    <line x1="70" y1="62" x2="118" y2="12"
+                                          stroke="#7a6248" stroke-width="3" stroke-linecap="round"/>
+                                    <line x1="70" y1="62" x2="118" y2="12"
+                                          stroke="#c4a882" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                                    <circle cx="118" cy="11" r="3.5" fill="#c4a882"
+                                            style="filter:drop-shadow(0 0 3px rgba(196,168,130,0.4))"/>
+                                    <circle cx="70" cy="62" r="6" fill="#3a2a1a" stroke="#7a6248" stroke-width="1.5"/>
+                                    <circle cx="70" cy="62" r="2.5" fill="#c4a882" opacity="0.6"/>
+                                </svg>
+                            </div>
                             <div class="tv-grain-mobile"></div>
                             <div class="tv-bezel-mobile">
                                 <div class="tv-screen-mobile" id="tvScreenMobile">
-                                    <div class="tv-screen-mobile::after"></div>
                                     <div class="tv-scanlines-mobile"></div>
                                     <div class="tv-screen-glow-mobile" id="tvGlowRingMobile"></div>
                                     <div class="tv-screen-content-mobile">
@@ -364,11 +494,11 @@
                                     <div class="tv-palette-display-mobile" id="tvPaletteDisplayMobile">
                                         <div class="tv-palette-name-mobile" id="tvPaletteNameMobile">PETRICHOR</div>
                                         <div class="tv-swatches-mobile" id="tvSwatchesMobile">
-                                            <div class="tv-swatch-mobile" style="background: #1A1814;"><div class="tv-swatch-hex-mobile">#1A1814</div></div>
-                                            <div class="tv-swatch-mobile" style="background: #3D3228;"><div class="tv-swatch-hex-mobile">#3D3228</div></div>
-                                            <div class="tv-swatch-mobile" style="background: #7A6248;"><div class="tv-swatch-hex-mobile">#7A6248</div></div>
-                                            <div class="tv-swatch-mobile" style="background: #C4A882;"><div class="tv-swatch-hex-mobile">#C4A882</div></div>
-                                            <div class="tv-swatch-mobile" style="background: #E8D5B0;"><div class="tv-swatch-hex-mobile">#E8D5B0</div></div>
+                                            <div class="tv-swatch-mobile" style="background:#1A1814"><div class="tv-swatch-hex-mobile">#1A1814</div></div>
+                                            <div class="tv-swatch-mobile" style="background:#3D3228"><div class="tv-swatch-hex-mobile">#3D3228</div></div>
+                                            <div class="tv-swatch-mobile" style="background:#7A6248"><div class="tv-swatch-hex-mobile">#7A6248</div></div>
+                                            <div class="tv-swatch-mobile" style="background:#C4A882"><div class="tv-swatch-hex-mobile">#C4A882</div></div>
+                                            <div class="tv-swatch-mobile" style="background:#E8D5B0"><div class="tv-swatch-hex-mobile">#E8D5B0</div></div>
                                         </div>
                                     </div>
                                     <div class="tv-loading-mobile" id="tvLoadingMobile">
@@ -388,9 +518,7 @@
                             </div>
                             <div class="tv-controls-mobile">
                                 <div class="tv-brand-mobile">PETRICHOR</div>
-                                <div class="tv-ctrl-right-mobile">
-                                    <div class="tv-knob-mobile"></div>
-                                </div>
+                                <div class="tv-ctrl-right-mobile"><div class="tv-knob-mobile"></div></div>
                             </div>
                             <div class="tv-channels-mobile" id="tvChannelDotsMobile">
                                 <div class="tv-ch-dot-mobile active" data-channel="0"></div>
@@ -413,24 +541,42 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Mobile Text Side -->
                 <div class="tv-text-side-mobile" id="tvTextSideMobile">
                     <div class="tv-eyebrow-mobile">Colour Palette</div>
                     <h2 class="tv-heading-mobile">Retro TV <em>Colour</em> Palette</h2>
                     <p class="tv-body-text-mobile">A nostalgic display of carefully curated colour schemes, each channel offering a unique visual experience that blends retro aesthetics with modern design principles.</p>
                     <div class="tv-features-mobile">
                         <div class="tv-feature-mobile">
-                            <div class="tv-feature-icon-mobile">1</div>
-                            <div>Interactive palette switching with smooth transitions</div>
+                            <div class="tv-feature-icon-mobile">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="4" cy="4" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                    <circle cx="10" cy="4" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                    <circle cx="4" cy="10" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                    <circle cx="10" cy="10" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                                </svg>
+                            </div>
+                            <div>8 hand-picked palettes — each named after a mood or moment</div>
                         </div>
                         <div class="tv-feature-mobile">
-                            <div class="tv-feature-icon-mobile">2</div>
-                            <div>Realistic TV boot sequence and loading animations</div>
+                            <div class="tv-feature-icon-mobile">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="1"   y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.35"/>
+                                    <rect x="3.9" y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.55"/>
+                                    <rect x="6.8" y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.72"/>
+                                    <rect x="9.7" y="3" width="2.2" height="8" rx="0.6" fill="currentColor" opacity="0.88"/>
+                                    <rect x="12"  y="3" width="1"   height="8" rx="0.6" fill="currentColor" opacity="1"/>
+                                </svg>
+                            </div>
+                            <div>5 tones per palette — from deep shadow to soft highlight</div>
                         </div>
                         <div class="tv-feature-mobile">
-                            <div class="tv-feature-icon-mobile">3</div>
-                            <div>Responsive design that works on all devices</div>
+                            <div class="tv-feature-icon-mobile">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 2a5 5 0 1 0 5 5A5 5 0 0 0 9.5 3 3.8 3.8 0 0 1 7 2z"
+                                          stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div>Dark-first colour theory — built for atmosphere, not just aesthetics</div>
                         </div>
                     </div>
                     <div class="tv-preview-strip-mobile">
@@ -504,8 +650,6 @@
         <script src="script-files/weather-effects.js"></script>
         <script src="script-files/tv.js"></script>
         <script src="script-files/tv-mobile.js"></script>
-
-        <!-- Desktop nav light-switch physics -->
         <script src="script-files/nav-lightswitch-desktop.js"></script>
         <script src="script-files/quotes.js"></script>
 
