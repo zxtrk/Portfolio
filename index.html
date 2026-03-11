@@ -226,75 +226,80 @@
             <div class="tv-palette-inner">
                 <!-- Desktop TV Stage -->
                 <div class="tv-stage">
-                    <!-- Wooden power box + wire (left of TV) -->
-                    <div class="tv-power-unit" id="tvPowerUnit">
-                        <div class="tv-power-box">
-                            <div class="tv-power-btn" id="tvPowerBtn">
-                                <div class="tv-power-btn-face"></div>
-                            </div>
-                        </div>
-                        <svg class="tv-power-wire-svg" viewBox="0 0 70 28" preserveAspectRatio="none" aria-hidden="true">
-                            <path class="tv-power-wire-path" d="M 2 22 C 18 26 50 20 68 12"/>
-                        </svg>
-                    </div>
-                    <div class="tv-wrap" id="tvWrap">
-                        <div class="tv-body">
-                            <div class="tv-grain"></div>
-                            <div class="tv-bezel">
-                                <div class="tv-screen" id="tvScreen">
-                                    <div class="tv-screen::after"></div>
-                                    <div class="tv-scanlines"></div>
-                                    <div class="tv-screen-glow" id="tvGlowRing"></div>
-                                    <div class="tv-screen-content">
-                                        <div class="tv-off-dot"></div>
-                                    </div>
-                                    <canvas class="tv-noise-canvas" id="tvNoiseCanvas"></canvas>
-                                    <div class="tv-static"></div>
-                                    <div class="tv-boot-line"></div>
-                                    <div class="tv-palette-display" id="tvPaletteDisplay">
-                                        <div class="tv-palette-name" id="tvPaletteName">PETRICHOR</div>
-                                        <div class="tv-swatches" id="tvSwatches">
-                                            <div class="tv-swatch" style="background: #1A1814;"><div class="tv-swatch-hex">#1A1814</div></div>
-                                            <div class="tv-swatch" style="background: #3D3228;"><div class="tv-swatch-hex">#3D3228</div></div>
-                                            <div class="tv-swatch" style="background: #7A6248;"><div class="tv-swatch-hex">#7A6248</div></div>
-                                            <div class="tv-swatch" style="background: #C4A882;"><div class="tv-swatch-hex">#C4A882</div></div>
-                                            <div class="tv-swatch" style="background: #E8D5B0;"><div class="tv-swatch-hex">#E8D5B0</div></div>
+                    <div class="tv-stage-column">
+                        <div class="tv-wrap" id="tvWrap">
+                            <div class="tv-body">
+                                <div class="tv-grain"></div>
+                                <div class="tv-bezel">
+                                    <div class="tv-screen" id="tvScreen">
+                                        <div class="tv-screen::after"></div>
+                                        <div class="tv-scanlines"></div>
+                                        <div class="tv-screen-glow" id="tvGlowRing"></div>
+                                        <div class="tv-screen-content">
+                                            <div class="tv-off-dot"></div>
+                                        </div>
+                                        <canvas class="tv-noise-canvas" id="tvNoiseCanvas"></canvas>
+                                        <div class="tv-static"></div>
+                                        <div class="tv-boot-line"></div>
+                                        <div class="tv-palette-display" id="tvPaletteDisplay">
+                                            <div class="tv-palette-name" id="tvPaletteName">PETRICHOR</div>
+                                            <div class="tv-swatches" id="tvSwatches">
+                                                <div class="tv-swatch" style="background: #1A1814;"><div class="tv-swatch-hex">#1A1814</div></div>
+                                                <div class="tv-swatch" style="background: #3D3228;"><div class="tv-swatch-hex">#3D3228</div></div>
+                                                <div class="tv-swatch" style="background: #7A6248;"><div class="tv-swatch-hex">#7A6248</div></div>
+                                                <div class="tv-swatch" style="background: #C4A882;"><div class="tv-swatch-hex">#C4A882</div></div>
+                                                <div class="tv-swatch" style="background: #E8D5B0;"><div class="tv-swatch-hex">#E8D5B0</div></div>
+                                            </div>
+                                        </div>
+                                        <div class="tv-loading" id="tvLoading">
+                                            <div class="tv-load-bar-wrap"><div class="tv-load-bar"></div></div>
+                                            <div class="tv-load-text">Loading...</div>
+                                        </div>
+                                        <div class="tv-channel-tag" id="tvChannelTag">CH 01</div>
+                                        <div class="tv-status-bar" id="tvStatusBar">
+                                            <span class="tv-status-name" id="tvStatusName">PETRICHOR</span>
+                                            <span class="tv-status-hex" id="tvStatusHex">#1A1814</span>
+                                        </div>
+                                        <div class="tv-on-air" id="tvOnAir">
+                                            <div class="tv-on-air-dot" id="tvOnAirDot"></div>
+                                            <span>ON AIR</span>
                                         </div>
                                     </div>
-                                    <div class="tv-loading" id="tvLoading">
-                                        <div class="tv-load-bar-wrap"><div class="tv-load-bar"></div></div>
-                                        <div class="tv-load-text">Loading...</div>
-                                    </div>
-                                    <div class="tv-channel-tag" id="tvChannelTag">CH 01</div>
-                                    <div class="tv-status-bar" id="tvStatusBar">
-                                        <span class="tv-status-name" id="tvStatusName">PETRICHOR</span>
-                                        <span class="tv-status-hex" id="tvStatusHex">#1A1814</span>
-                                    </div>
-                                    <div class="tv-on-air" id="tvOnAir">
-                                        <div class="tv-on-air-dot" id="tvOnAirDot"></div>
-                                        <span>ON AIR</span>
+                                </div>
+                                <div class="tv-controls">
+                                    <div class="tv-brand">PETRICHOR</div>
+                                    <div class="tv-ctrl-right">
+                                        <div class="tv-knob"></div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="tv-controls">
-                                <div class="tv-brand">PETRICHOR</div>
-                                <div class="tv-ctrl-right">
-                                    <div class="tv-knob"></div>
+                                <div class="tv-channels" id="tvChannelDots">
+                                    <div class="tv-ch-dot active" data-channel="0"></div>
+                                    <div class="tv-ch-dot" data-channel="1"></div>
+                                    <div class="tv-ch-dot" data-channel="2"></div>
+                                    <div class="tv-ch-dot" data-channel="3"></div>
+                                    <div class="tv-ch-dot" data-channel="4"></div>
+                                    <div class="tv-ch-dot" data-channel="5"></div>
+                                    <div class="tv-ch-dot" data-channel="6"></div>
+                                    <div class="tv-ch-dot" data-channel="7"></div>
+                                </div>
+                                <div class="tv-legs">
+                                    <div class="tv-leg"></div>
+                                    <div class="tv-leg"></div>
                                 </div>
                             </div>
-                            <div class="tv-channels" id="tvChannelDots">
-                                <div class="tv-ch-dot active" data-channel="0"></div>
-                                <div class="tv-ch-dot" data-channel="1"></div>
-                                <div class="tv-ch-dot" data-channel="2"></div>
-                                <div class="tv-ch-dot" data-channel="3"></div>
-                                <div class="tv-ch-dot" data-channel="4"></div>
-                                <div class="tv-ch-dot" data-channel="5"></div>
-                                <div class="tv-ch-dot" data-channel="6"></div>
-                                <div class="tv-ch-dot" data-channel="7"></div>
-                            </div>
-                            <div class="tv-legs">
-                                <div class="tv-leg"></div>
-                                <div class="tv-leg"></div>
+                        </div>
+
+                        <!-- Power unit: wire exits left side of TV, curves down to button below -->
+                        <div class="tv-power-unit-below" id="tvPowerUnit">
+                            <!-- SVG wire: starts at left edge of TV body, curves down to button -->
+                            <svg class="tv-power-wire-svg-below" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true">
+                                <path class="tv-power-wire-path" d="M 0 8 C 30 8 30 72 80 72 L 120 72"/>
+                            </svg>
+                            <div class="tv-power-box-below">
+                                <button class="tv-power-btn" id="tvPowerBtn" type="button" aria-label="Power on TV">
+                                    <div class="tv-power-btn-face"></div>
+                                </button>
+                                <span class="tv-power-label" id="tvPowerLabel">Press to turn on</span>
                             </div>
                         </div>
                     </div>
@@ -400,9 +405,18 @@
                                 <div class="tv-leg-mobile"></div>
                             </div>
                         </div>
-                        <div class="tv-hint-mobile">
-                            <div class="tv-hint-dot-mobile"></div>
-                            <span>Tap to power on</span>
+                    </div>
+
+                    <!-- Power unit below TV (mobile) -->
+                    <div class="tv-power-unit-below-mobile">
+                        <svg class="tv-power-wire-svg-below-mobile" viewBox="0 0 160 60" preserveAspectRatio="none" aria-hidden="true">
+                            <path class="tv-power-wire-path-mobile" d="M 0 6 C 24 6 24 54 64 54 L 96 54"/>
+                        </svg>
+                        <div class="tv-power-box-below-mobile">
+                            <button class="tv-power-btn-mobile" id="tvPowerBtnMobile" type="button" aria-label="Power on TV">
+                                <div class="tv-power-btn-face-mobile"></div>
+                            </button>
+                            <span class="tv-power-label-mobile" id="tvPowerLabelMobile">Press to turn on</span>
                         </div>
                     </div>
                 </div>
