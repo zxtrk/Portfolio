@@ -226,17 +226,24 @@
             <div class="tv-palette-inner">
                 <!-- Desktop TV Stage -->
                 <div class="tv-stage">
-                    <!-- Wooden power box + wire (left of TV) -->
+                    <!-- Power button (left), wire comes out of TV's left, curves down to button -->
                     <div class="tv-power-unit" id="tvPowerUnit">
-                        <div class="tv-power-box">
-                            <div class="tv-power-btn" id="tvPowerBtn">
-                                <div class="tv-power-btn-face"></div>
+                        <div class="tv-power-col">
+                            <div class="tv-hint tv-hint-desktop" id="tvHintDesktop">
+                                <div class="tv-hint-dot"></div>
+                                <span>Click to power on</span>
+                            </div>
+                            <div class="tv-power-box">
+                                <div class="tv-power-btn" id="tvPowerBtn">
+                                    <div class="tv-power-btn-face"></div>
+                                </div>
                             </div>
                         </div>
-                        <svg class="tv-power-wire-svg" viewBox="0 0 70 28" preserveAspectRatio="none" aria-hidden="true">
-                            <path class="tv-power-wire-path" d="M 2 22 C 18 26 50 20 68 12"/>
-                        </svg>
                     </div>
+                    <svg class="tv-power-wire-svg" viewBox="0 0 480 200" preserveAspectRatio="none" aria-hidden="true">
+                        <!-- Long wire: emerges from TV's left, curves down in broad sweep, ends at power button -->
+                        <path class="tv-power-wire-path" d="M 478 36 C 410 36 385 178 305 172 C 225 166 185 48 145 85 C 105 122 75 180 2 108"/>
+                    </svg>
                     <div class="tv-wrap" id="tvWrap">
                         <div class="tv-body">
                             <div class="tv-grain"></div>

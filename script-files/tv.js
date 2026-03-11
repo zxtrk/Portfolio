@@ -62,6 +62,8 @@
     const tvNowShowing     = document.getElementById('tvNowShowing');
     const tvNowName        = document.getElementById('tvNowName');
     const tvTextSide       = document.getElementById('tvTextSide');
+    const tvPowerBtn       = document.getElementById('tvPowerBtn');
+    const tvHintDesktop    = document.getElementById('tvHintDesktop');
 
     /* tvLoadText and tvOffState may not exist in HTML — guard everywhere */
     const tvLoadText = document.getElementById('tvLoadText');
@@ -90,7 +92,6 @@
             'touch-action:manipulation',
             'user-select:none',
             '-webkit-user-select:none',
-            'cursor:pointer',
             'pointer-events:auto',
             'opacity:0',
         ].join(';');
@@ -121,8 +122,8 @@
     }
 
     function _handleTap() {
-        if (!tvOn && !booting) bootTV();
-        else if (tvOn) nextChannel();
+        /* Only switch channel when TV is on; power-on must use the power button */
+        if (tvOn) nextChannel();
     }
 
     /* ── inject smooth-transition CSS ── */
@@ -422,7 +423,37 @@
             applyPalette(palIdx);
             tvOn = true; booting = false;
             startCycle();
+            tvWrap.classList.add('tv-on');
+            if (tvPowerBtn) tvPowerBtn.classList.add('btn-on');
+            if (tvHintDesktop) tvHintDesktop.style.opacity = '0';
         }, 300);
+    }
+
+    /* ── POWER OFF ── */
+    function powerOff() {
+        if (!tvOn || booting) return;
+        stopCycle();
+        tvOn = false;
+
+        tvLoading.style.opacity = '0';
+        tvLoading.innerHTML = '';
+        tvPaletteDisplay.style.opacity = '0';
+        tvNoiseCanvas.style.opacity = '0';
+        stopNoise();
+
+        const tvOffState = document.querySelector('#tvScreen .tv-screen-content');
+        if (tvOffState) tvOffState.style.opacity = '1';
+
+        tvScreen.style.background = '#050302';
+        if (tvChannelTag) tvChannelTag.style.color = 'rgba(255,255,255,0.0)';
+        tvStatusBar && tvStatusBar.querySelectorAll('span').forEach(s => { s.style.color = 'rgba(255,255,255,0.0)'; });
+        if (tvOnAir) tvOnAir.style.color = 'rgba(200,80,80,0.0)';
+        if (tvOnAirDot) { tvOnAirDot.style.background = 'rgba(200,80,80,0.0)'; tvOnAirDot.style.boxShadow = 'none'; }
+        if (tvGlowRing) tvGlowRing.style.opacity = '0';
+
+        tvWrap.classList.remove('tv-on');
+        if (tvPowerBtn) tvPowerBtn.classList.remove('btn-on');
+        if (tvHintDesktop) tvHintDesktop.style.opacity = '0.5';
     }
 
     /* ── NEXT CHANNEL (tap) ── */
@@ -480,6 +511,18 @@
 
     /* Create overlay (handles both touch and click) */
     _createTouchOverlay();
+
+    /* Power button: only way to turn TV on/off */
+    if (tvPowerBtn) {
+        tvPowerBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (!tvOn && !booting) bootTV();
+            else if (tvOn) powerOff();
+        });
+        tvPowerBtn.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tvPowerBtn.click(); }
+        });
+    }
 
     /* Desktop keyboard */
     tvWrap.addEventListener('keydown', e => {

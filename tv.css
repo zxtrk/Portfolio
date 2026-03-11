@@ -12,8 +12,8 @@
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 2rem;
+    grid-template-columns: minmax(0, 800px) 1fr;
+    gap: 4rem;
     align-items: center;
 }
 
@@ -21,11 +21,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    justify-self: start;
     perspective: 900px;
     min-height: 420px;
     position: relative;
     gap: 0;
+    padding-right: 0;
 }
 
 .tv-stage,
@@ -48,7 +50,7 @@
 }
 
 .tv-wrap {
-    transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg);
+    transform: rotateY(-14deg) rotateX(6deg) rotateZ(3deg);
     transform-style: preserve-3d;
     filter: drop-shadow(40px 30px 60px rgba(0,0,0,0.45)) drop-shadow(8px 8px 20px rgba(0,0,0,0.3));
     cursor: pointer;
@@ -60,11 +62,11 @@
 }
 
 .tv-wrap:active {
-    transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg) scale(0.97);
+    transform: rotateY(-14deg) rotateX(6deg) rotateZ(3deg) scale(0.97);
 }
 
 .tv-body {
-    width: 440px;
+    width: 280px;
     background: linear-gradient(160deg, #4a3a2a 0%, #2e2318 40%, #1e1610 70%, #2a1e14 100%);
     border-radius: 22px 22px 28px 28px;
     padding: 22px 22px 26px;
@@ -470,6 +472,8 @@
 .tv-text-side {
     opacity: 0;
     transform: translateX(30px);
+    min-width: 0;
+    padding-left: 2.5rem;
 }
 
 .tv-text-side.revealed {
@@ -480,11 +484,11 @@
 
 .tv-eyebrow {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--color-accent);
-    margin-bottom: 1rem;
+    margin-bottom: 0.85rem;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -500,12 +504,12 @@
 
 .tv-heading {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-size: clamp(1.65rem, 3.5vw, 2.6rem);
     font-weight: 400;
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: var(--color-text);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
 }
 
 .tv-heading em {
@@ -515,39 +519,39 @@
 
 .tv-body-text {
     font-family: var(--font-mono);
-    font-size: 13px;
-    line-height: 1.8;
+    font-size: 12px;
+    line-height: 1.75;
     color: var(--color-secondary);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     max-width: 440px;
 }
 
 .tv-features {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 2rem;
+    gap: 10px;
+    margin-bottom: 1.5rem;
 }
 
 .tv-feature {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
     color: var(--color-text);
     line-height: 1.5;
 }
 
 .tv-feature-icon {
-    width: 20px; height: 20px;
+    width: 18px; height: 18px;
     border: 1px solid var(--color-border);
     border-radius: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    font-size: 10px;
+    font-size: 9px;
     color: var(--color-accent);
     background: var(--color-light);
     margin-top: 1px;
@@ -565,7 +569,7 @@
 
 .tv-preview-label {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-secondary);
@@ -583,9 +587,9 @@
 }
 
 .tv-now-showing {
-    margin-top: 12px;
+    margin-top: 10px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-secondary);
@@ -1292,9 +1296,9 @@
 
 @media (max-width: 600px) {
     /* Use desktop TV styling - remove mobile-specific transforms and sizing */
-    .tv-body { width: 440px; }
+    .tv-body { width: 360px; }
     .tv-stage { perspective: 900px; }
-    .tv-wrap { transform: rotateY(-18deg) rotateX(6deg) rotateZ(3deg); }
+    .tv-wrap { transform: rotateY(-14deg) rotateX(6deg) rotateZ(3deg); }
     .tv-swatch { height: 64px; margin-bottom: 26px; }
     .tv-swatch-hex { font-size: 9px; }
     .tv-palette-name { font-size: 16px; }
@@ -1333,12 +1337,24 @@
 
 .tv-power-unit {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     flex-shrink: 0;
-    align-self: center;
-    transform: translateY(18px);
     pointer-events: none;
+}
+
+.tv-power-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.tv-hint-desktop {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    transition: opacity 0.3s ease;
 }
 
 .tv-power-box {
@@ -1426,20 +1442,28 @@
         0 0 20px rgba(200,60,60,0.25);
 }
 
-/* Desktop wire SVG */
-.tv-power-wire-svg {
-    width: 70px;
-    height: 28px;
-    overflow: visible;
-    flex-shrink: 0;
-}
+/* Desktop wire SVG — long wire curves down from TV's left to power button (desktop only) */
+@media (min-width: 901px) {
+    .tv-power-wire-svg {
+        width: 440px;
+        height: 200px;
+        overflow: visible;
+        flex-shrink: 0;
+    }
 
-.tv-power-wire-path {
-    fill: none;
-    stroke: #1a1208;
-    stroke-width: 3.5;
-    stroke-linecap: round;
-    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+    .tv-power-wire-path {
+        fill: none;
+        stroke: #5a4a38;
+        stroke-width: 7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) drop-shadow(0 0 2px rgba(0,0,0,0.3));
+    }
+
+    body.dark-mode .tv-power-wire-path {
+        stroke: #7a6a58;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)) drop-shadow(0 0 4px rgba(90,70,50,0.3));
+    }
 }
 
 
