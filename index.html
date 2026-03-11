@@ -226,6 +226,17 @@
             <div class="tv-palette-inner">
                 <!-- Desktop TV Stage -->
                 <div class="tv-stage">
+                    <!-- Wooden power box + wire (left of TV) -->
+                    <div class="tv-power-unit" id="tvPowerUnit">
+                        <div class="tv-power-box">
+                            <div class="tv-power-btn" id="tvPowerBtn">
+                                <div class="tv-power-btn-face"></div>
+                            </div>
+                        </div>
+                        <svg class="tv-power-wire-svg" viewBox="0 0 70 28" preserveAspectRatio="none" aria-hidden="true">
+                            <path class="tv-power-wire-path" d="M 2 22 C 18 26 50 20 68 12"/>
+                        </svg>
+                    </div>
                     <div class="tv-wrap" id="tvWrap">
                         <div class="tv-body">
                             <div class="tv-grain"></div>
@@ -285,10 +296,6 @@
                                 <div class="tv-leg"></div>
                                 <div class="tv-leg"></div>
                             </div>
-                        </div>
-                        <div class="tv-hint">
-                            <div class="tv-hint-dot"></div>
-                            <span>Click to power on</span>
                         </div>
                     </div>
                 </div>
@@ -441,7 +448,7 @@
                 <div class="contact-info" data-reveal>
                     <button class="contact-link" id="emailButton" type="button">
                         <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m3 7l9 6l9-6"/></g></svg></span>
-                        <span class="contact-details"><span class="contact-label">Email</span><span class="contact-value">Email.Hidden</span></span>
+                        <span class="contact-details"><span class="contact-label">Email</span><span class="contact-value">Contact Me</span></span>
                     </button>
                     <div class="email-form-container" id="emailFormContainer">
                         <form class="email-form" id="emailForm" action="https://api.web3forms.com/submit" method="POST">
