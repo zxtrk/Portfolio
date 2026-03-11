@@ -1,11 +1,15 @@
 /* ═══════════════════════════════════════════════════════════════
    MOBILE RETRO TV COLOUR PALETTE — tv-mobile.js
 
-   FIXES:
-   1. touchend now calls _handleTap() so taps actually work
-   2. Removed duplicate event listeners from INIT
-   3. Injected -webkit-tap-highlight-color:transparent for all
-      mobile TV elements to kill the yellow flash
+   SAFARI iOS FIX:
+   - Uses transparent overlay div (same pattern as desktop tv.js)
+     instead of direct tvWrap touch listeners.
+   - Overlay is a flat, untransformed div — Safari suppresses
+     tap highlights on it reliably, unlike 3D-transformed parents.
+   - Uses rgba(0,0,0,0) instead of "transparent" for
+     -webkit-tap-highlight-color (Safari parses these differently).
+   - Injects a <style> block targeting every mobile TV element
+     with the rgba(0,0,0,0) value.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -56,82 +60,115 @@
 
     const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i + 'Mobile'));
 
-    /* ── Bail early if core elements missing ── */
     if (!tvWrap || !tvScreen) return;
 
     /* ══════════════════════════════════════════════════════════
-       TOUCH HANDLER
+       SAFARI iOS TAP HIGHLIGHT FIX
 
-       Key fix: touchend must call _handleTap().
-       When e.preventDefault() is called on touchstart, the
-       browser suppresses the synthetic click event — so we MUST
-       fire _handleTap() from touchend directly.
+       Root cause on real Safari (not Chrome DevTools sim):
+       Elements with 3D CSS transforms (rotateY/rotateX/rotateZ)
+       cause Safari to flash the highlight on the nearest
+       non-transformed ancestor — hence the yellow block.
+
+       "transparent" keyword is unreliable in Safari; rgba(0,0,0,0)
+       is required.
+
+       Fix: flat untransformed overlay div captures all touches.
+       tvWrap gets pointer-events:none so Safari never hit-tests
+       the 3D element directly.
     ══════════════════════════════════════════════════════════ */
 
-    function _bindTouchHandlers() {
-        /* Kill tap highlight on every child element */
-        const tapStyle = document.createElement('style');
-        tapStyle.id = 'tv-mobile-tap-fix';
-        tapStyle.textContent = `
+    function _injectSafariTapFix() {
+        if (document.getElementById('tv-mobile-safari-fix')) return;
+        const s = document.createElement('style');
+        s.id = 'tv-mobile-safari-fix';
+        s.textContent = `
             #tvWrapMobile,
             #tvWrapMobile *,
             #tvWrapMobile *::before,
             #tvWrapMobile *::after,
             .tv-wrap-mobile,
-            .tv-wrap-mobile *,
-            .tv-wrap-mobile *::before,
-            .tv-wrap-mobile *::after {
-                -webkit-tap-highlight-color: transparent !important;
-                tap-highlight-color: transparent !important;
+            .tv-body-mobile,
+            .tv-bezel-mobile,
+            .tv-screen-mobile,
+            .tv-ch-dot-mobile,
+            .tv-stage-mobile,
+            #tvTouchOverlayMobile {
+                -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+                tap-highlight-color: rgba(0,0,0,0) !important;
                 -webkit-touch-callout: none !important;
                 user-select: none !important;
                 -webkit-user-select: none !important;
             }
+            #tvTouchOverlayMobile {
+                touch-action: manipulation;
+                cursor: pointer;
+                -webkit-appearance: none;
+                outline: none !important;
+            }
         `;
-        if (!document.getElementById('tv-mobile-tap-fix')) {
-            document.head.appendChild(tapStyle);
-        }
+        document.head.appendChild(s);
+    }
 
-        /* Apply inline too for belt-and-suspenders */
-        tvWrap.style.webkitTapHighlightColor = 'transparent';
-        tvWrap.style.tapHighlightColor = 'transparent';
-        tvWrap.style.touchAction = 'manipulation';
-        tvWrap.style.userSelect = 'none';
-        tvWrap.style.webkitUserSelect = 'none';
+    function _createTouchOverlay() {
+        tvWrap.style.position = 'relative';
+        /* Disable pointer-events on tvWrap so Safari never
+           hit-tests the 3D-transformed element directly */
+        tvWrap.style.pointerEvents = 'none';
 
-        if (tvScreen) {
-            tvScreen.style.webkitTapHighlightColor = 'transparent';
-            tvScreen.style.tapHighlightColor = 'transparent';
-            tvScreen.style.touchAction = 'manipulation';
-            tvScreen.style.userSelect = 'none';
-            tvScreen.style.webkitUserSelect = 'none';
-        }
+        const overlay = document.createElement('div');
+        overlay.id = 'tvTouchOverlayMobile';
+        overlay.setAttribute('role', 'button');
+        overlay.setAttribute('tabindex', '0');
+        overlay.style.cssText = [
+            'position:absolute',
+            'inset:0',
+            'z-index:99999',
+            'background:transparent',
+            '-webkit-tap-highlight-color:rgba(0,0,0,0)',
+            'tap-highlight-color:rgba(0,0,0,0)',
+            'touch-action:manipulation',
+            'user-select:none',
+            '-webkit-user-select:none',
+            '-webkit-touch-callout:none',
+            'cursor:pointer',
+            'pointer-events:auto',
+            '-webkit-appearance:none',
+            'outline:none',
+            'border:none',
+            'opacity:0',
+        ].join(';');
 
-        /*
-         * touchstart: preventDefault stops:
-         *   (a) the yellow highlight flash
-         *   (b) scroll while touching the TV
-         *   (c) the synthetic mouse/click events (which we don't need)
-         *
-         * touchend: THIS is where we fire _handleTap().
-         *   Without this, the TV never responds to taps because the
-         *   synthetic click was cancelled by preventDefault above.
-         */
-        tvWrap.addEventListener('touchstart', e => {
+        tvWrap.appendChild(overlay);
+
+        overlay.addEventListener('touchstart', function(e) {
             e.preventDefault();
+            e.stopPropagation();
         }, { passive: false });
 
-        tvWrap.addEventListener('touchend', e => {
+        overlay.addEventListener('touchend', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             _handleTap();
         }, { passive: false });
 
-        /* Desktop fallback */
-        tvWrap.addEventListener('click', () => _handleTap());
+        overlay.addEventListener('touchcancel', function(e) {
+            e.preventDefault();
+        }, { passive: false });
 
-        tvWrap.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
+        overlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            _handleTap();
         });
+
+        overlay.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                _handleTap();
+            }
+        });
+
+        return overlay;
     }
 
     function _handleTap() {
@@ -322,7 +359,6 @@
         if (booting) return;
         booting = true;
 
-        /* Hide the off-state dot (may not exist — guard it) */
         const offContent = tvScreen.querySelector('.tv-screen-content-mobile');
         if (offContent) offContent.style.opacity = '0';
 
@@ -358,7 +394,6 @@
             }
             biosEl.textContent = '';
 
-            /* Hide the default load bar/text if present */
             const tvLoadText = tvLoading.querySelector('.tv-load-text-mobile');
             if (tvLoadText) tvLoadText.style.display = 'none';
             const barWrap = tvLoading.querySelector('.tv-load-bar-wrap-mobile');
@@ -441,13 +476,19 @@
         }, 300);
     }
 
-    /* ── NEXT CHANNEL (tap) ── */
+    /* ── NEXT CHANNEL ── */
     function nextChannel() {
         _switchChannel((palIdx + 1) % PALETTES.length);
     }
 
     /* ── CHANNEL DOTS ── */
     tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot-mobile').forEach((dot, i) => {
+        /* Dots need pointer-events restored since tvWrap has none */
+        dot.style.pointerEvents = 'auto';
+        dot.style.position = 'relative';
+        dot.style.zIndex = '100000';
+        dot.style.webkitTapHighlightColor = 'rgba(0,0,0,0)';
+
         function switchTo() {
             if (!tvOn) return;
             _switchChannel(i < PALETTES.length ? i : i % PALETTES.length);
@@ -476,6 +517,7 @@
 
     /* ── INIT ── */
     _injectTvTransitionCSS();
-    _bindTouchHandlers();
+    _injectSafariTapFix();
+    _createTouchOverlay();
 
 })();
