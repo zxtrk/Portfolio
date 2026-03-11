@@ -9,7 +9,7 @@
       All touch events on the overlay call preventDefault()
       before the browser can render any highlight colour.
 
-   2. Smoother palette transitions — CSS trans4itions on swatches,
+   2. Smoother palette transitions — CSS transitions on swatches,
       palette name, status bar text. Channel dot active state
       also transitions. The noise flash between channels is
       shorter and the palette crossfade uses opacity smoothly.
@@ -47,9 +47,7 @@
     const tvWrap           = document.getElementById('tvWrap');
     const tvScreen         = document.getElementById('tvScreen');
     const tvNoiseCanvas    = document.getElementById('tvNoiseCanvas');
-    const tvOffState       = document.getElementById('tvOffState');
     const tvLoading        = document.getElementById('tvLoading');
-    const tvLoadText       = document.getElementById('tvLoadText');
     const tvPaletteDisplay = document.getElementById('tvPaletteDisplay');
     const tvPaletteName    = document.getElementById('tvPaletteName');
     const tvSwatches       = document.getElementById('tvSwatches');
@@ -64,30 +62,20 @@
     const tvNowShowing     = document.getElementById('tvNowShowing');
     const tvNowName        = document.getElementById('tvNowName');
     const tvTextSide       = document.getElementById('tvTextSide');
-    const tvStage          = document.getElementById('tvStage');
+
+    /* tvLoadText and tvOffState may not exist in HTML — guard everywhere */
+    const tvLoadText = document.getElementById('tvLoadText');
 
     const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i));
 
+    /* ── Bail early if core elements missing ── */
+    if (!tvWrap || !tvScreen) return;
+
     /* ══════════════════════════════════════════════════════════
        YELLOW HIGHLIGHT FIX v4
-
-       Root cause: the previous overlay was appended to
-       tvStage/tvStageInner which is a flex-row containing BOTH
-       the TV card AND the text side. The overlay therefore
-       covered the text side too, causing layout/interaction
-       issues — but worse, it wasn't sized correctly over the TV.
-
-       Correct approach:
-       - Append overlay directly inside tvWrap.
-       - Set tvWrap { position:relative } so the overlay's
-         position:absolute covers exactly tvWrap's bounding box.
-       - tvWrap already wraps only the TV card, nothing else.
-       - preventDefault on every touchstart/touchend kills the
-         yellow highlight at the earliest possible moment.
     ══════════════════════════════════════════════════════════ */
 
     function _createTouchOverlay() {
-        // Ensure tvWrap is a positioning context
         tvWrap.style.position = 'relative';
 
         const overlay = document.createElement('div');
@@ -107,12 +95,8 @@
             'opacity:0',
         ].join(';');
 
-        // Append inside tvWrap — covers only the TV card
         tvWrap.appendChild(overlay);
 
-        // preventDefault on touchstart is the critical step:
-        // it stops WebKit from painting the yellow highlight
-        // before JavaScript even runs.
         overlay.addEventListener('touchstart', e => {
             e.preventDefault();
             e.stopPropagation();
@@ -128,7 +112,6 @@
             e.preventDefault();
         }, { passive: false });
 
-        // Desktop click
         overlay.addEventListener('click', e => {
             e.preventDefault();
             _handleTap();
@@ -148,11 +131,9 @@
         const s = document.createElement('style');
         s.id = 'tv-transition-styles';
         s.textContent = `
-            /* Swatch colour crossfade */
             .tv-swatch {
                 transition: background 0.55s cubic-bezier(0.22,1,0.36,1) !important;
             }
-            /* Palette name fade */
             #tvPaletteName {
                 transition: opacity 0.3s ease, transform 0.3s ease;
             }
@@ -164,30 +145,24 @@
                 opacity: 0;
                 transform: translateY(4px);
             }
-            /* Status bar */
             #tvStatusName, #tvStatusHex {
                 transition: opacity 0.25s ease;
             }
             #tvStatusName.tv-fade-out, #tvStatusHex.tv-fade-out {
                 opacity: 0;
             }
-            /* Channel tag */
             #tvChannelTag {
                 transition: opacity 0.2s ease;
             }
-            /* Channel dots */
             .tv-ch-dot {
                 transition: transform 0.2s ease, box-shadow 0.2s ease !important;
             }
-            /* Palette display crossfade */
             #tvPaletteDisplay {
                 transition: opacity 0.25s ease !important;
             }
-            /* Noise canvas */
             #tvNoiseCanvas {
                 transition: opacity 0.18s ease !important;
             }
-            /* Now-showing badge */
             #tvNowShowing {
                 transition: opacity 0.3s ease !important;
             }
@@ -203,7 +178,6 @@
             h: Math.round(rect.height) || tvScreen.offsetHeight || 270,
         };
     }
-
 
     function startNoise(opacity) {
         const { w, h } = getScreenSize();
@@ -234,21 +208,17 @@
     function applyPalette(idx) {
         const p = PALETTES[idx];
 
-        // Swatches: CSS transition handles the colour fade
         tvSwatches.querySelectorAll('.tv-swatch').forEach((el, i) => {
-            // Stagger via transition-delay so it feels like a wipe
             el.style.transitionDelay = `${i * 0.07}s`;
             el.style.background = p.colors[i] || '#000';
             const hexEl = el.querySelector('.tv-swatch-hex');
             if (hexEl) hexEl.textContent = p.colors[i] || '';
         });
 
-        // Preview swatches on text side
         previewSwatches.forEach((el, i) => {
             if (el) el.style.background = p.colors[i] || 'transparent';
         });
 
-        // Palette name: exit → update → enter
         if (tvPaletteName) {
             tvPaletteName.classList.add('tv-name-exit');
             setTimeout(() => {
@@ -261,10 +231,8 @@
             }, 150);
         }
 
-        // Channel tag
         if (tvChannelTag) tvChannelTag.textContent = 'CH ' + String(idx + 1).padStart(2, '0');
 
-        // Status bar fade
         if (tvStatusName) {
             tvStatusName.classList.add('tv-fade-out');
             tvStatusHex && tvStatusHex.classList.add('tv-fade-out');
@@ -274,11 +242,9 @@
             }, 130);
         }
 
-        // Now showing badge
         if (tvNowName)    tvNowName.textContent = p.name;
         if (tvNowShowing) tvNowShowing.classList.add('active');
 
-        // Glow ring
         const glowCol = p.colors[2] || p.colors[0];
         if (tvGlowRing) {
             tvGlowRing.style.background =
@@ -286,7 +252,6 @@
             tvGlowRing.style.opacity = '0.7';
         }
 
-        // Channel dots
         tvChannelDots.querySelectorAll('.tv-ch-dot').forEach((d, i) => {
             d.classList.toggle('active', i === idx % 8);
             d.style.setProperty('--tv-active-color', p.colors[2]);
@@ -306,10 +271,9 @@
         if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
     }
 
-    /* ── Shared channel switch logic (used by cycle + tap + dots) ── */
+    /* ── Shared channel switch logic ── */
     function _switchChannel(targetIdx) {
         stopCycle();
-        // Quick noise flash
         tvNoiseCanvas.style.opacity = '0.28';
         tvPaletteDisplay.style.opacity = '0';
         setTimeout(() => {
@@ -344,7 +308,10 @@
         if (booting) return;
         booting = true;
 
-        tvOffState.style.opacity = '0';
+        /* tvOffState may not exist in HTML — guard against null */
+        const tvOffState = document.querySelector('#tvScreen .tv-screen-content');
+        if (tvOffState) tvOffState.style.opacity = '0';
+
         tvScreen.style.background = '#111';
         startNoise(0.6);
 
@@ -377,7 +344,7 @@
             }
             biosEl.textContent = '';
             if (tvLoadText) tvLoadText.style.display = 'none';
-            const barWrap = document.querySelector('.tv-load-bar-wrap');
+            const barWrap = tvLoading.querySelector('.tv-load-bar-wrap');
             if (barWrap) barWrap.style.display = 'none';
 
             let lineI = 0;
@@ -494,14 +461,12 @@
     /* ── INIT ── */
     _injectTvTransitionCSS();
 
-    // Apply touch highlight prevention directly to TV elements
     tvWrap.style.webkitTapHighlightColor = 'transparent';
     tvWrap.style.tapHighlightColor = 'transparent';
     tvWrap.style.touchAction = 'manipulation';
     tvWrap.style.userSelect = 'none';
     tvWrap.style.webkitUserSelect = 'none';
 
-    // Also apply to the TV screen to ensure no yellow highlight
     if (tvScreen) {
         tvScreen.style.webkitTapHighlightColor = 'transparent';
         tvScreen.style.tapHighlightColor = 'transparent';
@@ -510,19 +475,15 @@
         tvScreen.style.webkitUserSelect = 'none';
     }
 
-    // Belt-and-suspenders: kill touchstart on tvWrap itself too
+    /* Single touchstart prevention on tvWrap — touchend is handled by overlay */
     tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
-    tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
 
-    // Create the overlay (appended INSIDE tvWrap)
+    /* Create overlay (handles both touch and click) */
     _createTouchOverlay();
 
-    // Desktop fallback click on tvWrap
-    tvWrap.addEventListener('click', () => _handleTap());
-
+    /* Desktop keyboard */
     tvWrap.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
     });
 
-
-})();
+})();3

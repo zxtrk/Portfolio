@@ -1,9 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════
    MOBILE RETRO TV COLOUR PALETTE — tv-mobile.js
 
-   This script provides the same functionality as the desktop TV
-   but optimized for mobile devices with touch interactions and
-   responsive animations.
+   FIXES:
+   1. touchend now calls _handleTap() so taps actually work
+   2. Removed duplicate event listeners from INIT
+   3. Injected -webkit-tap-highlight-color:transparent for all
+      mobile TV elements to kill the yellow flash
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -36,9 +38,7 @@
     const tvWrap           = document.getElementById('tvWrapMobile');
     const tvScreen         = document.getElementById('tvScreenMobile');
     const tvNoiseCanvas    = document.getElementById('tvNoiseCanvasMobile');
-    const tvOffState       = document.getElementById('tvOffStateMobile');
     const tvLoading        = document.getElementById('tvLoadingMobile');
-    const tvLoadText       = document.getElementById('tvLoadTextMobile');
     const tvPaletteDisplay = document.getElementById('tvPaletteDisplayMobile');
     const tvPaletteName    = document.getElementById('tvPaletteNameMobile');
     const tvSwatches       = document.getElementById('tvSwatchesMobile');
@@ -53,29 +53,52 @@
     const tvNowShowing     = document.getElementById('tvNowShowingMobile');
     const tvNowName        = document.getElementById('tvNowNameMobile');
     const tvTextSide       = document.getElementById('tvTextSideMobile');
-    const tvStage          = document.getElementById('tvStageMobile');
 
     const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i + 'Mobile'));
 
-    /* ══════════════════════════════════════════════════════════
-       TOUCH HIGHLIGHT FIX v5
+    /* ── Bail early if core elements missing ── */
+    if (!tvWrap || !tvScreen) return;
 
-       Fixed yellow overlay issue:
-       - Remove the transparent overlay that was causing visual artifacts
-       - Apply touch prevention directly to TV elements
-       - Use CSS properties to prevent highlights
-       - Keep JavaScript touch handling for functionality
+    /* ══════════════════════════════════════════════════════════
+       TOUCH HANDLER
+
+       Key fix: touchend must call _handleTap().
+       When e.preventDefault() is called on touchstart, the
+       browser suppresses the synthetic click event — so we MUST
+       fire _handleTap() from touchend directly.
     ══════════════════════════════════════════════════════════ */
 
-    function _createTouchOverlay() {
-        // Apply touch prevention directly to TV elements instead of overlay
+    function _bindTouchHandlers() {
+        /* Kill tap highlight on every child element */
+        const tapStyle = document.createElement('style');
+        tapStyle.id = 'tv-mobile-tap-fix';
+        tapStyle.textContent = `
+            #tvWrapMobile,
+            #tvWrapMobile *,
+            #tvWrapMobile *::before,
+            #tvWrapMobile *::after,
+            .tv-wrap-mobile,
+            .tv-wrap-mobile *,
+            .tv-wrap-mobile *::before,
+            .tv-wrap-mobile *::after {
+                -webkit-tap-highlight-color: transparent !important;
+                tap-highlight-color: transparent !important;
+                -webkit-touch-callout: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+            }
+        `;
+        if (!document.getElementById('tv-mobile-tap-fix')) {
+            document.head.appendChild(tapStyle);
+        }
+
+        /* Apply inline too for belt-and-suspenders */
         tvWrap.style.webkitTapHighlightColor = 'transparent';
         tvWrap.style.tapHighlightColor = 'transparent';
         tvWrap.style.touchAction = 'manipulation';
         tvWrap.style.userSelect = 'none';
         tvWrap.style.webkitUserSelect = 'none';
 
-        // Also apply to the TV screen to ensure no yellow highlight
         if (tvScreen) {
             tvScreen.style.webkitTapHighlightColor = 'transparent';
             tvScreen.style.tapHighlightColor = 'transparent';
@@ -84,18 +107,31 @@
             tvScreen.style.webkitUserSelect = 'none';
         }
 
-        // Belt-and-suspenders: kill touchstart on tvWrap itself too
-        tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
-        tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
+        /*
+         * touchstart: preventDefault stops:
+         *   (a) the yellow highlight flash
+         *   (b) scroll while touching the TV
+         *   (c) the synthetic mouse/click events (which we don't need)
+         *
+         * touchend: THIS is where we fire _handleTap().
+         *   Without this, the TV never responds to taps because the
+         *   synthetic click was cancelled by preventDefault above.
+         */
+        tvWrap.addEventListener('touchstart', e => {
+            e.preventDefault();
+        }, { passive: false });
 
-        // Desktop fallback click on tvWrap
+        tvWrap.addEventListener('touchend', e => {
+            e.preventDefault();
+            _handleTap();
+        }, { passive: false });
+
+        /* Desktop fallback */
         tvWrap.addEventListener('click', () => _handleTap());
 
         tvWrap.addEventListener('keydown', e => {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
         });
-
-        return null; // No overlay needed
     }
 
     function _handleTap() {
@@ -109,11 +145,9 @@
         const s = document.createElement('style');
         s.id = 'tv-transition-styles-mobile';
         s.textContent = `
-            /* Swatch colour crossfade */
             .tv-swatch-mobile {
                 transition: background 0.55s cubic-bezier(0.22,1,0.36,1) !important;
             }
-            /* Palette name fade */
             #tvPaletteNameMobile {
                 transition: opacity 0.3s ease, transform 0.3s ease;
             }
@@ -125,30 +159,24 @@
                 opacity: 0;
                 transform: translateY(4px);
             }
-            /* Status bar */
             #tvStatusNameMobile, #tvStatusHexMobile {
                 transition: opacity 0.25s ease;
             }
             #tvStatusNameMobile.tv-fade-out, #tvStatusHexMobile.tv-fade-out {
                 opacity: 0;
             }
-            /* Channel tag */
             #tvChannelTagMobile {
                 transition: opacity 0.2s ease;
             }
-            /* Channel dots */
             .tv-ch-dot-mobile {
                 transition: transform 0.2s ease, box-shadow 0.2s ease !important;
             }
-            /* Palette display crossfade */
             #tvPaletteDisplayMobile {
                 transition: opacity 0.25s ease !important;
             }
-            /* Noise canvas */
             #tvNoiseCanvasMobile {
                 transition: opacity 0.18s ease !important;
             }
-            /* Now-showing badge */
             #tvNowShowingMobile {
                 transition: opacity 0.3s ease !important;
             }
@@ -164,7 +192,6 @@
             h: Math.round(rect.height) || tvScreen.offsetHeight || 270,
         };
     }
-
 
     function startNoise(opacity) {
         const { w, h } = getScreenSize();
@@ -195,21 +222,17 @@
     function applyPalette(idx) {
         const p = PALETTES[idx];
 
-        // Swatches: CSS transition handles the colour fade
         tvSwatches.querySelectorAll('.tv-swatch-mobile').forEach((el, i) => {
-            // Stagger via transition-delay so it feels like a wipe
             el.style.transitionDelay = `${i * 0.07}s`;
             el.style.background = p.colors[i] || '#000';
             const hexEl = el.querySelector('.tv-swatch-hex-mobile');
             if (hexEl) hexEl.textContent = p.colors[i] || '';
         });
 
-        // Preview swatches on text side
         previewSwatches.forEach((el, i) => {
             if (el) el.style.background = p.colors[i] || 'transparent';
         });
 
-        // Palette name: exit → update → enter
         if (tvPaletteName) {
             tvPaletteName.classList.add('tv-name-exit');
             setTimeout(() => {
@@ -222,10 +245,8 @@
             }, 150);
         }
 
-        // Channel tag
         if (tvChannelTag) tvChannelTag.textContent = 'CH ' + String(idx + 1).padStart(2, '0');
 
-        // Status bar fade
         if (tvStatusName) {
             tvStatusName.classList.add('tv-fade-out');
             tvStatusHex && tvStatusHex.classList.add('tv-fade-out');
@@ -235,11 +256,9 @@
             }, 130);
         }
 
-        // Now showing badge
         if (tvNowName)    tvNowName.textContent = p.name;
         if (tvNowShowing) tvNowShowing.classList.add('active');
 
-        // Glow ring
         const glowCol = p.colors[2] || p.colors[0];
         if (tvGlowRing) {
             tvGlowRing.style.background =
@@ -247,7 +266,6 @@
             tvGlowRing.style.opacity = '0.7';
         }
 
-        // Channel dots
         tvChannelDots.querySelectorAll('.tv-ch-dot-mobile').forEach((d, i) => {
             d.classList.toggle('active', i === idx % 8);
             d.style.setProperty('--tv-active-color', p.colors[2]);
@@ -267,10 +285,9 @@
         if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
     }
 
-    /* ── Shared channel switch logic (used by cycle + tap + dots) ── */
+    /* ── Shared channel switch logic ── */
     function _switchChannel(targetIdx) {
         stopCycle();
-        // Quick noise flash
         tvNoiseCanvas.style.opacity = '0.28';
         tvPaletteDisplay.style.opacity = '0';
         setTimeout(() => {
@@ -305,8 +322,10 @@
         if (booting) return;
         booting = true;
 
-        // Hide off state
-        if (tvOffState) tvOffState.style.opacity = '0';
+        /* Hide the off-state dot (may not exist — guard it) */
+        const offContent = tvScreen.querySelector('.tv-screen-content-mobile');
+        if (offContent) offContent.style.opacity = '0';
+
         tvScreen.style.background = '#111';
         startNoise(0.6);
 
@@ -338,8 +357,11 @@
                 tvLoading.appendChild(biosEl);
             }
             biosEl.textContent = '';
+
+            /* Hide the default load bar/text if present */
+            const tvLoadText = tvLoading.querySelector('.tv-load-text-mobile');
             if (tvLoadText) tvLoadText.style.display = 'none';
-            const barWrap = document.querySelector('.tv-load-bar-wrap-mobile');
+            const barWrap = tvLoading.querySelector('.tv-load-bar-wrap-mobile');
             if (barWrap) barWrap.style.display = 'none';
 
             let lineI = 0;
@@ -404,7 +426,6 @@
         tvLoading.style.opacity = '0';
         setTimeout(() => {
             tvLoading.innerHTML = '';
-            if (tvLoadText) tvLoadText.style.display = '';
 
             tvNoiseCanvas.style.opacity    = '0.07';
             tvPaletteDisplay.style.opacity = '1';
@@ -455,36 +476,6 @@
 
     /* ── INIT ── */
     _injectTvTransitionCSS();
-
-    // Apply touch highlight prevention directly to TV elements
-    tvWrap.style.webkitTapHighlightColor = 'transparent';
-    tvWrap.style.tapHighlightColor = 'transparent';
-    tvWrap.style.touchAction = 'manipulation';
-    tvWrap.style.userSelect = 'none';
-    tvWrap.style.webkitUserSelect = 'none';
-
-    // Also apply to the TV screen to ensure no yellow highlight
-    if (tvScreen) {
-        tvScreen.style.webkitTapHighlightColor = 'transparent';
-        tvScreen.style.tapHighlightColor = 'transparent';
-        tvScreen.style.touchAction = 'manipulation';
-        tvScreen.style.userSelect = 'none';
-        tvScreen.style.webkitUserSelect = 'none';
-    }
-
-    // Belt-and-suspenders: kill touchstart on tvWrap itself too
-    tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
-    tvWrap.addEventListener('touchend',   e => { e.preventDefault(); }, { passive: false });
-
-    // Create the overlay (appended INSIDE tvWrap)
-    _createTouchOverlay();
-
-    // Desktop fallback click on tvWrap
-    tvWrap.addEventListener('click', () => _handleTap());
-
-    tvWrap.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
-    });
-
+    _bindTouchHandlers();
 
 })();
