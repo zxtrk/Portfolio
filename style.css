@@ -1517,3 +1517,78 @@ body.dark-mode .main-footer { background-color: #111111; }
     .about-section { padding-top: 3rem; }
     .projects-section { padding-top: 3rem; }
 }
+
+/* ── DESKTOP NAV LIGHTSWITCH ── */
+/* ── DESKTOP NAV SIZE OVERRIDES ── */
+@media (min-width: 769px) {
+    .logo { font-size: 1.6rem !important; }
+    .nav-links a { font-size: 0.9rem !important; letter-spacing: 0.14em !important; }
+}
+
+/* ── DESKTOP LIGHT SWITCH (nav) ── */
+.nav-ls-wrap-desktop {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+/* Hide on mobile — mobile uses the burger menu switch */
+@media (max-width: 768px) {
+    .nav-ls-wrap-desktop { display: none; }
+}
+.nav-ls-container-desktop {
+    position: relative;
+    width: 116px;
+    height: 54px;
+}
+.nav-ls-rope-svg-desktop {
+    position: absolute;
+    top: 100%;
+    left: 21px;
+    transform: none;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 5;
+}
+.nav-ls-btn-desktop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-secondary) 25%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-secondary) 40%, transparent);
+    border-radius: 999px;
+    padding: 6px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.4s ease, border-color 0.4s ease;
+}
+.nav-ls-btn-desktop.ls-is-light {
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+.nav-ls-knob-desktop {
+    width: 42px;
+    height: 42px;
+    position: relative;
+    will-change: transform;
+    border-radius: 999px;
+    overflow: hidden;
+}
+.nav-ls-top-desktop {
+    background-color: var(--color-secondary);
+    border-radius: 999px;
+    position: absolute;
+    inset: 0;
+    transition: background-color 0.4s ease;
+    opacity: 0.75;
+}
+.nav-ls-btn-desktop.ls-is-light .nav-ls-top-desktop {
+    background-color: var(--color-accent);
+    opacity: 1;
+}
+.nav-ls-shine-desktop {
+    position: absolute;
+    inset: 3px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.28) 0%, transparent 65%);
+    pointer-events: none;
+}
+
