@@ -1,14 +1,30 @@
 /* ═══════════════════════════════════════════════════════════════
-   MOBILE RETRO TV COLOUR PALETTE — tv-mobile.js  v5
+   MOBILE RETRO TV COLOUR PALETTE — tv-mobile.js
 
-   CHANGES v5:
-   1. TV body touch NO LONGER turns TV on/off.
-      The dedicated power button (below the TV) handles power.
+   ROOT CAUSE (confirmed from HTML/CSS source):
 
-   2. Power button wired: tap toggles on/off.
-      "Press to turn on" label shown when off, hidden when on.
+   .tv-body-mobile has transform-style: preserve-3d (inherited from
+   .tv-wrap-mobile). Its ::before pseudo-element has:
+       transform: rotateY(90deg) translateZ(-4px)
+   and ::after has a bottom-panel shape.
 
-   3. Overlay only switches channels when TV is already ON.
+   Under preserve-3d, Safari iOS does NOT use CSS z-index for
+   stacking — it uses the element's Z position in 3D space.
+   These rotated pseudo-elements end up rendering visually ON TOP
+   of the TV screen, creating:
+     1. A dark/coloured overlay blocking the TV face
+     2. Touch events landing on the pseudo-element, not tvWrap
+     3. Safari applying tap highlight to the nearest 2D ancestor
+        (the whole section) → yellow flash
+
+   FIX:
+   Inject a high-priority <style> tag that:
+   - Overrides transform-style to flat on all mobile TV elements
+   - Hides .tv-body-mobile::before and ::after entirely
+   - Replaces the 3D transform with a 2D equivalent (still looks good)
+   - Sets -webkit-tap-highlight-color: rgba(0,0,0,0) everywhere
+     (rgba form is required — "transparent" is unreliable in Safari)
+   - Creates a flat overlay div for touch capture
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -56,8 +72,6 @@
     const tvNowShowing     = document.getElementById('tvNowShowingMobile');
     const tvNowName        = document.getElementById('tvNowNameMobile');
     const tvTextSide       = document.getElementById('tvTextSideMobile');
-    const tvPowerBtn       = document.getElementById('tvPowerBtnMobile');
-    const tvPowerLabel     = document.getElementById('tvPowerLabelMobile');
 
     const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i + 'Mobile'));
 
@@ -65,12 +79,19 @@
 
     /* ══════════════════════════════════════════════════════════
        STEP 1 — Inject CSS that kills all 3D rendering on mobile
+
+       Must run BEFORE the overlay is created so the DOM is flat
+       by the time any touch event can fire.
     ══════════════════════════════════════════════════════════ */
     function _killMobile3D() {
         if (document.getElementById('tv-mobile-3d-kill')) return;
         const s = document.createElement('style');
         s.id = 'tv-mobile-3d-kill';
         s.textContent = `
+            /* ── Force flat stacking on every mobile TV element ────────
+               preserve-3d causes Safari to sort children by Z position
+               instead of z-index, letting rotated pseudo-elements appear
+               on top of the TV screen. "flat" restores normal z-index. */
             #tvWrapMobile,
             #tvWrapMobile *,
             .tv-wrap-mobile,
@@ -79,12 +100,22 @@
                 transform-style: flat !important;
                 -webkit-transform-style: flat !important;
             }
+
+            /* ── Hide the 3D side/bottom panels ────────────────────────
+               .tv-body-mobile::before  = right-side panel
+                   (transform: rotateY(90deg) translateZ(-4px))
+               .tv-body-mobile::after   = bottom panel
+               These only make visual sense with preserve-3d. Without it
+               they appear as flat rectangles on top of the TV face. */
             .tv-body-mobile::before,
             .tv-body-mobile::after {
                 display: none !important;
                 content: none !important;
                 visibility: hidden !important;
             }
+
+            /* ── Replace 3D tilt with a 2D approximation ───────────────
+               Visually identical at mobile size, no 3D quirks. */
             .tv-wrap-mobile {
                 transform: rotate(-1deg) scale(0.98) !important;
                 -webkit-transform: rotate(-1deg) scale(0.98) !important;
@@ -95,6 +126,10 @@
                 transform: rotate(-1deg) scale(0.96) !important;
                 -webkit-transform: rotate(-1deg) scale(0.96) !important;
             }
+
+            /* ── Kill tap highlight on every mobile TV element ──────────
+               rgba(0,0,0,0) is required — Safari ignores "transparent"
+               as a value for -webkit-tap-highlight-color.               */
             #tvWrapMobile,
             #tvWrapMobile *,
             #tvWrapMobile *::before,
@@ -112,6 +147,8 @@
                 user-select: none !important;
                 -webkit-user-select: none !important;
             }
+
+            /* ── Overlay is always flat, no transform ───────────────── */
             #tvTouchOverlayMobile {
                 touch-action: manipulation !important;
                 cursor: pointer !important;
@@ -122,21 +159,14 @@
                 transform-style: flat !important;
                 position: absolute !important;
             }
-            /* Power label transition */
-            #tvPowerLabelMobile {
-                transition: opacity 0.4s ease, transform 0.4s ease;
-            }
-            #tvPowerLabelMobile.hidden {
-                opacity: 0 !important;
-                transform: translateY(4px);
-                pointer-events: none;
-            }
         `;
         document.head.appendChild(s);
     }
 
     /* ══════════════════════════════════════════════════════════
-       STEP 2 — Create touch overlay (channel switching only)
+       STEP 2 — Create the touch overlay
+       Now that the DOM is flat, a simple absolute-positioned div
+       covers tvWrap and captures all touch/click events cleanly.
     ══════════════════════════════════════════════════════════ */
     function _createTouchOverlay() {
         tvWrap.style.position = 'relative';
@@ -145,7 +175,7 @@
         overlay.id = 'tvTouchOverlayMobile';
         overlay.setAttribute('role', 'button');
         overlay.setAttribute('tabindex', '0');
-        overlay.setAttribute('aria-label', 'Switch channel');
+        overlay.setAttribute('aria-label', 'Power on TV');
         overlay.style.cssText = [
             'position:absolute',
             'inset:0',
@@ -169,33 +199,41 @@
 
         tvWrap.appendChild(overlay);
 
+        /* touchstart — preventDefault at the earliest hook to block
+           any browser-native highlight before it can be painted.     */
         overlay.addEventListener('touchstart', function(e) {
             e.preventDefault();
             e.stopPropagation();
         }, { passive: false });
 
+        /* touchend — this is where we actually fire the action.       */
         overlay.addEventListener('touchend', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            /* Only switch channels — never power on/off */
-            if (tvOn) nextChannel();
+            _handleTap();
         }, { passive: false });
 
         overlay.addEventListener('touchcancel', function(e) {
             e.preventDefault();
         }, { passive: false });
 
+        /* Mouse / desktop fallback */
         overlay.addEventListener('click', function(e) {
             e.preventDefault();
-            if (tvOn) nextChannel();
+            _handleTap();
         });
 
         overlay.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                if (tvOn) nextChannel();
+                _handleTap();
             }
         });
+    }
+
+    function _handleTap() {
+        if (!tvOn && !booting) bootTV();
+        else if (tvOn) nextChannel();
     }
 
     /* ── Smooth transitions ── */
@@ -366,9 +404,6 @@
         if (booting) return;
         booting = true;
 
-        if (tvPowerBtn) tvPowerBtn.classList.add('btn-on');
-        if (tvPowerLabel) tvPowerLabel.classList.add('hidden');
-
         const offContent = tvScreen.querySelector('.tv-screen-content-mobile');
         if (offContent) offContent.style.opacity = '0';
 
@@ -490,57 +525,8 @@
 
             applyPalette(palIdx);
             tvOn = true; booting = false;
-            if (tvWrap) tvWrap.classList.add('tv-on');
             startCycle();
         }, 300);
-    }
-
-    /* ── POWER OFF ── */
-    function powerOff() {
-        if (booting) return;
-        tvOn = false;
-        stopCycle();
-        stopNoise();
-
-        if (tvWrap) tvWrap.classList.remove('tv-on');
-        if (tvPowerBtn) tvPowerBtn.classList.remove('btn-on');
-        if (tvPowerLabel) tvPowerLabel.classList.remove('hidden');
-
-        if (tvPaletteDisplay) tvPaletteDisplay.style.opacity = '0';
-        if (tvNoiseCanvas)    tvNoiseCanvas.style.opacity    = '0';
-
-        startNoise(0.5);
-        setTimeout(() => {
-            stopNoise();
-            tvScreen.style.background = '#050302';
-        }, 200);
-
-        if (tvOnAir)    tvOnAir.style.color           = 'rgba(180,80,80,0.0)';
-        if (tvOnAirDot) { tvOnAirDot.style.background = 'rgba(200,80,80,0.0)'; tvOnAirDot.style.boxShadow = 'none'; }
-
-        const offContent = tvScreen.querySelector('.tv-screen-content-mobile');
-        if (offContent) {
-            setTimeout(() => { offContent.style.opacity = '1'; }, 250);
-        }
-
-        if (tvGlowRing) { tvGlowRing.style.background = ''; tvGlowRing.style.opacity = '0'; }
-
-        tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot-mobile').forEach(d => d.classList.remove('active'));
-        const first = tvChannelDots && tvChannelDots.querySelector('.tv-ch-dot-mobile');
-        if (first) first.classList.add('active');
-        palIdx = 0;
-    }
-
-    /* ── POWER BUTTON ── */
-    function _handlePowerBtn() {
-        if (!tvOn && !booting) bootTV();
-        else if (tvOn && !booting) powerOff();
-    }
-
-    if (tvPowerBtn) {
-        tvPowerBtn.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
-        tvPowerBtn.addEventListener('touchend',   e => { e.preventDefault(); e.stopPropagation(); _handlePowerBtn(); }, { passive: false });
-        tvPowerBtn.addEventListener('click',      e => { e.stopPropagation(); _handlePowerBtn(); });
     }
 
     /* ── NEXT CHANNEL ── */
@@ -548,7 +534,11 @@
         _switchChannel((palIdx + 1) % PALETTES.length);
     }
 
-    /* ── CHANNEL DOTS ── */
+    /* ── CHANNEL DOTS ──
+       The overlay covers tvWrap entirely. Channel dots sit inside
+       tvWrap but we need them above the overlay so taps reach them.
+       We raise their z-index above the overlay (99999) and give them
+       their own touch handlers.                                       */
     tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot-mobile').forEach((dot, i) => {
         dot.style.position                   = 'relative';
         dot.style.zIndex                     = '100000';
@@ -586,7 +576,7 @@
     }, { passive: true });
 
     /* ── INIT ── */
-    _killMobile3D();
+    _killMobile3D();          /* Must be first — flattens DOM before overlay is created */
     _injectTvTransitionCSS();
     _createTouchOverlay();
 

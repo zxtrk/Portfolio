@@ -1,18 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════
-   RETRO TV COLOUR PALETTE — tv.js  v5
+   RETRO TV COLOUR PALETTE — tv.js  v4
 
-   CHANGES v5:
-   1. TV body click NO LONGER turns TV on/off.
-      The dedicated power button (below the TV) is the only way
-      to power on/off. The overlay is kept for channel switching
-      only (when the TV is already on).
+   FIXES:
+   1. Yellow tap highlight — overlay now appends INSIDE tvWrap
+      (not tvStage/tvStageInner) so it only covers the TV body.
+      tvWrap gets position:relative so the overlay's
+      position:absolute covers exactly the TV card area.
+      All touch events on the overlay call preventDefault()
+      before the browser can render any highlight colour.
 
-   2. Power button wired up: click/touch toggles power.
-      Button shows "Press to turn on" label when TV is off,
-      label hidden when TV is on.
+   2. Smoother palette transitions — CSS transitions on swatches,
+      palette name, status bar text. Channel dot active state
+      also transitions. The noise flash between channels is
+      shorter and the palette crossfade uses opacity smoothly.
 
-   3. Wire path updated — curves from left side of TV down to
-      the power button positioned below the TV.
+   3. Status bar animates — name and hex fade in on each change.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -60,8 +62,9 @@
     const tvNowShowing     = document.getElementById('tvNowShowing');
     const tvNowName        = document.getElementById('tvNowName');
     const tvTextSide       = document.getElementById('tvTextSide');
-    const tvPowerBtn       = document.getElementById('tvPowerBtn');
-    const tvPowerLabel     = document.getElementById('tvPowerLabel');
+
+    /* tvLoadText and tvOffState may not exist in HTML — guard everywhere */
+    const tvLoadText = document.getElementById('tvLoadText');
 
     const previewSwatches = [0,1,2,3,4].map(i => document.getElementById('tvPs' + i));
 
@@ -69,7 +72,7 @@
     if (!tvWrap || !tvScreen) return;
 
     /* ══════════════════════════════════════════════════════════
-       TOUCH OVERLAY — channel switching only (TV must be ON)
+       YELLOW HIGHLIGHT FIX v4
     ══════════════════════════════════════════════════════════ */
 
     function _createTouchOverlay() {
@@ -102,8 +105,7 @@
         overlay.addEventListener('touchend', e => {
             e.preventDefault();
             e.stopPropagation();
-            /* Only switch channels — never power on/off */
-            if (tvOn) nextChannel();
+            _handleTap();
         }, { passive: false });
 
         overlay.addEventListener('touchcancel', e => {
@@ -112,11 +114,15 @@
 
         overlay.addEventListener('click', e => {
             e.preventDefault();
-            /* Only switch channels — never power on/off */
-            if (tvOn) nextChannel();
+            _handleTap();
         });
 
         return overlay;
+    }
+
+    function _handleTap() {
+        if (!tvOn && !booting) bootTV();
+        else if (tvOn) nextChannel();
     }
 
     /* ── inject smooth-transition CSS ── */
@@ -159,15 +165,6 @@
             }
             #tvNowShowing {
                 transition: opacity 0.3s ease !important;
-            }
-            /* Power button label */
-            #tvPowerLabel {
-                transition: opacity 0.4s ease, transform 0.4s ease;
-            }
-            #tvPowerLabel.hidden {
-                opacity: 0 !important;
-                transform: translateY(4px);
-                pointer-events: none;
             }
         `;
         document.head.appendChild(s);
@@ -311,10 +308,7 @@
         if (booting) return;
         booting = true;
 
-        /* Update power button state */
-        if (tvPowerBtn) tvPowerBtn.classList.add('btn-on');
-        if (tvPowerLabel) tvPowerLabel.classList.add('hidden');
-
+        /* tvOffState may not exist in HTML — guard against null */
         const tvOffState = document.querySelector('#tvScreen .tv-screen-content');
         if (tvOffState) tvOffState.style.opacity = '0';
 
@@ -349,7 +343,6 @@
                 tvLoading.appendChild(biosEl);
             }
             biosEl.textContent = '';
-            const tvLoadText = document.getElementById('tvLoadText');
             if (tvLoadText) tvLoadText.style.display = 'none';
             const barWrap = tvLoading.querySelector('.tv-load-bar-wrap');
             if (barWrap) barWrap.style.display = 'none';
@@ -416,7 +409,6 @@
         tvLoading.style.opacity = '0';
         setTimeout(() => {
             tvLoading.innerHTML = '';
-            const tvLoadText = document.getElementById('tvLoadText');
             if (tvLoadText) tvLoadText.style.display = '';
 
             tvNoiseCanvas.style.opacity    = '0.07';
@@ -429,83 +421,11 @@
 
             applyPalette(palIdx);
             tvOn = true; booting = false;
-            if (tvWrap) tvWrap.classList.add('tv-on');
             startCycle();
         }, 300);
     }
 
-    /* ── POWER OFF ── */
-    function powerOff() {
-        if (booting) return;
-        tvOn = false;
-        stopCycle();
-        stopNoise();
-
-        if (tvWrap) tvWrap.classList.remove('tv-on');
-        if (tvPowerBtn) tvPowerBtn.classList.remove('btn-on');
-        if (tvPowerLabel) tvPowerLabel.classList.remove('hidden');
-
-        /* Fade out palette display */
-        if (tvPaletteDisplay) tvPaletteDisplay.style.opacity = '0';
-        if (tvNoiseCanvas)    tvNoiseCanvas.style.opacity    = '0';
-
-        /* Flash of static then off */
-        startNoise(0.5);
-        setTimeout(() => {
-            stopNoise();
-            tvScreen.style.background = '#050302';
-        }, 200);
-
-        /* Reset ON AIR */
-        if (tvOnAir)    tvOnAir.style.color         = 'rgba(180,80,80,0.0)';
-        if (tvOnAirDot) { tvOnAirDot.style.background = 'rgba(200,80,80,0.0)'; tvOnAirDot.style.boxShadow = 'none'; }
-
-        /* Show off-dot */
-        const tvOffState = document.querySelector('#tvScreen .tv-screen-content');
-        if (tvOffState) {
-            setTimeout(() => { tvOffState.style.opacity = '1'; }, 250);
-        }
-
-        if (tvGlowRing) {
-            tvGlowRing.style.background = '';
-            tvGlowRing.style.opacity = '0';
-        }
-
-        /* Reset channel dots */
-        tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot').forEach(d => {
-            d.classList.remove('active');
-        });
-        const first = tvChannelDots && tvChannelDots.querySelector('.tv-ch-dot');
-        if (first) first.classList.add('active');
-        palIdx = 0;
-    }
-
-    /* ── POWER BUTTON HANDLER ── */
-    function _handlePowerBtn() {
-        if (!tvOn && !booting) bootTV();
-        else if (tvOn && !booting) powerOff();
-    }
-
-    /* ── Wire up power button ── */
-    if (tvPowerBtn) {
-        tvPowerBtn.addEventListener('touchstart', e => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, { passive: false });
-
-        tvPowerBtn.addEventListener('touchend', e => {
-            e.preventDefault();
-            e.stopPropagation();
-            _handlePowerBtn();
-        }, { passive: false });
-
-        tvPowerBtn.addEventListener('click', e => {
-            e.stopPropagation();
-            _handlePowerBtn();
-        });
-    }
-
-    /* ── NEXT CHANNEL (tap on screen when on) ── */
+    /* ── NEXT CHANNEL (tap) ── */
     function nextChannel() {
         _switchChannel((palIdx + 1) % PALETTES.length);
     }
@@ -555,15 +475,15 @@
         tvScreen.style.webkitUserSelect = 'none';
     }
 
-    /* Single touchstart prevention on tvWrap */
+    /* Single touchstart prevention on tvWrap — touchend is handled by overlay */
     tvWrap.addEventListener('touchstart', e => { e.preventDefault(); }, { passive: false });
 
-    /* Create overlay (handles channel switching when on) */
+    /* Create overlay (handles both touch and click) */
     _createTouchOverlay();
 
     /* Desktop keyboard */
     tvWrap.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (tvOn) nextChannel(); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
     });
 
 })();
