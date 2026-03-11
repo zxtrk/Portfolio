@@ -1,33 +1,48 @@
 /* ═══════════════════════════════════════════════════════════════
    MOBILE RETRO TV COLOUR PALETTE — tv-mobile.js
 
-   SAFARI iOS FIX:
-   - Uses transparent overlay div (same pattern as desktop tv.js)
-     instead of direct tvWrap touch listeners.
-   - Overlay is a flat, untransformed div — Safari suppresses
-     tap highlights on it reliably, unlike 3D-transformed parents.
-   - Uses rgba(0,0,0,0) instead of "transparent" for
-     -webkit-tap-highlight-color (Safari parses these differently).
-   - Injects a <style> block targeting every mobile TV element
-     with the rgba(0,0,0,0) value.
+   ROOT CAUSE (confirmed from HTML/CSS source):
+
+   .tv-body-mobile has transform-style: preserve-3d (inherited from
+   .tv-wrap-mobile). Its ::before pseudo-element has:
+       transform: rotateY(90deg) translateZ(-4px)
+   and ::after has a bottom-panel shape.
+
+   Under preserve-3d, Safari iOS does NOT use CSS z-index for
+   stacking — it uses the element's Z position in 3D space.
+   These rotated pseudo-elements end up rendering visually ON TOP
+   of the TV screen, creating:
+     1. A dark/coloured overlay blocking the TV face
+     2. Touch events landing on the pseudo-element, not tvWrap
+     3. Safari applying tap highlight to the nearest 2D ancestor
+        (the whole section) → yellow flash
+
+   FIX:
+   Inject a high-priority <style> tag that:
+   - Overrides transform-style to flat on all mobile TV elements
+   - Hides .tv-body-mobile::before and ::after entirely
+   - Replaces the 3D transform with a 2D equivalent (still looks good)
+   - Sets -webkit-tap-highlight-color: rgba(0,0,0,0) everywhere
+     (rgba form is required — "transparent" is unreliable in Safari)
+   - Creates a flat overlay div for touch capture
    ═══════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
 
     /* ── PALETTE DATA ── */
     const PALETTES = [
-        { name: 'PETRICHOR',      colors: ['#1A1814','#3D3228','#7A6248','#C4A882','#E8D5B0'] },
-        { name: 'DUSK WIRE',      colors: ['#0D0F1A','#1A2040','#2E4080','#6080C0','#A0B8E8'] },
-        { name: 'EMBER STATIC',   colors: ['#1A0A00','#3D1800','#8B3A00','#D4722A','#F0B870'] },
-        { name: 'MOSS SIGNAL',    colors: ['#0A1208','#1A2818','#2E4828','#5A7848','#9AB880'] },
-        { name: 'LAVENDER HAZE',  colors: ['#120A1A','#281840','#4A3070','#8060A8','#C0A0D8'] },
-        { name: 'COLD IRON',      colors: ['#0A0C0E','#1A1E22','#2E3840','#5A6878','#98A8B8'] },
-        { name: 'DESERT TAPE',    colors: ['#1A1008','#382218','#6A4830','#A87858','#D8B890'] },
-        { name: 'NEON GHOST',     colors: ['#080A10','#101828','#183048','#284870','#48A888'] },
-        { name: 'VELVET BURN',    colors: ['#100810','#281820','#502840','#903060','#C87090'] },
-        { name: 'CHALK STATIC',   colors: ['#181614','#302C28','#504840','#808070','#C8C4B8'] },
-        { name: 'COPPER DREAM',   colors: ['#0E0A06','#281A0C','#583A1A','#986030','#D09860'] },
-        { name: 'STORM CHANNEL',  colors: ['#080C12','#101820','#1E3040','#386080','#60A0C0'] },
+        { name: 'PETRICHOR',     colors: ['#1A1814','#3D3228','#7A6248','#C4A882','#E8D5B0'] },
+        { name: 'DUSK WIRE',     colors: ['#0D0F1A','#1A2040','#2E4080','#6080C0','#A0B8E8'] },
+        { name: 'EMBER STATIC',  colors: ['#1A0A00','#3D1800','#8B3A00','#D4722A','#F0B870'] },
+        { name: 'MOSS SIGNAL',   colors: ['#0A1208','#1A2818','#2E4828','#5A7848','#9AB880'] },
+        { name: 'LAVENDER HAZE', colors: ['#120A1A','#281840','#4A3070','#8060A8','#C0A0D8'] },
+        { name: 'COLD IRON',     colors: ['#0A0C0E','#1A1E22','#2E3840','#5A6878','#98A8B8'] },
+        { name: 'DESERT TAPE',   colors: ['#1A1008','#382218','#6A4830','#A87858','#D8B890'] },
+        { name: 'NEON GHOST',    colors: ['#080A10','#101828','#183048','#284870','#48A888'] },
+        { name: 'VELVET BURN',   colors: ['#100810','#281820','#502840','#903060','#C87090'] },
+        { name: 'CHALK STATIC',  colors: ['#181614','#302C28','#504840','#808070','#C8C4B8'] },
+        { name: 'COPPER DREAM',  colors: ['#0E0A06','#281A0C','#583A1A','#986030','#D09860'] },
+        { name: 'STORM CHANNEL', colors: ['#080C12','#101820','#1E3040','#386080','#60A0C0'] },
     ];
 
     /* ── STATE ── */
@@ -63,26 +78,58 @@
     if (!tvWrap || !tvScreen) return;
 
     /* ══════════════════════════════════════════════════════════
-       SAFARI iOS TAP HIGHLIGHT FIX
+       STEP 1 — Inject CSS that kills all 3D rendering on mobile
 
-       Root cause on real Safari (not Chrome DevTools sim):
-       Elements with 3D CSS transforms (rotateY/rotateX/rotateZ)
-       cause Safari to flash the highlight on the nearest
-       non-transformed ancestor — hence the yellow block.
-
-       "transparent" keyword is unreliable in Safari; rgba(0,0,0,0)
-       is required.
-
-       Fix: flat untransformed overlay div captures all touches.
-       tvWrap gets pointer-events:none so Safari never hit-tests
-       the 3D element directly.
+       Must run BEFORE the overlay is created so the DOM is flat
+       by the time any touch event can fire.
     ══════════════════════════════════════════════════════════ */
-
-    function _injectSafariTapFix() {
-        if (document.getElementById('tv-mobile-safari-fix')) return;
+    function _killMobile3D() {
+        if (document.getElementById('tv-mobile-3d-kill')) return;
         const s = document.createElement('style');
-        s.id = 'tv-mobile-safari-fix';
+        s.id = 'tv-mobile-3d-kill';
         s.textContent = `
+            /* ── Force flat stacking on every mobile TV element ────────
+               preserve-3d causes Safari to sort children by Z position
+               instead of z-index, letting rotated pseudo-elements appear
+               on top of the TV screen. "flat" restores normal z-index. */
+            #tvWrapMobile,
+            #tvWrapMobile *,
+            .tv-wrap-mobile,
+            .tv-body-mobile,
+            .tv-stage-mobile {
+                transform-style: flat !important;
+                -webkit-transform-style: flat !important;
+            }
+
+            /* ── Hide the 3D side/bottom panels ────────────────────────
+               .tv-body-mobile::before  = right-side panel
+                   (transform: rotateY(90deg) translateZ(-4px))
+               .tv-body-mobile::after   = bottom panel
+               These only make visual sense with preserve-3d. Without it
+               they appear as flat rectangles on top of the TV face. */
+            .tv-body-mobile::before,
+            .tv-body-mobile::after {
+                display: none !important;
+                content: none !important;
+                visibility: hidden !important;
+            }
+
+            /* ── Replace 3D tilt with a 2D approximation ───────────────
+               Visually identical at mobile size, no 3D quirks. */
+            .tv-wrap-mobile {
+                transform: rotate(-1deg) scale(0.98) !important;
+                -webkit-transform: rotate(-1deg) scale(0.98) !important;
+                filter: drop-shadow(18px 16px 36px rgba(0,0,0,0.55))
+                        drop-shadow(5px 5px 14px rgba(0,0,0,0.3)) !important;
+            }
+            .tv-wrap-mobile:active {
+                transform: rotate(-1deg) scale(0.96) !important;
+                -webkit-transform: rotate(-1deg) scale(0.96) !important;
+            }
+
+            /* ── Kill tap highlight on every mobile TV element ──────────
+               rgba(0,0,0,0) is required — Safari ignores "transparent"
+               as a value for -webkit-tap-highlight-color.               */
             #tvWrapMobile,
             #tvWrapMobile *,
             #tvWrapMobile *::before,
@@ -100,26 +147,35 @@
                 user-select: none !important;
                 -webkit-user-select: none !important;
             }
+
+            /* ── Overlay is always flat, no transform ───────────────── */
             #tvTouchOverlayMobile {
-                touch-action: manipulation;
-                cursor: pointer;
-                -webkit-appearance: none;
+                touch-action: manipulation !important;
+                cursor: pointer !important;
+                -webkit-appearance: none !important;
                 outline: none !important;
+                transform: none !important;
+                -webkit-transform: none !important;
+                transform-style: flat !important;
+                position: absolute !important;
             }
         `;
         document.head.appendChild(s);
     }
 
+    /* ══════════════════════════════════════════════════════════
+       STEP 2 — Create the touch overlay
+       Now that the DOM is flat, a simple absolute-positioned div
+       covers tvWrap and captures all touch/click events cleanly.
+    ══════════════════════════════════════════════════════════ */
     function _createTouchOverlay() {
         tvWrap.style.position = 'relative';
-        /* Disable pointer-events on tvWrap so Safari never
-           hit-tests the 3D-transformed element directly */
-        tvWrap.style.pointerEvents = 'none';
 
         const overlay = document.createElement('div');
         overlay.id = 'tvTouchOverlayMobile';
         overlay.setAttribute('role', 'button');
         overlay.setAttribute('tabindex', '0');
+        overlay.setAttribute('aria-label', 'Power on TV');
         overlay.style.cssText = [
             'position:absolute',
             'inset:0',
@@ -137,15 +193,20 @@
             'outline:none',
             'border:none',
             'opacity:0',
+            'transform:none',
+            '-webkit-transform:none',
         ].join(';');
 
         tvWrap.appendChild(overlay);
 
+        /* touchstart — preventDefault at the earliest hook to block
+           any browser-native highlight before it can be painted.     */
         overlay.addEventListener('touchstart', function(e) {
             e.preventDefault();
             e.stopPropagation();
         }, { passive: false });
 
+        /* touchend — this is where we actually fire the action.       */
         overlay.addEventListener('touchend', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -156,6 +217,7 @@
             e.preventDefault();
         }, { passive: false });
 
+        /* Mouse / desktop fallback */
         overlay.addEventListener('click', function(e) {
             e.preventDefault();
             _handleTap();
@@ -167,8 +229,6 @@
                 _handleTap();
             }
         });
-
-        return overlay;
     }
 
     function _handleTap() {
@@ -176,7 +236,7 @@
         else if (tvOn) nextChannel();
     }
 
-    /* ── inject smooth-transition CSS ── */
+    /* ── Smooth transitions ── */
     function _injectTvTransitionCSS() {
         if (document.getElementById('tv-transition-styles-mobile')) return;
         const s = document.createElement('style');
@@ -189,12 +249,10 @@
                 transition: opacity 0.3s ease, transform 0.3s ease;
             }
             #tvPaletteNameMobile.tv-name-exit {
-                opacity: 0;
-                transform: translateY(-4px);
+                opacity: 0; transform: translateY(-4px);
             }
             #tvPaletteNameMobile.tv-name-enter {
-                opacity: 0;
-                transform: translateY(4px);
+                opacity: 0; transform: translateY(4px);
             }
             #tvStatusNameMobile, #tvStatusHexMobile {
                 transition: opacity 0.25s ease;
@@ -202,21 +260,11 @@
             #tvStatusNameMobile.tv-fade-out, #tvStatusHexMobile.tv-fade-out {
                 opacity: 0;
             }
-            #tvChannelTagMobile {
-                transition: opacity 0.2s ease;
-            }
-            .tv-ch-dot-mobile {
-                transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-            }
-            #tvPaletteDisplayMobile {
-                transition: opacity 0.25s ease !important;
-            }
-            #tvNoiseCanvasMobile {
-                transition: opacity 0.18s ease !important;
-            }
-            #tvNowShowingMobile {
-                transition: opacity 0.3s ease !important;
-            }
+            #tvChannelTagMobile       { transition: opacity 0.2s ease; }
+            .tv-ch-dot-mobile         { transition: transform 0.2s ease, box-shadow 0.2s ease !important; }
+            #tvPaletteDisplayMobile   { transition: opacity 0.25s ease !important; }
+            #tvNoiseCanvasMobile      { transition: opacity 0.18s ease !important; }
+            #tvNowShowingMobile       { transition: opacity 0.3s ease !important; }
         `;
         document.head.appendChild(s);
     }
@@ -225,8 +273,8 @@
     function getScreenSize() {
         const rect = tvScreen.getBoundingClientRect();
         return {
-            w: Math.round(rect.width)  || tvScreen.offsetWidth  || 360,
-            h: Math.round(rect.height) || tvScreen.offsetHeight || 270,
+            w: Math.round(rect.width)  || tvScreen.offsetWidth  || 320,
+            h: Math.round(rect.height) || tvScreen.offsetHeight || 240,
         };
     }
 
@@ -255,7 +303,7 @@
         tvNoiseCanvas.style.opacity = 0;
     }
 
-    /* ── APPLY PALETTE (smooth) ── */
+    /* ── APPLY PALETTE ── */
     function applyPalette(idx) {
         const p = PALETTES[idx];
 
@@ -276,9 +324,7 @@
                 tvPaletteName.textContent = p.name;
                 tvPaletteName.classList.remove('tv-name-exit');
                 tvPaletteName.classList.add('tv-name-enter');
-                requestAnimationFrame(() => {
-                    tvPaletteName.classList.remove('tv-name-enter');
-                });
+                requestAnimationFrame(() => tvPaletteName.classList.remove('tv-name-enter'));
             }, 150);
         }
 
@@ -322,7 +368,6 @@
         if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
     }
 
-    /* ── Shared channel switch logic ── */
     function _switchChannel(targetIdx) {
         stopCycle();
         tvNoiseCanvas.style.opacity = '0.28';
@@ -430,16 +475,17 @@
 
         const SEGS = 12, segs = [];
         for (let i = 0; i < SEGS; i++) {
-            const s = document.createElement('div');
-            s.style.cssText = 'flex:1;height:100%;border-radius:1px;background:rgba(60,80,180,0.15);transition:background 0.15s ease;';
-            trackWrap.appendChild(s); segs.push(s);
+            const seg = document.createElement('div');
+            seg.style.cssText = 'flex:1;height:100%;border-radius:1px;background:rgba(60,80,180,0.15);transition:background 0.15s ease;';
+            trackWrap.appendChild(seg); segs.push(seg);
         }
 
         const statusTxt = document.createElement('div');
         statusTxt.style.cssText = 'font-family:"Share Tech Mono",monospace;font-size:8px;letter-spacing:0.14em;color:rgba(120,120,180,0.7);text-transform:uppercase;';
         statusTxt.textContent = 'Starting up...';
 
-        winEl.appendChild(title); winEl.appendChild(sub); winEl.appendChild(trackWrap); winEl.appendChild(statusTxt);
+        winEl.appendChild(title); winEl.appendChild(sub);
+        winEl.appendChild(trackWrap); winEl.appendChild(statusTxt);
         tvLoading.appendChild(winEl);
 
         const statusMsgs = ['Loading palettes...','Calibrating colours...','Almost ready...','Done.'];
@@ -449,7 +495,9 @@
                 segs[seg].style.background = 'linear-gradient(to bottom,rgba(100,130,255,0.9),rgba(60,80,200,0.8))';
                 segs[seg].style.boxShadow  = '0 0 6px rgba(100,130,255,0.5)';
                 seg++;
-                if (seg % Math.ceil(SEGS / statusMsgs.length) === 0 && msgI < statusMsgs.length) statusTxt.textContent = statusMsgs[msgI++];
+                if (seg % Math.ceil(SEGS / statusMsgs.length) === 0 && msgI < statusMsgs.length) {
+                    statusTxt.textContent = statusMsgs[msgI++];
+                }
             } else {
                 clearInterval(segTimer);
                 setTimeout(launchPalette, 400);
@@ -465,10 +513,15 @@
             tvNoiseCanvas.style.opacity    = '0.07';
             tvPaletteDisplay.style.opacity = '1';
             if (tvChannelTag) tvChannelTag.style.color = 'rgba(255,255,255,0.45)';
-            tvStatusBar && tvStatusBar.querySelectorAll('span').forEach(s => { s.style.color = 'rgba(255,255,255,0.4)'; });
+            tvStatusBar && tvStatusBar.querySelectorAll('span').forEach(s => {
+                s.style.color = 'rgba(255,255,255,0.4)';
+            });
 
-            if (tvOnAir)    tvOnAir.style.color         = 'rgba(200,80,80,0.9)';
-            if (tvOnAirDot) { tvOnAirDot.style.background = '#c85050'; tvOnAirDot.style.boxShadow = '0 0 6px #c85050'; }
+            if (tvOnAir)    tvOnAir.style.color           = 'rgba(200,80,80,0.9)';
+            if (tvOnAirDot) {
+                tvOnAirDot.style.background = '#c85050';
+                tvOnAirDot.style.boxShadow  = '0 0 6px #c85050';
+            }
 
             applyPalette(palIdx);
             tvOn = true; booting = false;
@@ -481,18 +534,22 @@
         _switchChannel((palIdx + 1) % PALETTES.length);
     }
 
-    /* ── CHANNEL DOTS ── */
+    /* ── CHANNEL DOTS ──
+       The overlay covers tvWrap entirely. Channel dots sit inside
+       tvWrap but we need them above the overlay so taps reach them.
+       We raise their z-index above the overlay (99999) and give them
+       their own touch handlers.                                       */
     tvChannelDots && tvChannelDots.querySelectorAll('.tv-ch-dot-mobile').forEach((dot, i) => {
-        /* Dots need pointer-events restored since tvWrap has none */
-        dot.style.pointerEvents = 'auto';
-        dot.style.position = 'relative';
-        dot.style.zIndex = '100000';
-        dot.style.webkitTapHighlightColor = 'rgba(0,0,0,0)';
+        dot.style.position                   = 'relative';
+        dot.style.zIndex                     = '100000';
+        dot.style.pointerEvents              = 'auto';
+        dot.style.webkitTapHighlightColor    = 'rgba(0,0,0,0)';
 
         function switchTo() {
             if (!tvOn) return;
             _switchChannel(i < PALETTES.length ? i : i % PALETTES.length);
         }
+
         dot.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
         dot.addEventListener('touchend',   e => { e.preventDefault(); e.stopPropagation(); switchTo(); }, { passive: false });
         dot.addEventListener('click',      e => { e.stopPropagation(); switchTo(); });
@@ -501,7 +558,10 @@
     /* ── REVEAL text side ── */
     const revObserver = new IntersectionObserver(entries => {
         entries.forEach(e => {
-            if (e.isIntersecting) { tvTextSide && tvTextSide.classList.add('revealed'); revObserver.unobserve(e.target); }
+            if (e.isIntersecting) {
+                tvTextSide && tvTextSide.classList.add('revealed');
+                revObserver.unobserve(e.target);
+            }
         });
     }, { threshold: 0.15 });
     const sec = document.getElementById('tvPaletteSectionMobile');
@@ -516,8 +576,8 @@
     }, { passive: true });
 
     /* ── INIT ── */
+    _killMobile3D();          /* Must be first — flattens DOM before overlay is created */
     _injectTvTransitionCSS();
-    _injectSafariTapFix();
     _createTouchOverlay();
 
 })();

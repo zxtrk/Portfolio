@@ -486,4 +486,4 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _handleTap(); }
     });
 
-})();3
+})();
