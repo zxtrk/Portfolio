@@ -514,8 +514,33 @@ function initLoadingScreen() {
         setTimeout(() => {
             loader.style.display = "none";
             document.body.style.overflow = "";
+            try { triggerInitialHeroReveal(); } catch (e) {}
         }, 900);
     }, 2300);
+}
+
+// ─── HERO REVEAL CONTROL ─────────────────────────────────────────────────
+let _heroRevealPlayed = false;
+
+function triggerInitialHeroReveal() {
+    if (_heroRevealPlayed) return;
+    _heroRevealPlayed = true;
+    const titleLine = document.querySelector(".title-line");
+    if (titleLine) {
+        titleLine.classList.remove("revealed");
+        void titleLine.offsetWidth;
+        titleLine.classList.add("revealed");
+    }
+    const heroInfo = document.querySelector(".hero-info-row");
+    if (heroInfo) {
+        heroInfo.style.opacity = "0";
+        heroInfo.style.transform = "translateY(24px)";
+        setTimeout(() => {
+            heroInfo.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+            heroInfo.style.opacity = "1";
+            heroInfo.style.transform = "translateY(0)";
+        }, 60);
+    }
 }
 
 // ─── LOCK SYSTEM ───────────────────────────────────────────────────────
@@ -729,17 +754,36 @@ function initSmoothScroll() {
             const target = document.querySelector(link.getAttribute("href"));
             if (!target) return;
             const targetY = target.offsetTop - 80;
-            if (isMobile()) { closeBurgerMenu(); setTimeout(() => smoothScrollTo(targetY, 900), 80); }
-            else { smoothScrollTo(targetY, 1200); }
+            if (isMobile()) {
+                closeBurgerMenu();
+                document.body.classList.add("mobile-nav-jump");
+                const targetId = target.id;
+                setTimeout(() => {
+                    smoothScrollTo(targetY, 900);
+                    if (targetId) {
+                        setTimeout(() => {
+                            try { playSectionRevealFromNav(targetId); } catch (e) {}
+                            document.body.classList.remove("mobile-nav-jump");
+                        }, 950);
+                    } else {
+                        document.body.classList.remove("mobile-nav-jump");
+                    }
+                }, 80);
+            } else {
+                smoothScrollTo(targetY, 1200);
+            }
         });
     });
 }
 
 // ─── HERO ANIMATION ────────────────────────────────────────────────────
 function initHeroAnimation() {
+    // Keep for desktop fallback if loader is disabled; main reveal is driven from triggerInitialHeroReveal.
     setTimeout(() => {
-        document.querySelector(".title-line")?.classList.add("revealed");
-        document.querySelector(".hero-subtitle")?.classList.add("revealed");
+        if (!_heroRevealPlayed) {
+            document.querySelector(".title-line")?.classList.add("revealed");
+            document.querySelector(".hero-subtitle")?.classList.add("revealed");
+        }
     }, 300);
 }
 
@@ -1303,18 +1347,48 @@ function initBurgerMenu() {
 function initMobileSectionObserver() {
     if (window.innerWidth > 768) return;
     const sections = document.querySelectorAll(".about-section,.projects-section,.quote-section,.contact-section");
+    window._navTriggeredSections = new Set();
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             const el = entry.target;
-            if (entry.isIntersecting) { el.classList.add("section-visible"); el.classList.remove("section-above"); }
-            else {
+            const id = el.id;
+            if (entry.isIntersecting) {
+                el.classList.add("section-visible");
+                el.classList.remove("section-above");
+                if (!window._navTriggeredSections || !window._navTriggeredSections.has(id)) {
+                    el.classList.add("section-entered");
+                }
+            } else {
                 const rect = el.getBoundingClientRect();
-                if (rect.top < 0) { el.classList.add("section-above"); el.classList.remove("section-visible"); }
-                else { el.classList.remove("section-visible", "section-above"); }
+                if (rect.top < 0) {
+                    el.classList.add("section-above");
+                    el.classList.remove("section-visible");
+                } else {
+                    el.classList.remove("section-visible", "section-above", "section-entered");
+                }
             }
         });
     }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
     sections.forEach(s => observer.observe(s));
+}
+
+function playSectionRevealFromNav(sectionId) {
+    if (!window._navTriggeredSections) window._navTriggeredSections = new Set();
+    window._navTriggeredSections.add(sectionId);
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const revealables = section.querySelectorAll("[data-reveal], .msa-fade-up, .msa-fade-left, .msa-fade-right, .msa-scale, .contact-info, .quote-content");
+    revealables.forEach((el, idx) => {
+        el.classList.remove("msa-visible", "revealed");
+        void el.offsetWidth;
+        setTimeout(() => {
+            if (el.hasAttribute("data-reveal")) {
+                el.classList.add("revealed");
+            } else {
+                el.classList.add("msa-visible");
+            }
+        }, idx * 70);
+    });
 }
 
 // ─── INSTANT TAP FEEDBACK ─────────────────────────────────────────────
