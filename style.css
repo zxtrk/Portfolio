@@ -826,6 +826,8 @@ body.dark-mode .about-section { background: transparent; }
 @keyframes paragraphLine { to { height: calc(100% - 16px); } }
 .intro-paragraph:last-child { margin-bottom: 0; }
 
+.about-features-label { display: none; }
+
 .about-features {
     display: grid;
     grid-template-columns: 1fr;
@@ -1446,10 +1448,32 @@ body.dark-mode .main-footer { background-color: #111111; }
         opacity: 0.05 !important;
     }
     .section-title { font-size: clamp(2rem, 8vw, 2.8rem) !important; margin-bottom: 0.875rem !important; }
-    .about-main { gap: 1rem !important; margin-bottom: 1rem !important; }
+    .about-main { gap: 1.25rem !important; margin-bottom: 1rem !important; }
 
-    .intro-paragraph { font-size: 15px; line-height: 1.7; padding-left: 0; margin-bottom: 0.75rem; }
+    .about-text-block { display: flex; flex-direction: column; gap: 0.625rem; }
+
+    .intro-paragraph {
+        font-size: 14px;
+        line-height: 1.85;
+        margin-bottom: 0;
+        padding: 0.875rem 1rem 0.875rem 1.125rem;
+        background: var(--color-light);
+        border-left: 3px solid var(--color-accent);
+        border-radius: 0 8px 8px 0;
+        color: var(--color-text);
+        position: relative;
+    }
     .intro-paragraph::before { display: none; }
+
+    .about-features-label {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
     .feature-item { flex-direction: row; align-items: center; padding: 0.875rem; gap: 0.875rem; }
     .feature-icon { font-size: 28px; width: 38px; height: 38px; flex-shrink: 0; }
     .feature-icon svg { width: 30px !important; height: 30px !important; }
