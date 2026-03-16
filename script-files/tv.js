@@ -1,4 +1,4 @@
-/* tv.js v5 — Desktop retro TV palette */
+/* tv.js v5 — Desktop retro TV palette .*/
 (function () {
     'use strict';
 
