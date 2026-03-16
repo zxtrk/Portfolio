@@ -1029,7 +1029,7 @@ function _injectLightSwitch(insertAfterEl) {
                 <!-- Rope body: quadratic bezier redrawn every RAF frame -->
                 <path id="ls-rope"
                       d="M20 0 Q20 30 20 60"
-                      stroke="var(--color-secondary)"
+                      style="stroke: var(--color-secondary)"
                       stroke-width="2.5"
                       stroke-linecap="round"
                       opacity="0.65"/>
@@ -1037,7 +1037,7 @@ function _injectLightSwitch(insertAfterEl) {
                 <!-- Pull-tab: teardrop, translated + rotated by JS to follow end -->
                 <g id="ls-rope-end">
                     <path d="M-6 4 Q-6 0 0 0 Q6 0 6 4 L4 20 Q0 25 -4 20 Z"
-                          fill="var(--color-accent)" opacity="0.92"/>
+                          style="fill: var(--color-accent)" opacity="0.92"/>
                 </g>
             </svg>
 
