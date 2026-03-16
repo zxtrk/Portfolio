@@ -1317,11 +1317,11 @@ body.dark-mode .main-footer { background-color: #111111; }
 
     .main-nav { padding: 0.75rem 1.25rem; background: var(--color-bg); }
     body.dark-mode .main-nav { background: #111111; }
-    .logo { font-size: 22px; }
+    .logo { font-size: 30px; }
     .dark-mode-toggle.desktop-only { display: none; }
     .dark-mode-toggle.mobile-only { display: flex; width: 36px; height: 36px; }
     .dark-mode-toggle.mobile-only .sun-icon, .dark-mode-toggle.mobile-only .moon-icon { width: 16px; height: 16px; }
-    .burger-menu { width: 36px; height: 30px; display: flex !important; }
+    .burger-menu { width: 44px; height: 36px; display: flex !important; }
     .burger-line { height: 3px; }
     .nav-links { display: none; }
 
@@ -1516,7 +1516,8 @@ body.dark-mode .main-footer { background-color: #111111; }
     .hero { padding-top: 100px !important; }
     .hero-title { font-size: clamp(2.1rem, 11vw, 2.8rem) !important; }
     .section-title { font-size: clamp(1.8rem, 8.5vw, 2.3rem) !important; }
-    .logo { font-size: 20px; }
+    .logo { font-size: 27px; }
+    .burger-menu { width: 40px; height: 34px; }
     section { padding: 1.25rem 1rem !important; }
     .contact-link { padding: 0.75rem; gap: 0.625rem; }
     .contact-icon svg { width: 18px !important; height: 18px !important; }
