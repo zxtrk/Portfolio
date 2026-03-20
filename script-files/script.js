@@ -8,19 +8,19 @@
 // ─── PROJECT DATA ─────────────────────────────────────────────────────
 const projects = [
     {
-        title: "Temporary Removed",
-        description: "Project has been temporarily removed due to issues with the code — last updated 14/02/26",
-        tags: ["HTML", "CSS", "JavaScript"],
-        pageUrl: "404.html",
-        imageUrl: "",
-        year: "202?",
+        title: "Nimbus",
+        description: "Nimbus is a real time weather dashboard with immersive effects that match the live weather condition for any searched city. ",
+        tags: ["API", "CSS", "JS", "HTML"],
+        pageUrl: "nimbus/nimbus.html",
+        imageUrl: "asset-images/nimbus.jpg",
+        year: "2025",
         index: "01",
     },
     {
         title: "Coming Soon",
         description: "A new project is currently in development. Something interesting is on the way — check back soon.",
         tags: ["In Progress"],
-        pageUrl: null,
+        pageUrl: "404.html",
         imageUrl: "",
         year: "202?",
         index: "02",
