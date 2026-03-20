@@ -10,7 +10,7 @@ const projects = [
     {
         title: "Nimbus.",
         description: "This is a real-time weather dashboard with immersive effects that match the live conditions for any searched city.",
-        tags: ["Weather-Stack", "CSS", "JavaScript"],
+        tags: ["API", "CSS", "JavaScript", "HTML"],
         pageUrl: "Nimbus/nimbus.html",
         imageUrl: "attached_assets/Nimbus.png",
         year: "2025",
