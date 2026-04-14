@@ -1846,20 +1846,9 @@ function initAdminPanel() {
                 </div>
                 <div class="adm-sec">
                   <div class="adm-sec-lbl">Site Pages</div>
-                  <button class="adm-btn adm-btn--ghost" id="admActivityBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                  <button class="adm-btn" id="admActivityBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--color-secondary);">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
                     Activity
-                  </button>
-                </div>
-                <div class="adm-sec">
-                  <div class="adm-sec-lbl">Quick Navigate</div>
-                  <div class="adm-field">
-                    <label>Page URL</label>
-                    <input class="adm-input" id="admNavUrl" type="url" placeholder="https://example.com" autocomplete="url">
-                  </div>
-                  <button class="adm-btn" id="admNavBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--color-secondary);">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                    Go to Page
                   </button>
                 </div>
                 <div class="adm-sec adm-sec--danger">
@@ -1914,7 +1903,19 @@ function initAdminPanel() {
     }
 
     function loadMainPanel() {
-        const load = data => {
+        function applyStats(cfg) {
+            if (document.getElementById("admStatDate"))
+                document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([], { month:"short", day:"numeric" });
+            if (cfg._lastUpdated) {
+                const d = new Date(cfg._lastUpdated);
+                if (document.getElementById("admStatTime"))
+                    document.getElementById("admStatTime").textContent = d.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" });
+            } else {
+                if (document.getElementById("admStatTime"))
+                    document.getElementById("admStatTime").textContent = "Never";
+            }
+        }
+        function applyFields(data) {
             const c = { ...DEFAULTS, ...data };
             setCheck("admLockAbout",    c.aboutLocked);
             setCheck("admLockProjects", c.projectsLocked);
@@ -1927,20 +1928,25 @@ function initAdminPanel() {
             setVal("admHeroStatus",  c.heroStatus);
             setVal("admHeroSub",     c.heroSubtext);
             setVal("admFooterNote",  c.footerNote);
-            if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([], { month:"short", day:"numeric" });
-            if (c._lastUpdated) {
-                const d = new Date(c._lastUpdated);
-                if (document.getElementById("admStatTime")) document.getElementById("admStatTime").textContent = d.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" });
-            } else {
-                if (document.getElementById("admStatTime")) document.getElementById("admStatTime").textContent = "Never";
-            }
-        };
+        }
+
+        // ── Always populate immediately from localStorage (no waiting) ──
+        const localCfg = getConfig();
+        applyStats(localCfg);
+        applyFields(localCfg);
+
+        // ── Then sync with Firebase in background ──
         if (db) {
             if (document.getElementById("admStatSync")) document.getElementById("admStatSync").textContent = "\u2713 Live";
-            db.ref("siteConfig").once("value").then(snap => load({ ...getConfig(), ...(snap.val() || {}) }));
+            db.ref("siteConfig").once("value").then(snap => {
+                const fireData = snap.val() || {};
+                const merged = { ...localCfg, ...fireData };
+                applyFields(merged);
+                // Only override local timestamp if Firebase has a newer one
+                if ((fireData._lastUpdated || 0) > (localCfg._lastUpdated || 0)) applyStats(merged);
+            }).catch(() => {});
         } else {
             if (document.getElementById("admStatSync")) document.getElementById("admStatSync").textContent = "Local";
-            load(getConfig());
         }
     }
 
@@ -1960,17 +1966,6 @@ function initAdminPanel() {
         document.getElementById("admActivityBtn")?.addEventListener("click", () => {
             window.open("games.html", "_blank");
         });
-
-        // ── Quick Navigate ──────────────────────────────────────────
-        const navUrlInput = document.getElementById("admNavUrl");
-        if (navUrlInput) navUrlInput.value = localStorage.getItem("adm-nav-url") || "";
-        document.getElementById("admNavBtn")?.addEventListener("click", () => {
-            const url = (document.getElementById("admNavUrl")?.value || "").trim();
-            if (!url) return;
-            localStorage.setItem("adm-nav-url", url);
-            window.location.href = url;
-        });
-        navUrlInput?.addEventListener("input", e => localStorage.setItem("adm-nav-url", e.target.value.trim()));
 
         document.querySelectorAll(".adm-key:not(.adm-key--blank)").forEach(btn =>
             btn.addEventListener("click", () => handlePinKey(btn.dataset.k))
