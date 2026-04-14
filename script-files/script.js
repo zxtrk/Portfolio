@@ -1964,7 +1964,7 @@ function initAdminPanel() {
 
         // ── Activity button ─────────────────────────────────────────
         document.getElementById("admActivityBtn")?.addEventListener("click", () => {
-            window.open("games.html", "_blank");
+            window.open("activity101.html", "_blank");
         });
 
         document.querySelectorAll(".adm-key:not(.adm-key--blank)").forEach(btn =>
