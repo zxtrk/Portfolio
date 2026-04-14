@@ -1715,6 +1715,9 @@ function initAdminPanel() {
                 .adm-range-input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--color-accent);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .15s ease}
                 .adm-range-input::-webkit-slider-thumb:hover{transform:scale(1.2)}
                 .adm-range-input::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--color-accent);cursor:pointer;border:none;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+                .adm-btn--nav{background:var(--color-secondary);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
+                .adm-btn--nav:hover{opacity:.88;transform:translateY(-1px)}
+                .adm-btn--nav:active{transform:scale(.98)}
                 .adm-log{max-height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch}
                 .adm-log-item{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--color-border);font-size:12px}
                 .adm-log-item:last-child{border-bottom:none}
@@ -1831,6 +1834,17 @@ function initAdminPanel() {
                   <div class="adm-sec-lbl">Recent Activity</div>
                   <div class="adm-log" id="adminActivityLog"><span class="adm-log-empty">Loading...</span></div>
                 </div>
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Quick Navigate</div>
+                  <div class="adm-field">
+                    <label>Page URL</label>
+                    <input class="adm-input" id="admNavUrl" type="url" placeholder="https://example.com" autocomplete="url">
+                  </div>
+                  <button class="adm-btn adm-btn--nav" id="admNavBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    Go to Page
+                  </button>
+                </div>
                 <div class="adm-sec adm-sec--danger">
                   <div class="adm-sec-lbl">Danger Zone</div>
                   <button class="adm-btn adm-btn--danger" id="admResetAll">Reset All Settings</button>
@@ -1925,6 +1939,17 @@ function initAdminPanel() {
         document.getElementById("admPinMobileClose")?.addEventListener("click",  closePanel);
         document.getElementById("admMainMobileClose")?.addEventListener("click", closePanel);
         document.getElementById("admLockPanel")?.addEventListener("click", () => { pinVerified = false; showPin(); });
+
+        // ── Quick Navigate ──────────────────────────────────────────
+        const navUrlInput = document.getElementById("admNavUrl");
+        if (navUrlInput) navUrlInput.value = localStorage.getItem("adm-nav-url") || "";
+        document.getElementById("admNavBtn")?.addEventListener("click", () => {
+            const url = (document.getElementById("admNavUrl")?.value || "").trim();
+            if (!url) return;
+            localStorage.setItem("adm-nav-url", url);
+            window.location.href = url;
+        });
+        navUrlInput?.addEventListener("input", e => localStorage.setItem("adm-nav-url", e.target.value.trim()));
 
         document.querySelectorAll(".adm-key:not(.adm-key--blank)").forEach(btn =>
             btn.addEventListener("click", () => handlePinKey(btn.dataset.k))
