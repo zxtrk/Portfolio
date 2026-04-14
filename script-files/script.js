@@ -1467,10 +1467,10 @@ function initAdminPanel() {
     }
 
     function fetchLog() {
-        if (!db) return;
+        if (!db) { loadLocalLog(); return; }
         db.ref("adminLog").orderByChild("ts").limitToLast(20).once("value", snap => {
             const data = snap.val();
-            if (!data) return;
+            if (!data) { loadLocalLog(); return; }
             activityLog = Object.values(data).sort((a, b) => b.ts - a.ts);
             renderLog();
         });
@@ -1537,8 +1537,21 @@ function initAdminPanel() {
         const entry = { msg, ts: Date.now() };
         activityLog.unshift(entry);
         if (activityLog.length > 20) activityLog.pop();
+        try { localStorage.setItem("adm-activity-log", JSON.stringify(activityLog.slice(0, 20))); } catch {}
         db?.ref("adminLog").push(entry);
         renderLog();
+    }
+
+    function loadLocalLog() {
+        try {
+            const saved = JSON.parse(localStorage.getItem("adm-activity-log") || "[]");
+            if (Array.isArray(saved) && saved.length) {
+                activityLog = saved;
+                renderLog();
+            } else {
+                renderLog();
+            }
+        } catch { renderLog(); }
     }
 
     function renderLog() {
@@ -1831,6 +1844,24 @@ function initAdminPanel() {
                   <div class="adm-sec-lbl">Recent Activity</div>
                   <div class="adm-log" id="adminActivityLog"><span class="adm-log-empty">Loading...</span></div>
                 </div>
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Site Pages</div>
+                  <button class="adm-btn adm-btn--ghost" id="admActivityBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                    Activity
+                  </button>
+                </div>
+                <div class="adm-sec">
+                  <div class="adm-sec-lbl">Quick Navigate</div>
+                  <div class="adm-field">
+                    <label>Page URL</label>
+                    <input class="adm-input" id="admNavUrl" type="url" placeholder="https://example.com" autocomplete="url">
+                  </div>
+                  <button class="adm-btn" id="admNavBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--color-secondary);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    Go to Page
+                  </button>
+                </div>
                 <div class="adm-sec adm-sec--danger">
                   <div class="adm-sec-lbl">Danger Zone</div>
                   <button class="adm-btn adm-btn--danger" id="admResetAll">Reset All Settings</button>
@@ -1896,12 +1927,12 @@ function initAdminPanel() {
             setVal("admHeroStatus",  c.heroStatus);
             setVal("admHeroSub",     c.heroSubtext);
             setVal("admFooterNote",  c.footerNote);
+            if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([], { month:"short", day:"numeric" });
             if (c._lastUpdated) {
                 const d = new Date(c._lastUpdated);
                 if (document.getElementById("admStatTime")) document.getElementById("admStatTime").textContent = d.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" });
-                if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = d.toLocaleDateString([], { month:"short", day:"numeric" });
             } else {
-                if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([], { month:"short", day:"numeric" });
+                if (document.getElementById("admStatTime")) document.getElementById("admStatTime").textContent = "Never";
             }
         };
         if (db) {
@@ -1910,7 +1941,6 @@ function initAdminPanel() {
         } else {
             if (document.getElementById("admStatSync")) document.getElementById("admStatSync").textContent = "Local";
             load(getConfig());
-            if (document.getElementById("admStatDate")) document.getElementById("admStatDate").textContent = new Date().toLocaleDateString([], { month:"short", day:"numeric" });
         }
     }
 
@@ -1925,6 +1955,22 @@ function initAdminPanel() {
         document.getElementById("admPinMobileClose")?.addEventListener("click",  closePanel);
         document.getElementById("admMainMobileClose")?.addEventListener("click", closePanel);
         document.getElementById("admLockPanel")?.addEventListener("click", () => { pinVerified = false; showPin(); });
+
+        // ── Activity button ─────────────────────────────────────────
+        document.getElementById("admActivityBtn")?.addEventListener("click", () => {
+            window.open("games.html", "_blank");
+        });
+
+        // ── Quick Navigate ──────────────────────────────────────────
+        const navUrlInput = document.getElementById("admNavUrl");
+        if (navUrlInput) navUrlInput.value = localStorage.getItem("adm-nav-url") || "";
+        document.getElementById("admNavBtn")?.addEventListener("click", () => {
+            const url = (document.getElementById("admNavUrl")?.value || "").trim();
+            if (!url) return;
+            localStorage.setItem("adm-nav-url", url);
+            window.location.href = url;
+        });
+        navUrlInput?.addEventListener("input", e => localStorage.setItem("adm-nav-url", e.target.value.trim()));
 
         document.querySelectorAll(".adm-key:not(.adm-key--blank)").forEach(btn =>
             btn.addEventListener("click", () => handlePinKey(btn.dataset.k))
